@@ -6,7 +6,7 @@
 (defn create-test-tables []
  (let [connection (DriverManager/getConnection "jdbc:h2:mem:")
        statement (.createStatement connection)
-       table-creation-sql ["create table Person (ID int, Name varchar(100))"]]
+       table-creation-sql ["create schema dbo" "create table dbo.Person (ID int, Name varchar(100))"]]
     (for [i table-creation-sql]  (.execute statement i))
  ))
 
