@@ -15,7 +15,7 @@
   ))
 
 (deftest table-graph-tests
-  (testing "Connects to an in-memory database and returns null."
+  (testing "Connects to an in-memory database and returns basic table list."
    (let [spec {:connection-string connection-string}]
        (create-test-tables connection-string)
      (let [table-graph (retrieve-table-graph spec)]
