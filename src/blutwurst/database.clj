@@ -31,12 +31,15 @@
     ))
 
 (defn retrieve-columns-for-table [meta-data table]
-                             (let [rs (.getColumns meta-data nil (:schema table) (:name table) nil)]
+                             (let [rs (.getColumns meta-data 
+                                                   nil 
+                                                   (:schema table) 
+                                                   (:name table) 
+                                                   nil)]
                               (read-columns rs [])
                                ))
 
-(defn retrieve-columns [spec 
-                        tables]
+(defn retrieve-columns [spec tables]
   (let [connection (DriverManager/getConnection (:connection-string spec))
         meta-data (.getMetaData connection)]
     (map (fn [table] 
