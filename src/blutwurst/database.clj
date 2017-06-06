@@ -1,5 +1,5 @@
 (ns blutwurst.database 
-  (:import (java.sql DriverManager)))
+  (:import (java.sql DriverManager JDBCType)))
 
 (defn read-table-row [rs] { 
                           :name (.getString rs "TABLE_NAME") 
@@ -27,7 +27,11 @@
 (defn read-columns [rs result]
   (if (not (.next rs))
     result
-    (recur rs (cons { :name (.getString rs "COLUMN_NAME") } result))
+    (recur rs (cons { 
+                     :name (.getString rs "COLUMN_NAME") 
+                     :type (.toString (JDBCType/valueOf (.getInt rs "DATA_TYPE")) )
+                    } 
+                    result))
     ))
 
 (defn retrieve-columns-for-table [meta-data table]
