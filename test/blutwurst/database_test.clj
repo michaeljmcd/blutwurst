@@ -33,6 +33,13 @@
      (let [spec {:connection-string connection-string}
            table-graph (retrieve-table-graph spec)]
        (println table-graph)
-       (is (= {:tables '({:name "PERSON" :schema "DBO" :columns ({:name "NAME" :type "VARCHAR"} {:name "ID" :type "INTEGER"})})}
+       (is (= {
+               :tables '({
+                          :name "PERSON" 
+                          :schema "DBO" 
+                          :columns ({:name "NAME" :type "VARCHAR" :length 100}
+                                    {:name "ID" :type "INTEGER" :length 10})
+                          })
+               }
               table-graph)))
    ))

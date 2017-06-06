@@ -30,6 +30,7 @@
     (recur rs (cons { 
                      :name (.getString rs "COLUMN_NAME") 
                      :type (.toString (JDBCType/valueOf (.getInt rs "DATA_TYPE")) )
+                     :length (.getInt rs "COLUMN_SIZE")
                     } 
                     result))
     ))
