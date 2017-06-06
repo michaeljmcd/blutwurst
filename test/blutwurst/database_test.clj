@@ -18,7 +18,8 @@
   (testing "Connects to an in-memory database and returns null."
    (let [spec {:connection-string connection-string}]
        (create-test-tables connection-string)
-       (let [table-graph (retrieve-table-graph spec)]
-    (is (not (= table-graph nil)))
-   )
-    )))
+     (let [table-graph (retrieve-table-graph spec)]
+       (println table-graph)
+       (is (not (= table-graph nil)))
+       ))
+   ))
