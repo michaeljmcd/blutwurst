@@ -37,16 +37,14 @@
   (testing "Connects to an in-memory database and returns basic table list."
      (let [spec {:connection-string connection-string}
            table-graph (retrieve-table-graph spec)
-           expected {:tables '({:name
-
-                              "PURCHASE", :schema "DBO", :columns ({:name
+           expected {:tables '({:name "PURCHASE", :schema "DBO", :columns ({:name
                                       "PURCHASEDBYID", :type "INTEGER", :length
-                                      10} {:name "AMOUNT", :type "DECIMAL",
-                                      :length 65535} {:name "ID", :type
-                                      "INTEGER", :length 10})} {:name "PERSON",
+                                      10 :nullable false} {:name "AMOUNT", :type "DECIMAL",
+                                      :length 65535 :nullable true} {:name "ID", :type
+                                      "INTEGER", :length 10 :nullable true})} {:name "PERSON",
                               :schema "DBO", :columns ({:name "NAME", :type
-                                      "VARCHAR", :length 100} {:name "ID", :type
-                                      "INTEGER", :length 10})})}]
+                                      "VARCHAR", :length 100 :nullable true} {:name "ID", :type
+                                      "INTEGER", :length 10 :nullable true})})}]
        (println table-graph)
        ;(println (diff expected table-graph))
 

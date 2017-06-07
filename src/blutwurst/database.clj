@@ -24,6 +24,12 @@
    result
  ))
 
+(defn string->boolean [input]
+  (case input
+    "YES" true
+    "NO" false
+    nil))
+
 (defn read-columns [rs result]
   (if (not (.next rs))
     result
@@ -31,6 +37,7 @@
                      :name (.getString rs "COLUMN_NAME") 
                      :type (.toString (JDBCType/valueOf (.getInt rs "DATA_TYPE")) )
                      :length (.getInt rs "COLUMN_SIZE")
+                     :nullable (string->boolean (.getString rs "IS_NULLABLE"))
                     } 
                     result))
     ))
