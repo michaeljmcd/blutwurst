@@ -1,19 +1,19 @@
 (ns blutwurst.database 
   (:import (java.sql DriverManager JDBCType)))
 
-(defn read-table-row [rs] { 
-                          :name (.getString rs "TABLE_NAME") 
-                          :schema (.getString rs "TABLE_SCHEM")
-                          })
+(defn- read-table-row [rs] { 
+                           :name (.getString rs "TABLE_NAME") 
+                           :schema (.getString rs "TABLE_SCHEM")
+                           })
 
 
-(defn build-table-list [rs result] 
+(defn- build-table-list [rs result] 
                           (if (not (.next rs))
                             result
                             (recur rs (cons (read-table-row rs) result))
                           ))
 
-(defn retrieve-tables [spec]
+(defn- retrieve-tables [spec]
  (let [connection (DriverManager/getConnection (:connection-string spec))
        meta-data (.getMetaData connection)
        result-set (.getTables meta-data nil nil nil (into-array ["TABLE"]))
@@ -24,13 +24,13 @@
    result
  ))
 
-(defn string->boolean [input]
+(defn- string->boolean [input]
   (case input
     "YES" true
     "NO" false
     nil))
 
-(defn read-columns [rs result]
+(defn- read-columns [rs result]
   (if (not (.next rs))
     result
     (recur rs (cons { 
@@ -42,7 +42,7 @@
                     result))
     ))
 
-(defn retrieve-columns-for-table [meta-data table]
+(defn- retrieve-columns-for-table [meta-data table]
                              (let [rs (.getColumns meta-data 
                                                    nil 
                                                    (:schema table) 
@@ -51,7 +51,7 @@
                               (read-columns rs [])
                                ))
 
-(defn retrieve-columns [spec tables]
+(defn- retrieve-columns [spec tables]
   (let [connection (DriverManager/getConnection (:connection-string spec))
         meta-data (.getMetaData connection)]
     (map (fn [table] 
