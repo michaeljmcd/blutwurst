@@ -53,8 +53,7 @@
                          :columns
                          ({:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true})})}]
-       (pprint table-graph)
-       ;(pprint (diff expected table-graph))
+       (pprint (diff expected table-graph))
 
        (is (= expected table-graph)))
    ))
