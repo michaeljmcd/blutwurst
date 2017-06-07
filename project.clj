@@ -1,6 +1,6 @@
 (defproject blutwurst "0.1.0-SNAPSHOT"
   :description "A command-line utility to populate database tables with test data."
-  :url "http://example.com/FIXME"
+  :url "https://www.github.com/michaeljmcd/blutwurst"
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"] 
