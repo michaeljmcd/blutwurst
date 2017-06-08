@@ -1,4 +1,5 @@
-(ns blutwurst.tuple-generator)
+(ns blutwurst.tuple-generator
+  (:require [clojure.pprint :refer :all]))
 
 (def value-generation-strategies
   ^{ :private true }
@@ -10,7 +11,33 @@
    }
   ])
 
+(defn- select-generators-for-column [column]
+  (let [generator-search (fn [column strategies]
+                           (if (nil? strategies)
+                             nil
+                             (let [current-strategy (first strategies)]
+                               (if ((:determiner current-strategy) column)
+                                 current-strategy
+                                 (recur column (rest strategies))
+                                 ))
+                             ))]
+    (generator-search column value-generation-strategies)
+    ))
+
+(defn- build-generator [table]
+  (let [column-generators (map (fn [i] 
+                                 (assoc i :generator (:generator (select-generators-for-column i))
+                                       )) 
+                               (:columns table))]
+    (fn []
+      (map (fn [i]
+             (list (:name i)
+                   ((:generator i) (:column i))
+                   ))
+           column-generators))
+  ))
+
 (defn generate-tuples-for-table [table-descriptor number-of-tuples]
-  (let [table-generator (fn [] { :a "1" })]
+  (let [table-generator (build-generator table-descriptor)]
     (repeatedly number-of-tuples table-generator)
     ))

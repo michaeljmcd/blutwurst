@@ -8,7 +8,8 @@
     (let [table-spec {
                       :name "Destination" 
                       :schema "foo" 
-                      :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false})
+                      :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
+                                 {:name "City" :type "VARCHAR" :length 100 :nullable true})
                       }
           data (generate-tuples-for-table table-spec 5)]
       (pprint data)
