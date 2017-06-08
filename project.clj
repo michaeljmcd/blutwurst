@@ -4,6 +4,7 @@
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"] 
+                 [org.clojure/tools.cli "0.3.5"]
                  [com.h2database/h2 "1.4.195"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
