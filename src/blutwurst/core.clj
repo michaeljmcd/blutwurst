@@ -23,5 +23,6 @@
         spec (build-spec (:options parsed-input))]
     (-> spec
         blutwurst.database/retrieve-table-graph
-        (partial blutwurst.planner/create-data-generation-plan spec))
+       ; (partial blutwurst.planner/create-data-generation-plan spec)
+        )
     ))

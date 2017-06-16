@@ -5,7 +5,7 @@
 (deftest main-tests
   (testing "Basic test of the main function's workflow."
     (with-redefs [foo/build-spec (fn [a] a)]
-      (is (= {:output "." :connection-string "jdbc:h2:mem:" :format "csv"}
+      (is (= {:tables '()}
              (foo/-main "app.jar")
              ))
     )))
