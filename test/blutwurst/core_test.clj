@@ -9,3 +9,7 @@
              (foo/-main "app.jar")
              ))
     )))
+
+(deftest command-line-parsing-tests
+  (testing "Building spec object out of command line options."
+    ))
