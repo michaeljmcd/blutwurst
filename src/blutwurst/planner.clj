@@ -1,4 +1,4 @@
 (ns blutwurst.planner)
 
-(defn plan-data-generation [spec schema]
-  )
+(defn create-data-generation-plan [spec schema]
+ (:tables schema))
