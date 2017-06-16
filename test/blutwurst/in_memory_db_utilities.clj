@@ -20,3 +20,11 @@
       (.execute statement i))
     (.close statement)
   ))
+
+(def connection-string "jdbc:h2:mem:test")
+
+(defn db-fixture [f]
+  (create-test-tables connection-string)
+  (f)
+  (clear-database connection-string))
+

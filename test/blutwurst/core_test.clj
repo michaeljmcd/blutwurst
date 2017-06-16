@@ -1,12 +1,12 @@
 (ns blutwurst.core-test
   (:require [clojure.test :refer :all]
-            [blutwurst.core :as foo]))
+            [blutwurst.core :as core]))
 
 (deftest main-tests
   (testing "Basic test of the main function's workflow."
-    (with-redefs [foo/build-spec (fn [a] a)]
+    (with-redefs [core/build-spec (fn [a] a)]
       (is (= {:tables '()}
-             (foo/-main "app.jar")
+             (core/-main "app.jar")
              ))
     )))
 
