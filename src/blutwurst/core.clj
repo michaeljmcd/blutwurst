@@ -1,6 +1,8 @@
 (ns blutwurst.core
   (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.pprint :refer :all])
+            [clojure.pprint :refer :all]
+            [blutwurst.database]
+            [blutwurst.planner])
   (:gen-class))
 
 (def cli-options 
@@ -19,5 +21,7 @@
   [& args]
   (let [parsed-input (parse-opts args cli-options)
         spec (build-spec (:options parsed-input))]
-    (-> spec)
+    (-> spec
+        blutwurst.database/retrieve-table-graph
+        (partial blutwurst.planner/create-data-generation-plan spec))
     ))
