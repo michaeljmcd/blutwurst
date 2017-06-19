@@ -2,7 +2,8 @@
   (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.pprint :refer :all]
             [blutwurst.database]
-            [blutwurst.planner])
+            [blutwurst.planner]
+            [blutwurst.tuple-generator])
   (:gen-class))
 
 (def cli-options 
@@ -23,5 +24,6 @@
         spec (build-spec (:options parsed-input))]
     (-> spec
         blutwurst.database/retrieve-table-graph
-        blutwurst.planner/create-data-generation-plan)
+        blutwurst.planner/create-data-generation-plan
+        blutwurst.tuple-generator/generate-tuples-for-plan)
     ))

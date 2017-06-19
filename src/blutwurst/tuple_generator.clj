@@ -41,3 +41,6 @@
   (let [table-generator (build-generator table-descriptor)]
     (repeatedly number-of-tuples table-generator)
     ))
+
+(defn generate-tuples-for-plan [execution-plan]
+ (map (fn [a] (generate-tuples-for-table a 100)) execution-plan))
