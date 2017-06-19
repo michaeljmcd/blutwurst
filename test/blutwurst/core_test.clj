@@ -1,6 +1,11 @@
 (ns blutwurst.core-test
   (:require [clojure.test :refer :all]
-            [blutwurst.core :as core]))
+            [clojure.pprint :refer :all]
+            [clojure.tools.trace :as trace]
+            [blutwurst.core :as core]
+            [blutwurst.in-memory-db-utilities :refer :all]))
+
+(use-fixtures :each db-fixture)
 
 (deftest main-tests
   (testing "Basic test of the main function's workflow."
@@ -9,6 +14,7 @@
              ))
     )))
 
-(deftest command-line-parsing-tests
-  (testing "Building spec object out of command line options."
-    ))
+(deftest integration-tests
+ (testing "End to end flow."
+  (is (= '() (core/-main "app.jar" "-c" connection-string)))
+ ))
