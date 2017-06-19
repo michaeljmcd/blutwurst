@@ -5,8 +5,7 @@
 (deftest main-tests
   (testing "Basic test of the main function's workflow."
     (with-redefs [core/build-spec (fn [a] a)]
-      (is (= {:tables '()}
-             (core/-main "app.jar")
+      (is (= '() (core/-main "app.jar")
              ))
     )))
 

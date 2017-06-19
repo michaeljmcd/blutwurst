@@ -15,5 +15,5 @@
                          :columns
                          ({:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true})})
-          (create-data-generation-plan nil simple-schema)))
+          (create-data-generation-plan simple-schema)))
     )))
