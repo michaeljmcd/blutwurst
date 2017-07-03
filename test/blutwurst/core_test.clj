@@ -16,5 +16,5 @@
 
 (deftest integration-tests
  (testing "End to end flow."
-  (is (= '() (core/-main "app.jar" "-c" connection-string)))
+  (is (= 2 (count (core/-main "app.jar" "-c" connection-string))))
  ))

@@ -24,6 +24,7 @@
                                  {:name "ID" :type "INTEGER" :length 3 :nullable true})
                       })
           data (generate-tuples-for-plan table-spec)]
-          (pprint data)
-      (is (= 100 (count data)))
+      (is (= 1 (count data)))
+      (is (= 100 (count (first data))))
   )))
+; TODO: build a negative test with an unknown data type

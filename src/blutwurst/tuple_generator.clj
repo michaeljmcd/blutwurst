@@ -14,15 +14,18 @@
        :determiner (fn [c] (= (:type c) "INTEGER"))
        :generator (fn [c] 1)
    }
+   {
+       :name "Dumb Decimal Generator"
+       :determiner (fn [c] (= (:type c) "DECIMAL"))
+       :generator (fn [c] 1.1)
+   }
   ])
 
 (defn- select-generators-for-column [column]
   (let [generator-search (fn [column strategies]
-                           (if (nil? strategies)
+                           (if (empty? strategies)
                              nil
                              (let [current-strategy (first strategies)]
-                              (pprint column)
-                              (pprint current-strategy)
                                (if ((:determiner current-strategy) column)
                                  current-strategy
                                  (recur column (rest strategies))
