@@ -8,14 +8,19 @@
 
 (def cli-options 
   [["-o" "--output OUTPUT_DIR" "Output location."
-    :default "."]
+    :default "-"]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported."
-    :default "csv"]
+    :default :csv]
    ["-h" "--help"]])
 
-(defn- build-spec [options] {:connection-string (:connection-string options)})
+(defn- build-spec [options] 
+  {
+   :connection-string (:connection-string options)
+   :format (:format options)
+   :output-location (:output options)
+  })
 
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
