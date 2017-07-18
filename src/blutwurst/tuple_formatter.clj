@@ -1,5 +1,6 @@
 (ns blutwurst.tuple-formatter
-    (:require [clojure.data.csv :as csv]))
+    (:require [clojure.data.csv :as csv]
+              [taoensso.timbre :as timbre :refer [trace]]))
 
 ; TODO: handle file output
 (defn- csv-formatter [spec rows]
@@ -11,6 +12,7 @@
   })
 
 (defn format-rows [spec rows]
+ (trace rows)
   (let [formatter ((:format spec) formatters)]
     (formatter spec rows)
     ))
