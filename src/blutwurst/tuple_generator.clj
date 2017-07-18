@@ -1,5 +1,6 @@
 (ns blutwurst.tuple-generator
-  (:require [clojure.pprint :refer :all]))
+  (:require [taoensso.timbre :as timbre :refer [trace]]
+   ))
 
 (def value-generation-strategies
   ^{ :private true }
@@ -53,4 +54,5 @@
     ))
 
 (defn generate-tuples-for-plan [execution-plan]
+ (trace execution-plan)
  (map (fn [a] (generate-tuples-for-table a 100)) execution-plan))

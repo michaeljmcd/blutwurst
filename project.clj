@@ -7,6 +7,7 @@
                  [org.clojure/data.csv "0.1.4"]
                  [org.clojure/tools.trace "0.7.9"]
                  [org.clojure/tools.cli "0.3.5"]
+                 [com.taoensso/timbre "4.10.0"]
                  [org.xerial/sqlite-jdbc "3.19.3"] ;TODO: handle drivers sanely
                  [com.h2database/h2 "1.4.195"]]
   :main ^:skip-aot blutwurst.core

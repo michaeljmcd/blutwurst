@@ -1,9 +1,13 @@
 (ns blutwurst.core
   (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.pprint :refer :all]
+			[taoensso.timbre :as timbre
+				:refer [log  trace  debug  info  warn  error  fatal  report
+					logf tracef debugf infof warnf errorf fatalf reportf with-level
+					spy get-env]]
             [blutwurst.database]
             [blutwurst.planner]
-            [blutwurst.tuple-generator])
+            [blutwurst.tuple-generator]
+            [blutwurst.tuple-formatter])
   (:gen-class))
 
 (def cli-options 
@@ -25,10 +29,14 @@
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
-  (let [parsed-input (parse-opts args cli-options)
-        spec (build-spec (:options parsed-input))]
-    (-> spec
-        blutwurst.database/retrieve-table-graph
-        blutwurst.planner/create-data-generation-plan
-        blutwurst.tuple-generator/generate-tuples-for-plan)
-    ))
+  (with-level :trace
+      (let [parsed-input (parse-opts args cli-options)
+            spec (build-spec (:options parsed-input))]
+        (trace spec)
+
+        (-> spec
+            blutwurst.database/retrieve-table-graph
+            blutwurst.planner/create-data-generation-plan
+            blutwurst.tuple-generator/generate-tuples-for-plan
+            (apply blutwurst.tuple-formatter/format-rows spec))
+        )))
