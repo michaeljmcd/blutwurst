@@ -16,5 +16,5 @@
 
 (deftest integration-tests
  (testing "End to end flow."
-  (is (= 2 (count (core/-main "app.jar" "-c" connection-string "-f" "csv"))))
+  (is (= 2 (count (core/-main "app.jar" "-c" connection-string "-f" :csv))))
  ))
