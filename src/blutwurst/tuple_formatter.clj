@@ -4,8 +4,8 @@
 
 ; TODO: handle file output
 (defn- csv-formatter [spec rows]
- (trace rows)
- (let [values-only (map (fn [r] (map (fn [r2] (second r2)) r)) rows)]
+ (let [values-only (mapv (fn [r] (mapv (fn [r2] (second r2)) r)) rows)]
+    (trace values-only)
      (csv/write-csv *out* values-only)
 ))
 
@@ -15,6 +15,7 @@
   })
 
 (defn format-rows [spec rows]
+ ;(trace (pr-str rows))
   (let [formatter (partial (get formatters (:format spec)) spec)]
    (map formatter rows)
     ))

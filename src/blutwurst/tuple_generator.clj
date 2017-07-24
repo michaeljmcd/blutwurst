@@ -54,5 +54,5 @@
     ))
 
 (defn generate-tuples-for-plan [execution-plan]
- (trace execution-plan)
+ (trace (pr-str execution-plan))
  (map (fn [a] (generate-tuples-for-table a 100)) execution-plan))
