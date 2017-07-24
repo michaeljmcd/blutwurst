@@ -4,7 +4,10 @@
 
 ; TODO: handle file output
 (defn- csv-formatter [spec rows]
- (csv/write-csv *out* rows))
+ (trace rows)
+ (let [values-only (map (fn [r] (map (fn [r2] (second r2)) r)) rows)]
+     (csv/write-csv *out* values-only)
+))
 
 (def formatters 
   {
@@ -12,6 +15,6 @@
   })
 
 (defn format-rows [spec rows]
-  (let [formatter (get formatters (:format spec))]
-   (formatter spec rows)
+  (let [formatter (partial (get formatters (:format spec)) spec)]
+   (map formatter rows)
     ))
