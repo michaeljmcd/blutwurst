@@ -16,6 +16,7 @@
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported."
+    :parse-fn #(keyword %)
     :default :csv]
    ["-h" "--help"]])
 
