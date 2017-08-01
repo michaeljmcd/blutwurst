@@ -15,7 +15,7 @@
   })
 
 (defn format-rows [spec rows]
- ;(trace (pr-str rows))
   (let [formatter (partial (get formatters (:format spec)) spec)]
-   (map formatter rows)
+   (doseq [x rows]
+    (formatter x))
     ))

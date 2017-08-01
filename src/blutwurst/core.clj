@@ -33,12 +33,12 @@
   (with-level :trace
       (let [parsed-input (parse-opts args cli-options)
             spec (build-spec (:options parsed-input))
-            formatter (partial blutwurst.tuple-formatter/format-rows spec)]
+            format-rows (partial blutwurst.tuple-formatter/format-rows spec)]
         (trace spec)
 
         (-> spec
             blutwurst.database/retrieve-table-graph
             blutwurst.planner/create-data-generation-plan
             blutwurst.tuple-generator/generate-tuples-for-plan
-            formatter)
+            format-rows)
         )))
