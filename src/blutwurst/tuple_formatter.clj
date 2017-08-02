@@ -5,7 +5,6 @@
 ; TODO: handle file output
 (defn- csv-formatter [spec rows]
  (let [values-only (mapv (fn [r] (mapv #(second %) r)) rows)]
-    (trace values-only)
      (csv/write-csv *out* values-only)
 ))
 
