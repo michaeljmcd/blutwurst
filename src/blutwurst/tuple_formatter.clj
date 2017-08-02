@@ -6,7 +6,8 @@
  (trace data)
  (let [rows (:tuples data)
        values-only (mapv (fn [r] (mapv #(second %) r)) rows)]
-   (with-out-str (csv/write-csv *out* values-only))
+       {:table (:table data)
+        :tuples (with-out-str (csv/write-csv *out* values-only)) }
     ))
 
 (def formatters 

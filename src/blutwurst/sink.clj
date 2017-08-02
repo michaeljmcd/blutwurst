@@ -12,9 +12,10 @@
  (let [extension (name (:format spec))]
    (fn [rows]
      (doseq [x rows]
-       (println x)
-     ))
- ))
+       (let [path (str (-> x :table :schema) "_" (-> x :table :name) "." extension)]
+           (spit path (:tuples x))
+       ))
+     )))
 
 (defn make-sink [spec]
  (cond 
