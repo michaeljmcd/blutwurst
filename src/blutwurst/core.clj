@@ -31,7 +31,7 @@
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
-  (with-level :fatal
+  (with-level :trace
       (let [parsed-input (parse-opts args cli-options)
             spec (build-spec (:options parsed-input))
             format-rows (partial format-rows spec)

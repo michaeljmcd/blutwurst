@@ -9,5 +9,5 @@
  ))
   (testing "Fallback to the standard out sink of nothing is provided."
    (let [sink (make-sink {})]
-    (is (= blutwurst.sink/standard-output-sink sink)))
+    (is (= blutwurst.sink/null-sink sink)))
   ))
