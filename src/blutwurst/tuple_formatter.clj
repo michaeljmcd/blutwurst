@@ -3,7 +3,6 @@
               [taoensso.timbre :as timbre :refer [trace]]))
 
 (defn- csv-formatter [spec data]
- (trace data)
  (let [rows (:tuples data)
        values-only (mapv (fn [r] (mapv #(second %) r)) rows)]
        {:table (:table data)

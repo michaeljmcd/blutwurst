@@ -9,10 +9,17 @@
 (defn null-sink [rows] nil)
 
 (defn make-directory-sink [spec]
- (let [extension (name (:format spec))]
+ (let [extension (name (:format spec))
+       base-dir (:output-directory spec)]
    (fn [rows]
      (doseq [x rows]
-       (let [path (str (-> x :table :schema) "_" (-> x :table :name) "." extension)]
+       (let [path (str base-dir 
+                       java.io.File/separator 
+                       (or (-> x :table :schema) "NOSCHEMA")
+                       "_" 
+                       (-> x :table :name) 
+                       "." 
+                       extension)]
            (spit path (:tuples x))
        ))
      )))
