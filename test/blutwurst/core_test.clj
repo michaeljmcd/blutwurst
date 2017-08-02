@@ -7,8 +7,8 @@
 
 (use-fixtures :each db-fixture)
 
-;(deftest integration-tests
-; (testing "End to end flow."
-;  (core/-main "app.jar" "-c" connection-string "-f" :csv "-o" "-")
-  ; TODO: add a new test
-;  ))
+ ; TODO: make test useful
+(deftest integration-tests
+ (testing "End to end flow."
+  (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-v")
+  ))

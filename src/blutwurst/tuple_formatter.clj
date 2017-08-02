@@ -2,11 +2,12 @@
     (:require [clojure.data.csv :as csv]
               [taoensso.timbre :as timbre :refer [trace]]))
 
-(defn- csv-formatter [spec rows]
- (let [values-only (mapv (fn [r] (mapv #(second %) r)) rows)]
-   (with-out-str 
-     (csv/write-csv *out* values-only))
-))
+(defn- csv-formatter [spec data]
+ (trace data)
+ (let [rows (:tuples data)
+       values-only (mapv (fn [r] (mapv #(second %) r)) rows)]
+   (with-out-str (csv/write-csv *out* values-only))
+    ))
 
 (def formatters 
   {

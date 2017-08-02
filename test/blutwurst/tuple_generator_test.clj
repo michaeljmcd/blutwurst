@@ -12,7 +12,7 @@
                                  {:name "City" :type "VARCHAR" :length 100 :nullable true})
                       }
           data (generate-tuples-for-table table-spec 5)]
-      (is (= 5 (count data)))
+      (is (= 2 (count data)))
     )))
 
 (deftest generate-tuples-from-plan-test   
@@ -25,6 +25,6 @@
                       })
           data (generate-tuples-for-plan table-spec)]
       (is (= 1 (count data)))
-      (is (= 100 (count (first data))))
+      (is (= 2 (count (first data))))
   )))
 ; TODO: build a negative test with an unknown data type

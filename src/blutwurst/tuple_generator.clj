@@ -50,9 +50,9 @@
 
 (defn generate-tuples-for-table [table-descriptor number-of-tuples]
   (let [table-generator (build-generator table-descriptor)]
-    (repeatedly number-of-tuples table-generator)
+    {:table table-descriptor :tuples (repeatedly number-of-tuples table-generator)}
     ))
 
 (defn generate-tuples-for-plan [execution-plan]
  (trace (pr-str execution-plan))
- (map (fn [a] (generate-tuples-for-table a 100)) execution-plan))
+ (map #(generate-tuples-for-table % 100) execution-plan))
