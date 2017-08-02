@@ -10,6 +10,6 @@
 
 (defn make-sink [spec]
  (cond 
-  (= "-" (:output spec)) standard-output-sink
+  (= "-" (:output-location spec)) standard-output-sink
   :else null-sink
  ))
