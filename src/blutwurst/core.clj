@@ -12,8 +12,9 @@
   (:gen-class))
 
 (def cli-options 
-  [["-o" "--output OUTPUT_DIR" "Output location."
+  [["-o" "--output OUTPUT_FILE" "Individual file to which to write the generated data."
     :default "-"]
+   ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported."
@@ -26,7 +27,8 @@
   {
    :connection-string (:connection-string options)
    :format (:format options)
-   :output-location (:output options)
+   :output-file (:output options)
+   :output-directory (:output-dir options)
   })
 
 (defn -main

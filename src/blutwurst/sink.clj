@@ -8,8 +8,17 @@
 
 (defn null-sink [rows] nil)
 
+(defn make-directory-sink [spec]
+ (let [extension (name (:format spec))]
+   (fn [rows]
+     (doseq [x rows]
+       (println x)
+     ))
+ ))
+
 (defn make-sink [spec]
  (cond 
-  (= "-" (:output-location spec)) standard-output-sink
+  (not (empty? (:output-directory spec))) (make-directory-sink spec)
+  (= "-" (:output-file spec)) standard-output-sink
   :else null-sink
  ))

@@ -4,7 +4,7 @@
 
 (deftest sink-creation-test
  (testing "Creating a new sink for stdout based on a specification."
-  (let [sink (make-sink {:output-location "-"})]
+  (let [sink (make-sink {:output-file "-"})]
    (is (= blutwurst.sink/standard-output-sink sink))
  ))
   (testing "Fallback to the null sink if nothing is provided."
