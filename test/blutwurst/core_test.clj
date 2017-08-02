@@ -7,15 +7,8 @@
 
 (use-fixtures :each db-fixture)
 
-(deftest main-tests
-  (testing "Basic test of the main function's workflow."
-    (with-redefs [core/build-spec (fn [a] a)]
-      (core/-main "app.jar")
-      ; TODO: add a new test
-    )))
-
-(deftest integration-tests
- (testing "End to end flow."
-  (core/-main "app.jar" "-c" connection-string "-f" :csv)
+;(deftest integration-tests
+; (testing "End to end flow."
+;  (core/-main "app.jar" "-c" connection-string "-f" :csv "-o" "-")
   ; TODO: add a new test
-  ))
+;  ))

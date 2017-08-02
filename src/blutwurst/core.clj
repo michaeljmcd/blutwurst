@@ -4,10 +4,11 @@
 				:refer [log  trace  debug  info  warn  error  fatal  report
 					logf tracef debugf infof warnf errorf fatalf reportf with-level
 					spy get-env]]
-            [blutwurst.database]
+            [blutwurst.database :refer [retrieve-table-graph]]
             [blutwurst.planner]
             [blutwurst.tuple-generator]
-            [blutwurst.tuple-formatter])
+            [blutwurst.tuple-formatter]
+            [blutwurst.sink :refer [make-sink]])
   (:gen-class))
 
 (def cli-options 
@@ -33,12 +34,14 @@
   (with-level :fatal
       (let [parsed-input (parse-opts args cli-options)
             spec (build-spec (:options parsed-input))
-            format-rows (partial blutwurst.tuple-formatter/format-rows spec)]
+            format-rows (partial blutwurst.tuple-formatter/format-rows spec)
+            sink (make-sink spec)]
         (trace spec)
 
         (-> spec
-            blutwurst.database/retrieve-table-graph
+            retrieve-table-graph
             blutwurst.planner/create-data-generation-plan
             blutwurst.tuple-generator/generate-tuples-for-plan
-            format-rows)
+            format-rows
+            sink)
         )))
