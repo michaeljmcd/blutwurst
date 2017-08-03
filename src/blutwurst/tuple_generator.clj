@@ -14,8 +14,7 @@
 
 (defn random-string [max-length]
  (let [r (Random.)
-       valid-chars ["a" "b" "c" "d" "e" "f" "g"
-                    "h" "i" "j" "k" "0" "1" "2"]
+       valid-chars (map char (range 97 123)) ; TODO make this a little cleaner
        max-char-index (- (count valid-chars) 1)]
     (apply str
     (repeatedly (.nextInt r (- max-length 1))
