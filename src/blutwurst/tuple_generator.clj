@@ -1,6 +1,11 @@
 (ns blutwurst.tuple-generator
-  (:require [taoensso.timbre :as timbre :refer [trace]]
-   ))
+  (:import (java.util Random))
+  (:require [taoensso.timbre :as timbre :refer [trace]]))
+
+(defn- random-integer []
+ (let [random (Random.)]
+   (.nextInt random)
+ ))
 
 (def value-generation-strategies
   ^{ :private true }
@@ -11,9 +16,9 @@
       :generator (fn [c] "TEST")
    }
    {
-       :name "Dumb Integer Generator"
+       :name "Random Integer Generator"
        :determiner (fn [c] (= (:type c) "INTEGER"))
-       :generator (fn [c] 1)
+       :generator (fn [c] (random-integer)) ; TODO account for column's max value
    }
    {
        :name "Dumb Decimal Generator"
