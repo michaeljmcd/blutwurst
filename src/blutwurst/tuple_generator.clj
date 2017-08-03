@@ -7,6 +7,11 @@
    (.nextInt random)
  ))
 
+(defn- random-decimal []
+ (let [random (Random.)]
+  (.nextLong random)
+))
+
 (def value-generation-strategies
   ^{ :private true }
   [
@@ -21,9 +26,9 @@
        :generator (fn [c] (random-integer)) ; TODO account for column's max value
    }
    {
-       :name "Dumb Decimal Generator"
+       :name "Random Decimal Generator"
        :determiner (fn [c] (= (:type c) "DECIMAL"))
-       :generator (fn [c] 1.1)
+       :generator (fn [c] (random-decimal)) ; TODO account for column's max value
    }
   ])
 
