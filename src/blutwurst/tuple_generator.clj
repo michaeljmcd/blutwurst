@@ -25,7 +25,7 @@
   ^{ :private true }
   [
    {
-      :name "Simple String Generator"
+      :name "Random String Generator"
       :determiner #(= (:type %) "VARCHAR")
       :generator #(random-string (or (:length %) 255))
    }
@@ -51,6 +51,7 @@
                                  (recur column (rest strategies))
                                  ))
                              ))]
+
     (generator-search column value-generation-strategies)
     ))
 
