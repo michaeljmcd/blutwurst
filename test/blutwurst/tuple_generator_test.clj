@@ -3,6 +3,12 @@
             [clojure.pprint :refer :all]
             [blutwurst.tuple-generator :refer :all]))
 
+(deftest random-string-test
+ (testing "Basic random string generation."
+   (let [value (random-string 10)]
+    (is (< (count value) 10)))
+ ))
+
 (deftest tuple-generator-test
   (testing "Basic tuple generator."
     (let [table-spec {

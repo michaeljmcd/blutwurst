@@ -12,22 +12,32 @@
   (.nextLong random)
 ))
 
+(defn random-string [max-length]
+ (let [r (Random.)
+       valid-chars ["a" "b" "c" "d" "e" "f" "g"
+                    "h" "i" "j" "k" "0" "1" "2"]
+       max-char-index (- (count valid-chars) 1)]
+    (apply str
+    (repeatedly (.nextInt r (- max-length 1))
+                #(nth valid-chars (.nextInt r max-char-index))))
+ ))
+
 (def value-generation-strategies
   ^{ :private true }
   [
    {
       :name "Simple String Generator"
-      :determiner (fn [c] (= (:type c) "VARCHAR"))
-      :generator (fn [c] "TEST")
+      :determiner #(= (:type %) "VARCHAR")
+      :generator #(random-string (or (:length %) 255))
    }
    {
        :name "Random Integer Generator"
-       :determiner (fn [c] (= (:type c) "INTEGER"))
+       :determiner #(= (:type %) "INTEGER")
        :generator (fn [c] (random-integer)) ; TODO account for column's max value
    }
    {
        :name "Random Decimal Generator"
-       :determiner (fn [c] (= (:type c) "DECIMAL"))
+       :determiner #(= (:type %) "DECIMAL")
        :generator (fn [c] (random-decimal)) ; TODO account for column's max value
    }
   ])
