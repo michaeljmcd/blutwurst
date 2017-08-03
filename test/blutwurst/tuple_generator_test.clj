@@ -1,6 +1,7 @@
 (ns blutwurst.tuple-generator-test
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
+            [taoensso.timbre :as timbre :refer [trace]]
             [blutwurst.tuple-generator :refer :all]))
 
 (deftest random-string-test
@@ -22,15 +23,16 @@
     )))
 
 (deftest generate-tuples-from-plan-test   
-(testing "Multiple data types."
-    (let [table-spec '({
-                      :name "Destination" 
-                      :schema "foo" 
-                      :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
-                                 {:name "ID" :type "INTEGER" :length 3 :nullable true})
-                      })
-          data (generate-tuples-for-plan table-spec)]
-      (is (= 1 (count data)))
-      (is (= 2 (count (first data))))
-  )))
+    (testing "Multiple data types."
+        (let [table-spec '({
+                          :name "Destination" 
+                          :schema "foo" 
+                          :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
+                                     {:name "ID" :type "INTEGER" :length 3 :nullable true})
+                          })
+              data (generate-tuples-for-plan table-spec)]
+          (trace data)
+          (is (= 1 (count data)))
+          (is (= 2 (count (first data))))
+      )))
 ; TODO: build a negative test with an unknown data type
