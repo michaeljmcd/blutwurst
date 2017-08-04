@@ -2,7 +2,10 @@
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
             [taoensso.timbre :as timbre :refer [trace]]
+            [blutwurst.logging-fixture :refer :all]
             [blutwurst.tuple-generator :refer :all]))
+
+(use-fixtures :each logging-fixture)
 
 (deftest random-string-test
  (testing "Basic random string generation."
@@ -27,7 +30,7 @@
         (let [table-spec '({
                           :name "Destination" 
                           :schema "foo" 
-                          :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
+                          :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
                                      {:name "ID" :type "INTEGER" :length 3 :nullable true})
                           })
               data (generate-tuples-for-plan table-spec)]
