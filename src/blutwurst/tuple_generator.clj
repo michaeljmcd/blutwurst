@@ -56,8 +56,8 @@
     ))
 
 (defn- build-generator [table]
-  (let [column-generators (map (fn [i] 
-                                 (assoc i :generator (:generator (select-generators-for-column i))
+  (let [column-generators (map (fn [column] 
+                                 (assoc column :generator (:generator (select-generators-for-column column))
                                        )) 
                                (:columns table))]
     (fn []
