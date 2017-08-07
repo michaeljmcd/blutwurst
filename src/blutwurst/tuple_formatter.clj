@@ -64,6 +64,7 @@
 
 (defn format-rows [spec tables]
  (mapv (partial (case (:format spec)
-         :csv csv-formatter
-         :sql sql-formatter) spec)
+                  :csv csv-formatter
+                  :sql sql-formatter) 
+                spec)
        tables))
