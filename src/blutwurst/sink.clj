@@ -6,7 +6,7 @@
   (println (apply str (:tuples x)))
  ))
 
-(defn null-sink [rows] nil)
+(defn null-sink [tables] nil)
 
 (defn make-directory-sink [spec]
  (let [extension (name (:format spec))
