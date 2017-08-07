@@ -9,6 +9,7 @@
                  [org.clojure/tools.trace "0.7.9"]
                  [com.taoensso/timbre "4.10.0"]
                  [org.clojure/core.incubator "0.1.4"]
+                 [cheshire "5.7.1"]
 
                  ;TODO: handle drivers sanely
                  [org.xerial/sqlite-jdbc "3.19.3"]

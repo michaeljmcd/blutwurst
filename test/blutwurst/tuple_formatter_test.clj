@@ -32,3 +32,7 @@
                       :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'Then O''Kelly came in with the \t hatchett.');\n"]})
                     (format-rows spec rows)))
    )))
+
+(deftest json-formatter-test
+  (testing "Basic JSON generation with integer-only values."
+  ))
