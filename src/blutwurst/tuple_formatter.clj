@@ -54,7 +54,6 @@
         table-name (-> table :table :name)
         columns (build-columns table)
         tuples (build-tuples table)]
-   (trace (pr-str tuples))
 
    { 
     :table (:table table)
