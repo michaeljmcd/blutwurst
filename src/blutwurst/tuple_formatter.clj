@@ -13,7 +13,7 @@
     :tuples (with-out-str (csv/write-csv *out* (extract-data-from-table-tuples table))) })
 
 (defn- comma-delimit [values]
- (reduce (fn [a, b] (if (empty? a) b (str a "," b))) values))
+ (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))
 
 (defn- sql-identifier [token]
  (str "\"" token "\""))
@@ -33,8 +33,9 @@
  ))
 
 (defn- build-tuples [table]
- (mapv #(->> % comma-delimit parenthesize)
-  (-> table :table :tuples)
+ (comma-delimit
+ (mapv (fn [tuple] (->> tuple comma-delimit parenthesize))
+  (extract-data-from-table-tuples table))
  ))
 
 (defn- sql-formatter 
@@ -46,6 +47,7 @@
         table-name (-> table :table :name)
         columns (build-columns table)
         tuples (build-tuples table)]
+   (trace (pr-str tuples))
    (<< "INSERT INTO ~{schema}\"~{table-name}\" ~{columns} VALUES ~{tuples}")))
 
 (defn format-rows [spec tables]
