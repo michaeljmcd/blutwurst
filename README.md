@@ -1,32 +1,37 @@
-# blutwurst - A database test data generator.
+# blutwurst - A test data generator.
 
-You don't want to know how the sausage is made.
+"You don't want to know how the sausage is made."
+
+Blutwurst is a utility for building test data sets based on some sort of
+schema. These can then be exported to files for use in filling up a new
+database or adding to unit tests.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+No installation archives exist (yet). We will add them once we reach a certain
+level of completion on this project. In the meantime, clone this repository and run:
+
+    lein uberjar
 
 ## Usage
 
-FIXME: explanation
+To generate data, execute the JAR:
 
-    $ java -jar blutwurst-0.1.0-standalone.jar [args]
+    $ java -jar blutwurst-0.2.0-SNAPSHOT-standalone.jar [args]
 
 ## Options
 
-FIXME: listing of options this app accepts.
+In order to get a full list of the arguments supported by this application, run the following command:
+
+    $ java -jar blutwurst-0.2.0-SNAPSHOT-standalone.jar -h
 
 ## Examples
 
-...
+Stay tuned.
 
 ### Bugs
 
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+No reported bugs, as yet.
 
 ## License
 
