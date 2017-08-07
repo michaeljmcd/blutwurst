@@ -36,16 +36,15 @@
   [& args]
       (let [parsed-input (parse-opts args cli-options)
             spec (build-spec (:options parsed-input))
-            format-rows (partial format-rows spec)
             sink (make-sink spec)]
       (with-level (if (-> parsed-input :options :verbose) :trace :fatal)
         (trace parsed-input)
         (trace spec)
 
-        (-> spec
-            retrieve-table-graph
-            create-data-generation-plan
-            generate-tuples-for-plan
-            format-rows
-            sink)
+        (->> spec
+             retrieve-table-graph
+             create-data-generation-plan
+             generate-tuples-for-plan
+             (format-rows spec)
+             sink)
         )))
