@@ -1,6 +1,7 @@
 (ns blutwurst.tuple-generator
   (:import (java.util Random))
-  (:require [taoensso.timbre :as timbre :refer [trace]]))
+  (:require [taoensso.timbre :as timbre :refer [trace]]
+            [clojure.pprint :refer :all]))
 
 (defn- random-integer []
  (let [random (Random.)]
@@ -61,11 +62,9 @@
                                        )) 
                                (:columns table))]
     (fn []
-      (map (fn [i]
-             (list (:name i)
-                   ((:generator i) (:column i))
-                   ))
-           column-generators))
+      (zipmap (map #(-> % :name keyword) column-generators)
+              (map #((:generator %) (:column %)) column-generators))
+      )
   ))
 
 (defn generate-tuples-for-table [table-descriptor number-of-tuples]
