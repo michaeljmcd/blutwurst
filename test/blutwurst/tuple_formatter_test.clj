@@ -10,7 +10,7 @@
   (testing "Generating a CSV from rows."
     (let [spec {:format :csv}
           rows '({:table "test" :tuples ((("A" 1) ("B" 2)))})]
-        (is (= '({:table "test" :tuples "1,2\n"})
+        (is (= '({:table "test" :tuples ["1,2\n"]})
                (format-rows spec rows)))
       )))
 
@@ -19,6 +19,7 @@
      (let [spec {:format :sql}
            rows '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
                    :tuples ((("A" 1) ("B" 2)))})]
-             (is (= ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2)"]
+             (is (= '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
+                      :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2);\n"]})
                     (format-rows spec rows)))
            )))

@@ -20,7 +20,7 @@
                        (-> x :table :name) 
                        "." 
                        extension)]
-           (spit path (:tuples x))
+           (spit path (apply str (:tuples x)))
        ))
      )))
 

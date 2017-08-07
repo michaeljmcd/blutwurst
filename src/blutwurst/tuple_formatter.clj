@@ -10,7 +10,7 @@
 
 (defn- csv-formatter [spec table]
    {:table (:table table)
-    :tuples (with-out-str (csv/write-csv *out* (extract-data-from-table-tuples table))) })
+    :tuples (vector (with-out-str (csv/write-csv *out* (extract-data-from-table-tuples table)))) })
 
 (defn- comma-delimit [values]
  (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))
@@ -32,6 +32,7 @@
       parenthesize
  ))
 
+; TODO: recognize datatypes and escape string types
 (defn- build-tuples [table]
  (comma-delimit
  (mapv (fn [tuple] (->> tuple comma-delimit parenthesize))
@@ -48,7 +49,12 @@
         columns (build-columns table)
         tuples (build-tuples table)]
    (trace (pr-str tuples))
-   (<< "INSERT INTO ~{schema}\"~{table-name}\" ~{columns} VALUES ~{tuples}")))
+
+   { 
+    :table (:table table)
+    :tuples (vector (<< "INSERT INTO ~{schema}\"~{table-name}\" ~{columns} VALUES ~{tuples};\n"))
+   }
+))
 
 (defn format-rows [spec tables]
  (mapv (partial (case (:format spec)
