@@ -19,6 +19,6 @@
      (let [spec {:format :sql}
            rows '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
                    :tuples ((("A" 1) ("B" 2)))})]
-             (is (= '("INSERT INTO \"foo\".\"Example\" (A, B) VALUES (1, 2)")
+             (is (= '("INSERT INTO \"foo\".\"Example\" (\"A\", \"B\") VALUES (1, 2)")
                     (format-rows spec rows)))
            )))
