@@ -58,10 +58,10 @@
                           :schema "foo" 
                           :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
                                      {:name "ID" :type "INTEGER" :length 3 :nullable true})
-                          })
-              expected-tuples (repeat 100 {:Address1 "asdf" :ID 100})]
+                          })]
+
         (is (= `({:table ~(first table-spec)
-                 :tuples ~expected-tuples
+                 :tuples ~(repeat 100 {:Address1 "asdf" :ID 100})
                  })
                 (generate-tuples-for-plan table-spec)
                ))
