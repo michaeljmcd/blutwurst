@@ -32,10 +32,16 @@
       parenthesize
  ))
 
-; TODO: recognize datatypes and escape string types
+(defn- sql-value-string [values]
+ (map (fn [x]
+       (if (string? x)
+        (str "'" (clojure.string/replace x "'" "''") "'")
+        x))
+      values))
+
 (defn- build-tuples [table]
  (comma-delimit
- (mapv (fn [tuple] (->> tuple comma-delimit parenthesize))
+ (mapv (fn [tuple] (->> tuple sql-value-string comma-delimit parenthesize))
   (extract-data-from-table-tuples table))
  ))
 
