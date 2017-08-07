@@ -1,9 +1,9 @@
 (ns blutwurst.sink
    (:require [taoensso.timbre :as timbre :refer [trace]]))
 
-(defn standard-output-sink [rows]
- (doseq [x rows]
-  (println x)
+(defn standard-output-sink [tables]
+ (doseq [x tables]
+  (println (apply str (:tuples x)))
  ))
 
 (defn null-sink [rows] nil)
