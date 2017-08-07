@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This change
 ### Added
 - SQL `INSERT` statement generation.
 - Added a single-file output sink.
+- Support for JSON format output.
 
 ## [0.1.0] - 2017-08-04
 ### Added
