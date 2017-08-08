@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file. This change
 - Added a single-file output sink.
 - Support for JSON format output.
 
+### Fixed
+- Passing `-h` or `--help` did not cause the usage information to be printed.
+
 ## [0.1.0] - 2017-08-04
 ### Added
 - Basic database schema scanning (support for SQLite and H2 databases only).

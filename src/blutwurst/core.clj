@@ -1,5 +1,6 @@
 (ns blutwurst.core
   (:require [clojure.tools.cli :refer [parse-opts]]
+            [clojure.string :as string]
 			[taoensso.timbre :as timbre
 				:refer [log  trace  debug  info  warn  error  fatal  report
 					logf tracef debugf infof warnf errorf fatalf reportf with-level
@@ -17,7 +18,7 @@
    ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
-   ["-f" "--format FORMAT" "Format to which test data should be exported."
+   ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
     :parse-fn #(keyword %)
     :default :csv]
    ["-v" "--verbose" :id :verbose]
@@ -31,20 +32,38 @@
    :output-directory (:output-dir options)
   })
 
+(defn- usage [option-summary]
+ (println (->> ["Usage: java -jar blutwurst.jar [options]"
+                ""
+                option-summary
+                ""
+                "Blutwurst is a command line tool to generate test data."
+                "Specifying a connection string will cause database table schemas to be scanned and test data randomly generated"
+                "The output, format and output-dir options specify where to send the generated data (default is standard out)"
+                "and in what format to send it (the default is CSV)."
+                ""
+                "Please report bugs or issues at https://github.com/michaeljmcd/blutwurst"]
+                (string/join \newline)))
+ (System/exit 0))
+
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
       (let [parsed-input (parse-opts args cli-options)
             spec (build-spec (:options parsed-input))
             sink (make-sink spec)]
-      (with-level (if (-> parsed-input :options :verbose) :trace :fatal)
-        (trace parsed-input)
-        (trace spec)
 
-        (->> spec
-             retrieve-table-graph
-             create-data-generation-plan
-             generate-tuples-for-plan
-             (format-rows spec)
-             sink)
-        )))
+          (with-level (if (-> parsed-input :options :verbose) :trace :fatal)
+            (trace parsed-input)
+            (trace spec)
+
+            (if (-> parsed-input :options :help)
+              (usage (:summary parsed-input))
+
+              (->> spec
+                   retrieve-table-graph
+                   create-data-generation-plan
+                   generate-tuples-for-plan
+                   (format-rows spec)
+                   sink))
+      )))
