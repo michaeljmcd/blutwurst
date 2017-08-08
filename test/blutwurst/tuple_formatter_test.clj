@@ -34,5 +34,13 @@
    )))
 
 (deftest json-formatter-test
-  (testing "Basic JSON generation with integer-only values."
+  (testing "Basic JSON generation."
+     (let [spec {:format :json}
+           table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
+           rows `({:table ~table
+                   :tuples ({:A 1 :B  "\"Thus sayeth...\""})})]
+       (is (= `[{:table ~table
+                 :tuples ["[{\"A\":1,\"B\":\"\\\"Thus sayeth...\\\"\"}]"]}]
+              (format-rows spec rows))
+           ))
   ))

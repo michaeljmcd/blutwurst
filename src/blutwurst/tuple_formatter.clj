@@ -1,6 +1,7 @@
 (ns blutwurst.tuple-formatter
     (:require [clojure.data.csv :as csv]
               [clojure.core.strint :refer [<<]]
+              [cheshire.core :as json]
               [taoensso.timbre :as timbre :refer [trace]]))
 
 (defn- extract-data-from-table-tuples [table]
@@ -61,9 +62,16 @@
    }
 ))
 
+(defn- json-formatter [spec table] 
+  {
+   :table (:table table) 
+   :tuples (vector (json/generate-string (:tuples table)))
+  })
+
 (defn format-rows [spec tables]
  (mapv (partial (case (:format spec)
                   :csv csv-formatter
+                  :json json-formatter
                   :sql sql-formatter) 
                 spec)
        tables))
