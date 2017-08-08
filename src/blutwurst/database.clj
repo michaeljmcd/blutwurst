@@ -59,11 +59,17 @@
          tables)
   ))
 
+(defn- retrieve-keys 
+ "This function is responsible for building an adjacency matrix illustrating the key relationships
+ between tables."
+ [tables] nil)
+
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."
  (let [table-list (->> spec
-                   retrieve-tables
-                   (retrieve-columns spec))]
+                       retrieve-tables
+                       (retrieve-columns spec))]
      { 
       :tables table-list
+      :dependencies (retrieve-keys table-list)
      }))
