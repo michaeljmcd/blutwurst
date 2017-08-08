@@ -24,7 +24,7 @@
        ))
      )))
 
-(defn- make-file-sink [spec]
+(defn make-file-sink [spec]
  (let [path (:output-file spec)]
   (fn [tables]
    (spit path (apply str (flatten (map #(:tuples %) tables)))))

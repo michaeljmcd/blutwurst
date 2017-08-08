@@ -9,10 +9,9 @@
  ))
 
  (testing "Creates a file sink for non-stdout options."
-  (let [stub (fn [x] "asdf")]
-    (with-redefs-fn [blutwurst.sink/make-file-sink stub]
-      (is (= stub (make-sink {:output-file "a.txt"})))
-    )))
+    (with-redefs-fn {#'blutwurst.sink/make-file-sink (fn [x] "asdf")}
+      #(is (= "asdf" (blutwurst.sink/make-sink {:output-file "a.txt"})))
+     ))
 
   (testing "Fallback to the null sink if nothing is provided."
    (let [sink (make-sink {})]
