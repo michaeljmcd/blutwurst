@@ -17,7 +17,8 @@
 (deftest sql-formatter-test
    (testing "Basic SQL generation with integer-only values."
      (let [spec {:format :sql}
-           rows '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
+           table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
+           rows `({:table ~table
                    :tuples ({:A 1 :B 2})})]
              (is (= '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
                       :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2);\n"]})
@@ -26,7 +27,8 @@
 
    (testing "SQL generation quotes and escapes string values."
      (let [spec {:format :sql}
-           rows '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
+           table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
+           rows `({:table ~table
                    :tuples ({:A 1 :B  "Then O'Kelly came in with the \t hatchett."})})]
              (is (= '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
                       :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'Then O''Kelly came in with the \t hatchett.');\n"]})
