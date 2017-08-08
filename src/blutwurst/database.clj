@@ -61,9 +61,9 @@
 
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."
- (let [retrieve-columns (partial retrieve-columns spec)]
+ (let [table-list (->> spec
+                   retrieve-tables
+                   (retrieve-columns spec))]
      { 
-      :tables (-> spec
-                  retrieve-tables
-                  retrieve-columns)
+      :tables table-list
      }))
