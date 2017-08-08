@@ -11,19 +11,19 @@ database or adding to unit tests.
 No installation archives exist (yet). We will add them once we reach a certain
 level of completion on this project. In the meantime, clone this repository and run:
 
-    lein uberjar
+    boot build
 
 ## Usage
 
 To generate data, execute the JAR:
 
-    $ java -jar blutwurst-0.2.0-SNAPSHOT-standalone.jar [args]
+    $ java -jar blutwurst.jar [args]
 
 ## Options
 
 In order to get a full list of the arguments supported by this application, run the following command:
 
-    $ java -jar blutwurst-0.2.0-SNAPSHOT-standalone.jar -h
+    $ java -jar blutwurst.jar -h
 
 ## Examples
 
