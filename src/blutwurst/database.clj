@@ -74,9 +74,16 @@
   result)))
 
 (defn- retrieve-dependencies-for-table [meta-data table]
- (let [rs (.getImportedKeys meta-data nil (:schema table) (:name table))]
+ (let [rs (.getImportedKeys meta-data nil (:schema table) (:name table))
+       ]
+ (with-local-vars [ last-key nil result {}]
   (while (.next rs)
    (do
+    (var-set result (assoc (var-get result) (vector (.getString rs "FKCOLUMN_NAME"))
+     {:name (.getString rs "PKTABLE_NAME") 
+     :schema (.getString rs "PKTABLE_SCHEM") 
+     :columns (vector (.getString rs "PKCOLUMN_NAME"))}))
+
     (trace (.getString rs "PK_NAME"))
     (trace (.getString rs "FK_NAME"))
     (trace "PK: ")
@@ -88,6 +95,7 @@
     (trace (.getString rs "FKTABLE_NAME"))
     (trace (.getString rs "FKCOLUMN_NAME"))
   ))
+  (var-get result))
  ))
 
 (defn- retrieve-keys 
