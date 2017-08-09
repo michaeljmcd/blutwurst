@@ -1,0 +1,8 @@
+(macroexpand-1 (blutwurst.database/with-jdbc-meta-data {:connection-string "a"} (fn [a] a)))
+(require 'blutwurst.database)
+(macroexpand-1 (blutwurst.database/with-jdbc-meta-data {:connection-string "a"} (fn [a] a)))
+(macroexpand-1 (blutwurst.database/with-jdbc-meta-data {:connection-string "jdbc:sqlite:a"} (fn [a] a)))
+(macroexpand (blutwurst.database/with-jdbc-meta-data {:connection-string "jdbc:sqlite:a"} (fn [a] a)))
+(macroexpand-1 '(blutwurst.database/with-jdbc-meta-data {:connection-string "jdbc:sqlite:a"} (fn [a] a)))
+(hash-map '("a" "b"))
+(hash-map '("a" "b") 1)
