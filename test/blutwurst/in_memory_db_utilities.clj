@@ -13,8 +13,14 @@
         statement (.createStatement connection)
         table-creation-sql [
                             "create schema dbo" 
+                            "create table dbo.PurchaseType (Name varchar(50), Category varchar(50))"
                             "create table dbo.Person (ID int, Name varchar(100))"
-                            "create table dbo.Purchase (ID int, Amount decimal, PurchasedByID int not null, foreign key (PurchasedByID) references dbo.Person(ID))"
+                            "create table dbo.Purchase (ID int, Amount decimal, 
+                                PurchaseTypeName varchar(50),
+                                PurchaseTypeCategory varchar(50),
+                                PurchasedByID int not null, 
+                                foreign key (PurchaseTypeName, PurchaseTypeCategory) references dbo.PurchaseType(Name, Category),
+                                foreign key (PurchasedByID) references dbo.Person(ID))"
                             ]]
     (doseq [i table-creation-sql]
       (.execute statement i))

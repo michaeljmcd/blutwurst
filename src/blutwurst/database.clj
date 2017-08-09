@@ -1,4 +1,5 @@
 (ns blutwurst.database 
+  (:require [taoensso.timbre :as timbre :refer [trace]])
   (:import (java.sql DriverManager JDBCType)))
 
 (defmacro with-jdbc-meta-data 
@@ -50,26 +51,52 @@
     ))
 
 (defn- retrieve-columns-for-table [meta-data table]
-                             (let [rs (.getColumns meta-data 
-                                                   nil 
-                                                   (:schema table) 
-                                                   (:name table) 
-                                                   nil)]
-                              (read-columns rs [])
-                               ))
-
-
+ (let [rs (.getColumns meta-data 
+                       nil 
+                       (:schema table) 
+                       (:name table) 
+                       nil)]
+  (read-columns rs [])
+   ))
 
 (defn- retrieve-columns [spec tables]
  (with-jdbc-meta-data spec
-     #(map (fn [table] 
-               (assoc table :columns (retrieve-columns-for-table % table)))
-             tables)))
+     #(mapv (fn [table] 
+                (assoc table :columns (retrieve-columns-for-table % table)))
+            tables)))
+
+(comment
+(defn- read-dependencies [rs result]
+ (if (.next rs)
+  (recur rs (assoc result 
+                   (vector (.getString rs "FKCOLUMN_NAME")) 
+                   {:name (.getString rs "PKTABLE_NAME")}))
+  result)))
+
+(defn- retrieve-dependencies-for-table [meta-data table]
+ (let [rs (.getImportedKeys meta-data nil (:schema table) (:name table))]
+  (while (.next rs)
+   (do
+    (trace (.getString rs "PK_NAME"))
+    (trace (.getString rs "FK_NAME"))
+    (trace "PK: ")
+    (trace (.getString rs "PKTABLE_SCHEM"))
+    (trace (.getString rs "PKTABLE_NAME"))
+    (trace (.getString rs "PKCOLUMN_NAME"))
+    (trace "FK: ")
+    (trace (.getString rs "FKTABLE_SCHEM"))
+    (trace (.getString rs "FKTABLE_NAME"))
+    (trace (.getString rs "FKCOLUMN_NAME"))
+  ))
+ ))
 
 (defn- retrieve-keys 
  "This function is responsible for building an adjacency matrix illustrating the key relationships
  between tables."
- [spec tables] tables)
+ [spec tables] 
+ (with-jdbc-meta-data spec
+   #(mapv (fn [table] (assoc table :dependencies (retrieve-dependencies-for-table % table)))
+          tables)))
 
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."
