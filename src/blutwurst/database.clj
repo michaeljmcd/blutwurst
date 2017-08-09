@@ -12,7 +12,6 @@
    `(let [~connection-name (DriverManager/getConnection (:connection-string ~spec))
           ~meta-data-name (.getMetaData ~connection-name)
           ~result-name (apply ~fun (list ~meta-data-name))]
-      ;(.close ~connection-name)
       ~result-name)
  ))
 
@@ -70,15 +69,14 @@
 (defn- retrieve-keys 
  "This function is responsible for building an adjacency matrix illustrating the key relationships
  between tables."
- [spec tables] nil)
+ [spec tables] tables)
 
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."
  (let [table-list (->> spec
                        retrieve-tables
                        (retrieve-columns spec)
-                      ; (retrieve-keys spec)
-                       )]
+                       (retrieve-keys spec))]
      { 
       :tables table-list
      }))
