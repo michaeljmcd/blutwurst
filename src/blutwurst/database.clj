@@ -1,11 +1,25 @@
 (ns blutwurst.database 
   (:import (java.sql DriverManager JDBCType)))
 
+(defmacro with-jdbc-meta-data 
+ "Accepts a specification object and a function accepting a single argument (metadata).
+  This macro will establish a database connection, retrieve the meta data object, invoke 
+  the function on it and cleanup afterwards."
+ [spec fun]
+ (let [connection-name (gensym)
+       meta-data-name (gensym)
+       result-name (gensym)]
+   `(let [~connection-name (DriverManager/getConnection (:connection-string ~spec))
+          ~meta-data-name (.getMetaData ~connection-name)
+          ~result-name (apply ~fun (list ~meta-data-name))]
+      ;(.close ~connection-name)
+      ~result-name)
+ ))
+
 (defn- read-table-row [rs] { 
                            :name (.getString rs "TABLE_NAME") 
                            :schema (.getString rs "TABLE_SCHEM")
                            })
-
 
 (defn- build-table-list [rs result] 
                           (if (not (.next rs))
@@ -14,15 +28,9 @@
                           ))
 
 (defn- retrieve-tables [spec]
- (let [connection (DriverManager/getConnection (:connection-string spec))
-       meta-data (.getMetaData connection)
-       result-set (.getTables meta-data nil nil nil (into-array ["TABLE"]))
-       
-       result (build-table-list result-set [])]
-
-   (.close connection)
-   result
- ))
+ (with-jdbc-meta-data spec
+    #(build-table-list (.getTables % nil nil nil (into-array ["TABLE"])) [])
+))
 
 (defn- string->boolean [input]
   (case input
@@ -51,25 +59,26 @@
                               (read-columns rs [])
                                ))
 
+
+
 (defn- retrieve-columns [spec tables]
-  (let [connection (DriverManager/getConnection (:connection-string spec))
-        meta-data (.getMetaData connection)]
-    (map (fn [table] 
-           (assoc table :columns (retrieve-columns-for-table meta-data table)))
-         tables)
-  ))
+ (with-jdbc-meta-data spec
+     #(map (fn [table] 
+               (assoc table :columns (retrieve-columns-for-table % table)))
+             tables)))
 
 (defn- retrieve-keys 
  "This function is responsible for building an adjacency matrix illustrating the key relationships
  between tables."
- [tables] nil)
+ [spec tables] nil)
 
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."
  (let [table-list (->> spec
                        retrieve-tables
-                       (retrieve-columns spec))]
+                       (retrieve-columns spec)
+                      ; (retrieve-keys spec)
+                       )]
      { 
       :tables table-list
-      :dependencies (retrieve-keys table-list)
      }))

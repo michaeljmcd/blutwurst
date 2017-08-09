@@ -26,7 +26,6 @@
                          :columns
                          ({:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true})})
-                    :dependencies nil
                        }]
        (is (= expected table-graph)))
    ))
