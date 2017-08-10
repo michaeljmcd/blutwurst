@@ -14,21 +14,24 @@
            table-graph (retrieve-table-graph spec)
            expected {:tables
                        [{:name "PURCHASETYPE" :schema "DBO" 
-                         :dependencies {}
                          :columns [
-                          {:name "NAME" :type "VARCHAR" :length 50 :nullable true}
                           {:name "CATEGORY" :type "VARCHAR" :length 50 :nullable true}
-                         ]}
+                          {:name "NAME" :type "VARCHAR" :length 50 :nullable true}
+                         ]
+                         :dependencies {} }
                         {:name "PURCHASE",
                          :schema "DBO",
                          :dependencies {
                             ["PURCHASEDBYID"] {:name "PERSON" :schema "DBO" :columns ["ID"]}
+                            ["PURCHASETYPENAME" "PURCHASETYPECATEGORY"] {:name "PURCHASETYPE" :schema "DBO" :columns ["NAME" "CATEGORY"]}
                          }
                          :columns
                          [{:name "PURCHASEDBYID",
                            :type "INTEGER",
                            :length 10,
                            :nullable false}
+                          {:name "PURCHASETYPECATEGORY" :type "VARCHAR" :length 50 :nullable true}
+                          {:name "PURCHASETYPENAME" :type "VARCHAR" :length 50 :nullable true}
                           {:name "AMOUNT", :type "DECIMAL", :length 65535, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
                         {:name "PERSON",
