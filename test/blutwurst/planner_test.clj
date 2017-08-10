@@ -1,19 +1,20 @@
 (ns blutwurst.planner-test
   (:require [clojure.test :refer :all]
+            [blutwurst.logging-fixture :refer :all]
             [blutwurst.planner :refer :all]))
+
+(use-fixtures :each logging-fixture)
 
 (deftest planner-tests
   (testing "Testing the process of sequencing tables."
-    (let [simple-schema {:tables '({:name "PERSON",
-                         :schema "DBO",
-                         :columns
-                         [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
-                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]})}]
-     (is (= '({:name "PERSON",
-                         :schema "DBO",
-                         :columns
-                         [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
-                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]})
+    (let [person-table-def {:name "PERSON",
+                             :schema "DBO",
+                             :columns
+                             [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
+                              {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
+     simple-schema {:tables (list person-table-def)}]
+
+     (is (= (list person-table-def)
           (create-data-generation-plan simple-schema)))
     ))
 
@@ -26,8 +27,8 @@
          state-table-definition {:name "STATE" :schema "ASDF" :columns '({:name "NAME"})
                                         :dependencies []}
          foreign-key-schema {:tables (list city-table-definition state-table-definition)}]
+
      (is (= (list state-table-definition city-table-definition)
             (create-data-generation-plan foreign-key-schema)
          )))
-                                       
   ))
