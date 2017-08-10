@@ -18,13 +18,28 @@
                           {:name "CATEGORY" :type "VARCHAR" :length 50 :nullable true}
                           {:name "NAME" :type "VARCHAR" :length 50 :nullable true}
                          ]
-                         :dependencies {} }
+                         :dependencies [] }
                         {:name "PURCHASE",
                          :schema "DBO",
-                         :dependencies {
-                            ["PURCHASEDBYID"] {:name "PERSON" :schema "DBO" :columns ["ID"]}
-                            ["PURCHASETYPENAME" "PURCHASETYPECATEGORY"] {:name "PURCHASETYPE" :schema "DBO" :columns ["NAME" "CATEGORY"]}
-                         }
+                         :dependencies [
+                            { 
+                              :dependency-name "CONSTRAINT_96"
+                              :target-name "PERSON"
+                              :target-schema "DBO"
+                              :links {
+                                "PURCHASEDBYID" "ID"
+                              }
+                            }
+                            { 
+                              :dependency-name "CONSTRAINT_9"
+                              :target-name "PURCHASETYPE"
+                              :target-schema "DBO"
+                              :links {
+                                "PURCHASETYPENAME" "NAME"
+                                "PURCHASETYPECATEGORY" "CATEGORY"
+                              }
+                            }
+                         ]
                          :columns
                          [{:name "PURCHASEDBYID",
                            :type "INTEGER",
@@ -36,7 +51,7 @@
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
                         {:name "PERSON",
                          :schema "DBO",
-                         :dependencies {}
+                         :dependencies []
                          :columns
                          [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}

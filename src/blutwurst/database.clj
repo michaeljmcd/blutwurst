@@ -65,45 +65,41 @@
                 (assoc table :columns (retrieve-columns-for-table % table)))
             tables)))
 
-(comment
-(defn- read-dependencies [rs result]
- (if (.next rs)
-  (recur rs (assoc result 
-                   (vector (.getString rs "FKCOLUMN_NAME")) 
-                   {:name (.getString rs "PKTABLE_NAME")}))
-  result)))
+; This code is gnarly. Need to find a better way to represent what is going on
+; here. Basically, we are creating a hierarchical structure from a flat one in a
+; recursive function.
 
-(defn- read-dependencies [rs last-key from-columns to-columns destination-table result]
-  (if (not (.next rs))
-    (if (not (= [] from-columns))
-      (assoc result from-columns (assoc destination-table :columns to-columns))
-      result)
-    (let [key-name (.getString rs "FK_NAME")
-          current-column (.getString rs "FKCOLUMN_NAME")
-          current-to-column (.getString rs "PKCOLUMN_NAME")]
-      (recur rs 
-             key-name 
-             (if (= key-name last-key)
-               (conj from-columns current-column)
-               (vector current-column))
-             (if (= key-name last-key)
-               (conj to-columns current-to-column)
-               (vector current-to-column))
-             (if (= key-name last-key)
-               destination-table
-               {:name (.getString rs "PKTABLE_NAME") :schema (.getString rs "PKTABLE_SCHEM")})
-             (if (or (= key-name last-key) (= [] to-columns))
-               result
-               (assoc result from-columns (assoc destination-table :columns to-columns))))
-      )))
+(defn- read-dependencies [rs last-key target-table target-schema links result]
+ (if (not (.next rs))
+  (if (empty? links)
+   result
+   (conj result {:dependency-name last-key :target-name target-table :target-schema target-schema :links links}))
+
+  (let [key-name (.getString rs "FK_NAME")
+        current-column (.getString rs "FKCOLUMN_NAME")
+        current-to-column (.getString rs "PKCOLUMN_NAME")]
+    (recur rs
+           key-name
+           (.getString rs "PKTABLE_NAME")
+           (.getString rs "PKTABLE_SCHEM")
+           (if (or (= key-name last-key)
+                   (nil? last-key))
+            (assoc links current-column current-to-column)
+            {current-column current-to-column})
+           (if (or (= key-name last-key)
+                   (nil? last-key))
+            result
+            (conj result {:dependency-name last-key :target-name target-table :target-schema target-schema :links links}))
+     ))
+ ))
 
 (defn- retrieve-dependencies-for-table [meta-data table]
   (read-dependencies (.getImportedKeys meta-data nil (:schema table) (:name table))
-                     nil
-                     []
-                     []
-                     {}
-                     {}))
+    nil
+    nil
+    nil
+    {}
+    []))
 
 (defn- retrieve-keys 
  "This function is responsible for building an adjacency matrix illustrating the key relationships
