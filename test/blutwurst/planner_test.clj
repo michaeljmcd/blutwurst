@@ -15,7 +15,7 @@
      simple-schema {:tables (list person-table-def)}]
 
      (is (= (list person-table-def)
-          (create-data-generation-plan simple-schema)))
+            (create-data-generation-plan simple-schema)))
     ))
 
   (testing "Planning should account for foreign key relationships when buidling out a plan."

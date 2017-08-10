@@ -2,10 +2,17 @@
     (:require [taoensso.timbre :as timbre :refer [trace]]
               [clojure.pprint :refer :all]))
 
-(defn topological-schema-sort [nodes edges result]
+(defn- find-nodes-without-incoming-connections [nodes edges]
+ (filter #(some (complement (fn [e] 
+                             (and (= (:to-schema e) (:schema %))
+                                  (= (:to-name e) (:name %)))))
+                 edges)
+         nodes))
+
+(defn- topological-schema-sort [all-nodes nonentrant-nodes edges result]
 )
 
-(defn extract-edges [nodes]
+(defn- extract-edges [nodes]
  (->> nodes
       (map #(map (fn [d] {
                       :from-name (:name %) 
@@ -24,6 +31,9 @@
        edges (extract-edges nodes)]
   (pprint edges)
 
-  (topological-schema-sort nodes edges [])
+  (topological-schema-sort nodes 
+                           (find-nodes-without-incoming-connections nodes edges) 
+                           edges 
+                           '())
   ; TODO: error check
  ))
