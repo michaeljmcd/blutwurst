@@ -73,30 +73,35 @@
                    {:name (.getString rs "PKTABLE_NAME")}))
   result)))
 
-(defn- retrieve-dependencies-for-table [meta-data table]
- (let [rs (.getImportedKeys meta-data nil (:schema table) (:name table))
-       ]
- (with-local-vars [ last-key nil result {}]
-  (while (.next rs)
-   (do
-    (var-set result (assoc (var-get result) (vector (.getString rs "FKCOLUMN_NAME"))
-     {:name (.getString rs "PKTABLE_NAME") 
-     :schema (.getString rs "PKTABLE_SCHEM") 
-     :columns (vector (.getString rs "PKCOLUMN_NAME"))}))
+(defn- read-dependencies [rs last-key from-columns to-columns destination-table result]
+  (if (not (.next rs))
+    (assoc result from-columns (assoc destination-table :columns to-columns))
+    (let [key-name (.getString rs "FK_NAME")
+          current-column (.getString rs "FKCOLUMN_NAME")
+          current-to-column (.getString rs "PKCOLUMN_NAME")]
+      (recur rs 
+             key-name 
+             (if (= key-name last-key)
+               (conj from-columns current-column)
+               (vector current-column))
+             (if (= key-name last-key)
+               (conj to-columns current-to-column)
+               (vector current-to-column))
+             (if (= key-name last-key)
+               destination-table
+               {:name (.getString rs "PKTABLE_NAME") :schema (.getString rs "PKTABLE_SCHEM")})
+             (if (= key-name last-key)
+               result
+               (assoc result from-columns (assoc destination-table :columns to-columns))))
+      )))
 
-    (trace (.getString rs "PK_NAME"))
-    (trace (.getString rs "FK_NAME"))
-    (trace "PK: ")
-    (trace (.getString rs "PKTABLE_SCHEM"))
-    (trace (.getString rs "PKTABLE_NAME"))
-    (trace (.getString rs "PKCOLUMN_NAME"))
-    (trace "FK: ")
-    (trace (.getString rs "FKTABLE_SCHEM"))
-    (trace (.getString rs "FKTABLE_NAME"))
-    (trace (.getString rs "FKCOLUMN_NAME"))
-  ))
-  (var-get result))
- ))
+(defn- retrieve-dependencies-for-table [meta-data table]
+  (read-dependencies (.getImportedKeys meta-data nil (:schema table) (:name table))
+                     nil
+                     []
+                     []
+                     {}
+                     {}))
 
 (defn- retrieve-keys 
  "This function is responsible for building an adjacency matrix illustrating the key relationships
