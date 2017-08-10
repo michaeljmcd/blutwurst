@@ -13,7 +13,13 @@
      (let [spec {:connection-string connection-string}
            table-graph (retrieve-table-graph spec)
            expected {:tables
-                       [{:name "PURCHASE",
+                       [{:name "PURCHASETYPE" :schema "DBO" 
+                         :dependencies {}
+                         :columns [
+                          {:name "NAME" :type "VARCHAR" :length 50 :nullable true}
+                          {:name "CATEGORY" :type "VARCHAR" :length 50 :nullable true}
+                         ]}
+                        {:name "PURCHASE",
                          :schema "DBO",
                          :dependencies {
                             ["PURCHASEDBYID"] {:name "PERSON" :schema "DBO" :columns ["ID"]}
@@ -27,10 +33,11 @@
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
                         {:name "PERSON",
                          :schema "DBO",
-                         :dependencies []
+                         :dependencies {}
                          :columns
                          [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
-                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]}]
+                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
+                        ]
                        }]
        (is (= expected table-graph)))
    ))

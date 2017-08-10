@@ -75,7 +75,9 @@
 
 (defn- read-dependencies [rs last-key from-columns to-columns destination-table result]
   (if (not (.next rs))
-    (assoc result from-columns (assoc destination-table :columns to-columns))
+    (if (not (= [] from-columns))
+      (assoc result from-columns (assoc destination-table :columns to-columns))
+      result)
     (let [key-name (.getString rs "FK_NAME")
           current-column (.getString rs "FKCOLUMN_NAME")
           current-to-column (.getString rs "PKCOLUMN_NAME")]
@@ -90,7 +92,7 @@
              (if (= key-name last-key)
                destination-table
                {:name (.getString rs "PKTABLE_NAME") :schema (.getString rs "PKTABLE_SCHEM")})
-             (if (= key-name last-key)
+             (if (or (= key-name last-key) (= [] to-columns))
                result
                (assoc result from-columns (assoc destination-table :columns to-columns))))
       )))
