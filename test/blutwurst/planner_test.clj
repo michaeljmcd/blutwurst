@@ -37,5 +37,25 @@
 
      (is (= (list country-table-definition state-table-definition city-table-definition)
             result
-         )))
-  ))
+         ))
+     ))
+
+ (testing "Planning should work for multiple nested levels of keys."
+   (let [city-table-definition {:name "CITY" :schema "ASDF" :columns '({:name "STATE"}  {:name "NAME"})
+                                        :dependencies [
+                                          { :dependency-name "D1" :target-name "STATE"
+                                            :target-schema "ASDF" :links {"STATE" "NAME"}}
+                                        ]}
+         country-table-definition {:name "COUNTRY" :schema "ASDF" :columns '({:name "NAME"}) :dependencies []}
+         state-table-definition {:name "STATE" :schema "ASDF" :columns '({:name "NAME"} {:name "COUNTRY"})
+                                        :dependencies [{ :dependency-name "D2" :target-name "COUNTRY"
+                                            :target-schema "ASDF" :links {"COUNTRY" "NAME"}}]}
+         foreign-key-schema {:tables (list country-table-definition city-table-definition state-table-definition)}
+         result (create-data-generation-plan foreign-key-schema)]
+
+     (trace "Table order: " (pr-str (seq (map #(str (:schema %) "." (:name %)) result))))
+
+     (is (= (list country-table-definition state-table-definition city-table-definition)
+            result
+         ))
+  )))
