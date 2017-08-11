@@ -14,7 +14,7 @@
                  ;TODO: handle drivers sanely
                  [org.xerial/sqlite-jdbc "3.19.3"]
                  [com.h2database/h2 "1.4.195"]]
-  :plugins [[quickie "0.4.1"]]
+  :plugins [[quickie "0.4.1"] [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
