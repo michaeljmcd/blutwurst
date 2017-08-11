@@ -3,23 +3,21 @@
               [clojure.set :as setops]
               [clojure.pprint :refer :all]))
 
+(defn- incoming-to-node [node edge]
+ (and (= (:to-schema edge) (:schema node))
+      (= (:to-name edge) (:name node))))
+
 (defn- find-nodes-without-incoming-connections [nodes edges]
  (if (empty? edges)
   nodes
-  (filter #(not (some (fn [e] (and (= (:to-schema e) (:schema %))
-                                  (= (:to-name e) (:name %)))) edges))
+  (filter #(not (some (fn [e] (incoming-to-node % e)) edges))
           nodes)
   ))
-
-(defn- incoming-to-node [node edge]
- (and (= (:to-schema edge) (:schema node))
-      (= (:to-name edge) (:name edge))))
 
 (defn- topological-schema-sort [all-nodes nonentrant-nodes edges result]
  (trace "Entering topological schema sort non-entrant: " (pr-str (seq nonentrant-nodes))) 
         (trace "Edges: " (pr-str (seq edges )))
         (trace "Result: " (pr-str (seq result)))
-        ;(trace "All nodes: " (pr-str (seq all-nodes)))
 
  (if (empty? nonentrant-nodes)
   (if (not (empty? edges))
@@ -29,8 +27,7 @@
   (let [current-node (first nonentrant-nodes)
         nonentrant-nodes (rest nonentrant-nodes)
         result (cons current-node result)
-        pruned-edges (filter (partial incoming-to-node current-node) edges)
-       ]
+        pruned-edges (filter (partial incoming-to-node current-node) edges)]
 
     (trace "Edges after pruning: " (pr-str (seq pruned-edges)))
 
