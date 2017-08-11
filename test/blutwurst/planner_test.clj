@@ -27,7 +27,7 @@
                                           { :dependency-name "D2" :target-name "COUNTRY"
                                             :target-schema "ASDF" :links {"COUNTRY" "NAME"}}
                                         ]}
-         country-table-definition {:name "COUNTRY" :schema "ASDF" :columns '({:name "NAME"})}
+         country-table-definition {:name "COUNTRY" :schema "ASDF" :columns '({:name "NAME"}) :dependencies []}
          state-table-definition {:name "STATE" :schema "ASDF" :columns '({:name "NAME"})
                                         :dependencies []}
          foreign-key-schema {:tables (list country-table-definition city-table-definition state-table-definition)}

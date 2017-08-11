@@ -6,11 +6,10 @@
 (defn- find-nodes-without-incoming-connections [nodes edges]
  (if (empty? edges)
   nodes
- (filter #(some (complement (fn [e] 
-                             (and (= (:to-schema e) (:schema %))
-                                  (= (:to-name e) (:name %)))))
-                 edges)
-         nodes)))
+  (filter #(not (some (fn [e] (and (= (:to-schema e) (:schema %))
+                                  (= (:to-name e) (:name %)))) edges))
+          nodes)
+  ))
 
 (defn- incoming-to-node [node edge]
  (and (= (:to-schema edge) (:schema node))
