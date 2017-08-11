@@ -11,7 +11,7 @@ database or adding to unit tests.
 No installation archives exist (yet). We will add them once we reach a certain
 level of completion on this project. In the meantime, clone this repository and run:
 
-    boot build
+    lein uberjar
 
 ## Usage
 
