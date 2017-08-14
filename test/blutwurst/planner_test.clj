@@ -19,6 +19,12 @@
             (create-data-generation-plan simple-schema)))
     ))
 
+   (testing "Handles empty input."
+     (is (= '() (create-data-generation-plan (list)))))
+
+   (testing "Handles nil input."
+     (is (= '() (create-data-generation-plan (list)))))
+
   (testing "Planning should account for foreign key relationships when buidling out a plan."
    (let [city-table-definition {:name "CITY" :schema "ASDF" :columns '({:name "STATE"} {:name "COUNTRY"} {:name "NAME"})
                                         :dependencies [
