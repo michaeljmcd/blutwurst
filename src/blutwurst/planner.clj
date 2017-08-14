@@ -31,7 +31,7 @@
   (let [current-node (first nonentrant-nodes)
         nonentrant-nodes (rest nonentrant-nodes)
         result (cons current-node result)
-        pruned-edges (filter (complement (partial outgoing-from-node current-node)) edges)]
+        pruned-edges (remove (partial outgoing-from-node current-node) edges)]
 
     (trace "Edges after pruning: " (pr-str (seq pruned-edges)))
 
@@ -58,7 +58,7 @@
 
  (let [nodes (:tables schema)
        edges (extract-edges nodes)]
-  (pprint edges)
+  (trace (pr-str (seq edges)))
   (trace "Preparing to sort graph....")
 
   (topological-schema-sort nodes 
