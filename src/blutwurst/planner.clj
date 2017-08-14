@@ -7,6 +7,10 @@
  (and (= (:to-schema edge) (:schema node))
       (= (:to-name edge) (:name node))))
 
+(defn- outgoing-from-node [node edge]
+ (and (= (:from-schema edge) (:schema node))
+      (= (:from-name edge) (:name node))))
+
 (defn- find-nodes-without-incoming-connections [nodes edges]
  (if (empty? edges)
   nodes
@@ -16,8 +20,8 @@
 
 (defn- topological-schema-sort [all-nodes nonentrant-nodes edges result]
  (trace "Entering topological schema sort non-entrant: " (pr-str (seq nonentrant-nodes))) 
-        (trace "Edges: " (pr-str (seq edges )))
-        (trace "Result: " (pr-str (seq result)))
+ (trace "Edges: " (pr-str (seq edges )))
+ (trace "Result: " (pr-str (seq result)))
 
  (if (empty? nonentrant-nodes)
   (if (not (empty? edges))
@@ -27,7 +31,7 @@
   (let [current-node (first nonentrant-nodes)
         nonentrant-nodes (rest nonentrant-nodes)
         result (cons current-node result)
-        pruned-edges (filter (partial incoming-to-node current-node) edges)]
+        pruned-edges (filter (complement (partial outgoing-from-node current-node)) edges)]
 
     (trace "Edges after pruning: " (pr-str (seq pruned-edges)))
 
@@ -35,8 +39,7 @@
           (find-nodes-without-incoming-connections (setops/difference (set all-nodes) (set result)) pruned-edges)
            pruned-edges
            result)
-  ))
-)
+  )))
 
 (defn- extract-edges [nodes]
  (->> nodes
