@@ -1,6 +1,7 @@
 (ns blutwurst.database 
   (:require [taoensso.timbre :as timbre :refer [trace]])
-  (:import (java.sql DriverManager JDBCType)))
+  (:import (java.sql DriverManager JDBCType)
+           (java.lang Class)))
 
 (defmacro with-jdbc-meta-data 
  "Accepts a specification object and a function accepting a single argument (metadata).
@@ -9,8 +10,10 @@
  [spec fun]
  (let [connection-name (gensym)
        meta-data-name (gensym)
-       result-name (gensym)]
-   `(let [~connection-name (DriverManager/getConnection (:connection-string ~spec))
+       result-name (gensym)
+       d (gensym)]
+   `(let [~d (.newInstance (Class/forName "org.sqlite.JDBC"))
+          ~connection-name (DriverManager/getConnection (:connection-string ~spec))
           ~meta-data-name (.getMetaData ~connection-name)
           ~result-name (apply ~fun (list ~meta-data-name))]
       ~result-name)

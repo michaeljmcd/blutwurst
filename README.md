@@ -15,9 +15,11 @@ level of completion on this project. In the meantime, clone this repository and 
 
 ## Usage
 
-To generate data, execute the JAR:
+To generate data, execute the JAR adding any other JDBC drivers to the classpath. An example is below that includes the sqlite jar:
 
-    $ java -jar blutwurst.jar [args]
+    $  java -cp '.;lib/sqlite-jdbc-3.19.3.jar;target/uberjar/blutwurst-0.2.0-SNAPSHOT-standalone.jar' blutwurst.core [args]
+
+This is, admittedly, not a great user experience. We will be developing wrapper scripts to make this nicer.    
 
 ## Options
 
