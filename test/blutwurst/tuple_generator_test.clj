@@ -25,12 +25,7 @@
    }
   ])
 
-(defn predictable-generator-fixture [f]
- (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
-  (f)
- ))
-
-(use-fixtures :each logging-fixture predictable-generator-fixture)
+(use-fixtures :each logging-fixture)
 
 (deftest random-string-test
  (testing "Basic random string generation."
@@ -38,21 +33,9 @@
     (is (< (count value) 10)))
  ))
 
-(deftest tuple-generator-test
-  (testing "Basic tuple generator."
-    (let [table-spec {
-                      :name "Destination" 
-                      :schema "foo" 
-                      :columns '({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
-                                 {:name "City" :type "VARCHAR" :length 100 :nullable true})
-                      }]
-      (is (= {:table table-spec
-              :tuples [{:Address1 "asdf" :City "asdf"} {:Address1 "asdf" :City "asdf"}]} 
-             (generate-tuples-for-table table-spec 2)))
-    )))
-
 (deftest generate-tuples-from-plan-test   
     (testing "Multiple data types."
+      (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
         (let [table-spec '({
                           :name "Destination" 
                           :schema "foo" 
@@ -65,5 +48,25 @@
                  })
                 (generate-tuples-for-plan table-spec)
                ))
-      )))
+      ))))
+
+(deftest generate-tuples-with-foreign-keys
+    (testing "Foreign key values are all found in source table."
+      (let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
+                                                                    {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
+            hero-table '{:name "Hero" :schema "asdf" :columns ({:name "Name" :type "VARCHAR" :length 200}
+                                                                {:name "PrimaryWeaponID" :type "INTEGER" :length 3})
+                         :dependencies [
+                           {:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}
+                         ]
+                        }
+            result (generate-tuples-for-plan (list weapon-table hero-table))
+            generated-weapons (-> result first :tuples)]
+
+        (pprint result)
+        (is (reduce (fn [a b] (and a b)) 
+                    (map #(some (fn [c] (= (:ID c) (:PrimaryWeaponID %))) generated-weapons) 
+                         (-> result second :tuples))))
+     )))
 ; TODO: build a negative test with an unknown data type
+
