@@ -11,7 +11,7 @@
                  [org.clojure/core.incubator "0.1.4"]
                  [cheshire "5.7.1"]
 
-                 [com.h2database/h2 "1.4.195"]]
+                 [com.h2database/h2 "1.4.195" :scope "test"]]
   :plugins [[quickie "0.4.1"] [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
