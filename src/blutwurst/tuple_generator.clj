@@ -32,7 +32,7 @@
    {
       :name "Random String Generator"
       :determiner #(= (:type %) "VARCHAR")
-      :generator #(random-string (or (:length %) 255))
+      :generator #(random-string (or (min (:length %) 2000) 255))
    }
    {
        :name "Random Integer Generator"
@@ -97,10 +97,13 @@
 (defn- generate-tuples-for-plan* [execution-plan result]
  (if (empty? execution-plan)
   (reverse result)
-  (recur (rest execution-plan)
-         (cons (generate-tuples-for-table (first execution-plan) 100 result) result))
+  (do
+      (trace "Beginning data generation for table " (first execution-plan))
+      (recur (rest execution-plan)
+             (cons (generate-tuples-for-table (first execution-plan) 100 result) result)))
  ))
 
 (defn generate-tuples-for-plan [execution-plan]
+ (trace "Beginning tuple generation for execution plan.")
  (generate-tuples-for-plan* execution-plan '()))
  
