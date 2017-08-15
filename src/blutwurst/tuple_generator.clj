@@ -90,8 +90,8 @@
        (trace "Dependency selectors: " dependency-selectors)
     (fn []
      (apply hash-map
-      (flatten (concat (map #(%) dependency-selectors)
-                       (map (fn [a] (list (-> a :column :name keyword) ((:generator a) (:column a)))) value-generators)
+            (flatten (concat (map #(%) dependency-selectors)
+                             (map (fn [a] (list (-> a :column :name keyword) ((:generator a) (:column a)))) value-generators)
               )))
     )
   ))
