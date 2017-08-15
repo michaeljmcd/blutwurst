@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. This change
 - Added a single-file output sink.
 - Support for JSON format output.
 - Support for detecting foreign key relationships and organizing generated SQL accordingly.
+- Added option to use driver JARs on the classpath rather than requiring all SQL drivers to be compiled into the JAR.
 
 ### Fixed
 - Passing `-h` or `--help` did not cause the usage information to be printed.
