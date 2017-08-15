@@ -1,7 +1,20 @@
 (ns blutwurst.database 
-  (:require [taoensso.timbre :as timbre :refer [trace]])
+  (:require [taoensso.timbre :as timbre :refer [trace]]
+            [clojure.string :as cstring])
   (:import (java.sql DriverManager JDBCType)
            (java.lang Class)))
+
+(def ^:private jdbc-drivers 
+ {
+    "jdbc:sqlite:" { :classname "org.sqlite.JDBC" }
+    "jdbc:derby:" { :classname "org.apache.derby.jdbc.EmbeddedDriver" }
+ })
+
+(defn- find-class-for-spec [spec]
+ (let [driver-entries (filter #(cstring/starts-with? (:connection-string spec) (first %)) jdbc-drivers)]
+  (trace "Found drivers: " (pr-str (seq driver-entries)))
+  (:classname (second (first driver-entries)))
+  ))
 
 (defmacro with-jdbc-meta-data 
  "Accepts a specification object and a function accepting a single argument (metadata).
@@ -12,11 +25,13 @@
        meta-data-name (gensym)
        result-name (gensym)
        d (gensym)]
-   `(let [~d (.newInstance (Class/forName "org.sqlite.JDBC"))
-          ~connection-name (DriverManager/getConnection (:connection-string ~spec))
-          ~meta-data-name (.getMetaData ~connection-name)
-          ~result-name (apply ~fun (list ~meta-data-name))]
-      ~result-name)
+   `(do
+       (.newInstance (Class/forName (find-class-for-spec ~spec)))
+
+       (let [~connection-name (DriverManager/getConnection (:connection-string ~spec))
+             ~meta-data-name (.getMetaData ~connection-name)
+             ~result-name (apply ~fun (list ~meta-data-name))]
+            ~result-name))
  ))
 
 (defn- read-table-row [rs] { 
