@@ -65,13 +65,9 @@
                                    (= (-> % :table :name) (:target-name dependency)))
                              generated-data))
         tuple-count (count (:tuples targeted-table))]
-        (trace "Found targeted table: " targeted-table)
     (fn []
       (let [chosen-row (nth (:tuples targeted-table) (random-integer-under-value tuple-count))
             column-values (map #(list (keyword (first %)) (get chosen-row (keyword (second %)))) (:links dependency))]
-        (trace "I picked: " chosen-row)
-        (trace "Resulting in: " (pr-str (seq column-values)))
-
         column-values
     ))
  ))
@@ -85,9 +81,6 @@
  (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (:dependencies table))
        value-generators (map #(hash-map :column % :generator (-> % select-generators-for-column :generator)) 
                              (value-columns table))]
-       (trace "Simple value generators: " (pr-str (seq (value-columns table))))
-       (trace "Generator: " (pr-str (seq value-generators)))
-       (trace "Dependency selectors: " dependency-selectors)
     (fn []
      (apply hash-map
             (flatten (concat (map #(%) dependency-selectors)
@@ -109,7 +102,5 @@
  ))
 
 (defn generate-tuples-for-plan [execution-plan]
- (trace (pr-str (seq execution-plan)))
-
  (generate-tuples-for-plan* execution-plan '()))
  
