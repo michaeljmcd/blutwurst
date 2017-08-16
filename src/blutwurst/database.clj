@@ -56,8 +56,11 @@
 
 (defn- retrieve-tables [spec]
  (with-jdbc-meta-data spec
-    #(build-table-list (.getTables % nil nil nil (into-array ["TABLE"])) [])
-))
+    #(if (empty? (:included-schemas spec))
+        (build-table-list (.getTables % nil nil nil (into-array ["TABLE"])) [])
+        (mapcat (fn [s] (build-table-list (.getTables % nil s nil (into-array ["TABLE"])) [])) 
+                (:included-schemas spec))
+     )))
 
 (defn- string->boolean [input]
   (case input
