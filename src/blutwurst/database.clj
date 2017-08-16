@@ -122,9 +122,10 @@
     []))
 
 (defn- retrieve-keys 
- "This function is responsible for building an adjacency matrix illustrating the key relationships
- between tables."
- [spec tables] 
+ "This function exists to find foreign keys between tables and return them for inclusion in the table object.
+  The main reason that this is included in the table structure and not outside of it is that it will be
+  needed when doing foreign key subselects."
+  [spec tables] 
  (with-jdbc-meta-data spec
    #(mapv (fn [table] (assoc table :dependencies (retrieve-dependencies-for-table % table)))
           tables)))
