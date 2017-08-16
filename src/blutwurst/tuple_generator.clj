@@ -31,12 +31,12 @@
   [
    {
       :name "Random String Generator"
-      :determiner #(= (:type %) "VARCHAR")
+      :determiner #(some #{(:type %)} '("VARCHAR" "NVARCHAR" "CHAR"))
       :generator #(random-string (or (min (:length %) 2000) 255))
    }
    {
        :name "Random Integer Generator"
-       :determiner #(= (:type %) "INTEGER")
+       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT"))
        :generator (fn [c] (random-integer)) ; TODO account for column's max value
    }
    {
