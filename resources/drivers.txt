@@ -1,5 +1,15 @@
- {
-    "jdbc:sqlite:" { :classname "org.sqlite.JDBC" }
-    "jdbc:derby:" { :classname "org.apache.derby.jdbc.EmbeddedDriver" }
-    "jdbc:h2:" {:classname "org.h2.Driver" }
- }
+{
+    "jdbc:sqlite:" { :classname "org.sqlite.JDBC" :name "SQLite" }
+    "jdbc:derby://" { :classname "org.apache.derby.jdbc.ClientDriver" :name "Derby (Client)" }
+    "jdbc:derby:" { :classname "org.apache.derby.jdbc.EmbeddedDriver" :name "Derby (Embedded)" }
+    "jdbc:h2:" { :classname "org.h2.Driver" :name "H2 SQL" }
+    "jdbc:mongo:" { :classname "mongodb.jdbc.MongoDriver" :name "Mongo DB" }
+    "jdbc:mysql:" { :classname "org.mariadb.jdbc.Driver" :name "MariaDB / MySQL" }
+    "jdbc:db2:" { :classname "COM.ibm.db2.jdbc.net.DB2Driver" :name "IBM DB2" }
+    "jdbc:firebirdsql:" { :classname "org.firebirdsql.jdbc.FBDriver" :name "Firebird Driver" }
+    "jdbc:jtds:sqlserver://" { :classname "net.sourceforge.jtds.jdbc.Driver" :name "jTDS SQL Server Driver" }
+    "jdbc:hsqldb:" { :classname "org.hsqldb.jdbcDriver" :name "HSQLDB JDBC Driver" }
+    "jdbc:sqlserver://" { :classname "com.microsoft.sqlserver.jdbc.SQLServerDriver" :name "MS SQL Server Driver" }
+    "jdbc:postgresql:" { :classname "org.postgresql.Driver" :name "PostgreSQL Driver" }
+    "jdbc:odbc:" { :classname "sun.jdbc.odbc.JdbcOdbcDriver" :name "ODBC Bridge" }
+}
