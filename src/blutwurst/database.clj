@@ -1,17 +1,19 @@
 (ns blutwurst.database 
   (:require [taoensso.timbre :as timbre :refer [trace]]
-            [clojure.string :as cstring])
+            [clojure.string :as cstring]
+            [clojure.tools.reader.edn :as edn]
+            [clojure.java.io :as io])
   (:import (java.sql DriverManager JDBCType)
            (java.lang Class)))
 
-(def ^:private jdbc-drivers 
- {
-    "jdbc:sqlite:" { :classname "org.sqlite.JDBC" }
-    "jdbc:derby:" { :classname "org.apache.derby.jdbc.EmbeddedDriver" }
- })
+(def ^:private jdbc-drivers (-> "drivers.txt" io/resource slurp edn/read-string))
 
 (defn- find-class-for-spec [spec]
- (let [driver-entries (filter #(cstring/starts-with? (:connection-string spec) (first %)) jdbc-drivers)]
+ (trace "Found spec: " spec)
+ (trace "Driver list: " jdbc-drivers)
+
+ (let [connection-string (:connection-string spec)
+       driver-entries (filter #(cstring/starts-with? connection-string (first %)) jdbc-drivers)]
   (trace "Found drivers: " (pr-str (seq driver-entries)))
   (:classname (second (first driver-entries)))
   ))
