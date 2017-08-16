@@ -78,6 +78,8 @@
     ))
 
 (defn- retrieve-columns-for-table [meta-data table]
+ (trace "Retrieving columns for " table)
+
  (let [rs (.getColumns meta-data 
                        nil 
                        (:schema table) 
@@ -135,7 +137,8 @@
   [spec tables] 
  (with-jdbc-meta-data spec
    #(mapv (fn [table] (assoc table :dependencies (retrieve-dependencies-for-table % table)))
-          tables)))
+          tables)
+  ))
 
 (defn retrieve-table-graph [spec]
  "This function accepts a connection specification and produces a table graph."

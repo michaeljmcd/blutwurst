@@ -1,10 +1,7 @@
 (ns blutwurst.core
   (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.string :as string]
-			[taoensso.timbre :as timbre
-				:refer [log  trace  debug  info  warn  error  fatal  report
-					logf tracef debugf infof warnf errorf fatalf reportf with-level
-					spy get-env]]
+			[taoensso.timbre :as timbre :refer [log  trace with-level]]
             [blutwurst.database :refer [retrieve-table-graph]]
             [blutwurst.planner :refer [create-data-generation-plan]]
             [blutwurst.tuple-generator :refer [generate-tuples-for-plan]]
@@ -16,6 +13,9 @@
   [["-o" "--output OUTPUT_FILE" "Individual file to which to write the generated data."
     :default "-"]
    ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
+   ["-s" "--schema SCHEMA" "Database schemas to include in the database scan."
+    :default '()
+    :assoc-fn #(update-in %1 [%2] conj %3)]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
@@ -30,6 +30,7 @@
    :format (:format options)
    :output-file (:output options)
    :output-directory (:output-dir options)
+   :included-schemas (:schema options)
   })
 
 (defn- usage [option-summary]
