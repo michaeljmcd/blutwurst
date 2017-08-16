@@ -6,17 +6,25 @@
   (:import (java.sql DriverManager JDBCType)
            (java.lang Class)))
 
-(def ^:private jdbc-drivers (-> "drivers.txt" io/resource slurp edn/read-string))
+(def ^:private 
+     jdbc-drivers (-> "drivers.txt" 
+                       io/resource 
+                       slurp 
+                       edn/read-string))
 
-(defn- find-class-for-spec [spec]
- (trace "Found spec: " spec)
- (trace "Driver list: " jdbc-drivers)
+(defn- find-class-for-spec [connection-string]
+     (trace "Looking up driver class for connection string " connection-string)
+     (trace "Driver list: " jdbc-drivers)
 
- (let [connection-string (:connection-string spec)
-       driver-entries (filter #(cstring/starts-with? connection-string (first %)) jdbc-drivers)]
-  (trace "Found drivers: " (pr-str (seq driver-entries)))
-  (:classname (second (first driver-entries)))
-  ))
+     (let [driver-entries (filter #(cstring/starts-with? connection-string (first %)) jdbc-drivers)]
+       (trace "Found drivers: " (pr-str (seq driver-entries)))
+       (:classname (second (first driver-entries)))
+      ))
+
+(defn- load-driver-for-connection-string-inner [connection-string]
+  (.newInstance (Class/forName (find-class-for-spec connection-string))))
+
+(def ^:private load-driver-for-connection-string (memoize load-driver-for-connection-string-inner))
 
 (defmacro with-jdbc-meta-data 
  "Accepts a specification object and a function accepting a single argument (metadata).
@@ -25,10 +33,9 @@
  [spec fun]
  (let [connection-name (gensym)
        meta-data-name (gensym)
-       result-name (gensym)
-       d (gensym)]
+       result-name (gensym)]
    `(do
-       (.newInstance (Class/forName (find-class-for-spec ~spec)))
+       (load-driver-for-connection-string (:connection-string ~spec))
 
        (let [~connection-name (DriverManager/getConnection (:connection-string ~spec))
              ~meta-data-name (.getMetaData ~connection-name)
