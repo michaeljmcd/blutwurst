@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file. This change
 ### Fixed
 - Passing `-h` or `--help` did not cause the usage information to be printed.
 
+### Removed
+- No JDBC drivers are included in the final JAR at this point. These will have to be provided at runtime.
+
 ## [0.1.0] - 2017-08-04
 ### Added
 - Basic database schema scanning (support for SQLite and H2 databases only).
