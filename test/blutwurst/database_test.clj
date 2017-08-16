@@ -8,11 +8,7 @@
 
 (use-fixtures :each db-fixture logging-fixture)
 
-(deftest table-graph-tests
-  (testing "Connects to an in-memory database and returns basic table list."
-     (let [spec {:connection-string connection-string}
-           table-graph (retrieve-table-graph spec)
-           expected {:tables
+(def full-expected-graph {:tables
                        [{:name "PURCHASETYPE" :schema "DBO" 
                          :columns [
                           {:name "CATEGORY" :type "VARCHAR" :length 50 :nullable true}
@@ -56,6 +52,21 @@
                          [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
                         ]
-                       }]
-       (is (= expected table-graph)))
+                       })
+
+(deftest table-graph-tests
+  (testing "Connects to an in-memory database and returns basic table list."
+     (let [spec {:connection-string connection-string}
+           table-graph (retrieve-table-graph spec)]
+       (is (= full-expected-graph table-graph))))
+   
+   (testing "Table scans exclude schemas when at least one is provided."
+     (let [spec {:connection-string connection-string :included-schemas '("FOOBAR")}
+           table-graph (retrieve-table-graph spec)]
+       (is (= {:tables []} table-graph))))
+
+   (testing "Table scans include schemas when at least one is provided."
+     (let [spec {:connection-string connection-string :included-schemas '("DBO")}
+           table-graph (retrieve-table-graph spec)]
+       (is (= full-expected-graph table-graph)))
    ))
