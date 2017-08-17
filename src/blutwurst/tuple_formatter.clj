@@ -14,7 +14,7 @@
    {:table (:table table)
     :tuples (vector (with-out-str 
                        (csv/write-csv *out* 
-                                      (concat (vector (map #(:name %) (:columns (:table table))))
+                                      (concat (vector (map #(-> % first name) (first (:tuples table))))
                                               (extract-data-from-table-tuples table)))
                        ))
    })
