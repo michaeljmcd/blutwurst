@@ -94,16 +94,17 @@
     {:table table-descriptor :tuples (repeatedly number-of-tuples table-generator)}
     ))
 
-(defn- generate-tuples-for-plan* [execution-plan result]
+(defn- generate-tuples-for-plan* [rows-to-generate execution-plan result]
  (if (empty? execution-plan)
   (reverse result)
   (do
       (trace "Beginning data generation for table " (first execution-plan))
-      (recur (rest execution-plan)
-             (cons (generate-tuples-for-table (first execution-plan) 100 result) result)))
+      (recur rows-to-generate
+             (rest execution-plan)
+             (cons (generate-tuples-for-table (first execution-plan) rows-to-generate result) result)))
  ))
 
-(defn generate-tuples-for-plan [execution-plan]
+(defn generate-tuples-for-plan [spec execution-plan]
  (trace "Beginning tuple generation for execution plan.")
- (generate-tuples-for-plan* execution-plan '()))
+ (generate-tuples-for-plan* (:number-of-rows spec) execution-plan '()))
  

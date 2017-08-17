@@ -70,7 +70,7 @@
               (->> spec
                    retrieve-table-graph
                    create-data-generation-plan
-                   generate-tuples-for-plan
+                   (generate-tuples-for-plan spec)
                    (format-rows spec)
                    sink))
       )))

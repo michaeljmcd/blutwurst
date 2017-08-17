@@ -41,12 +41,13 @@
                           :schema "foo" 
                           :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
                                      {:name "ID" :type "INTEGER" :length 3 :nullable true})
-                          })]
+                          })
+             spec {:number-of-rows 10}]
 
         (is (= `({:table ~(first table-spec)
-                 :tuples ~(repeat 100 {:Address1 "asdf" :ID 100})
+                 :tuples ~(repeat 10 {:Address1 "asdf" :ID 100})
                  })
-                (generate-tuples-for-plan table-spec)
+                (generate-tuples-for-plan spec table-spec)
                ))
       ))))
 
@@ -60,10 +61,10 @@
                            {:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}
                          ]
                         }
-            result (generate-tuples-for-plan (list weapon-table hero-table))
+            spec {:number-of-rows 100}
+            result (generate-tuples-for-plan spec (list weapon-table hero-table))
             generated-weapons (-> result first :tuples)]
 
-        (pprint result)
         (is (reduce (fn [a b] (and a b)) 
                     (map #(some (fn [c] (= (:ID c) (:PrimaryWeaponID %))) generated-weapons) 
                          (-> result second :tuples))))
