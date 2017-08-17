@@ -1,4 +1,4 @@
-(defproject blutwurst "0.2.0-SNAPSHOT"
+(defproject blutwurst "0.2.0"
   :description "A command-line utility to populate database tables with test data."
   :url "https://www.github.com/michaeljmcd/blutwurst"
   :license {:name "MIT"
@@ -12,7 +12,8 @@
                  [com.taoensso/timbre "4.10.0"]
                  [cheshire "5.7.1"]
                  [com.h2database/h2 "1.4.195" :scope "test"]]
-  :plugins [[quickie "0.4.1"] [venantius/ultra "0.5.1"]]
+  :plugins [[quickie "0.4.1"] 
+            [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
