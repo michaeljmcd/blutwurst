@@ -1,6 +1,9 @@
 (ns blutwurst.tuple-generator
   (:import (java.util Random Date))
-  (:require [taoensso.timbre :as timbre :refer [trace error]]))
+  (:require [taoensso.timbre :as timbre :refer [trace error]]
+            [clojure.java.io :as io]
+            [clojure.data.csv :as csv]
+            [clojure.string :as string]))
 
 (defn- random-integer []
  (let [random (Random.)]
@@ -31,12 +34,33 @@
   (Date. (mod (.nextLong r) 4102466400000)) ; Makes sure that our date stays under 2100-01-01.
  ))
 
+(defn- column-is-string? [column]
+  (some #{(:type column)} '("VARCHAR" "NVARCHAR" "CHAR")))
+
+(defn- make-resource-generator-fn [resource garbage-rows]
+ (let [values (drop garbage-rows (-> resource io/resource io/reader csv/read-csv))
+       value-count (count values)]
+  (trace values)
+  (fn [c]
+   (string/trimr (nth (nth values (random-integer-under-value value-count)) 0)))
+ ))
+
 (def value-generation-strategies
   ^{ :private true }
   [
    {
+     :name "Random First Name Selector"
+     :determiner #(and (column-is-string? %) (string/includes? (:name %) "FIRST"))
+     :generator (make-resource-generator-fn "census-derived-all-first.csv" 0)
+   }
+   {
+      :name "Random Last Name Selector"
+      :determiner #(and (column-is-string? %) (string/includes? (:name %) "LAST"))
+      :generator (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3)
+   }
+   {
       :name "Random String Generator"
-      :determiner #(some #{(:type %)} '("VARCHAR" "NVARCHAR" "CHAR"))
+      :determiner column-is-string?
       :generator #(random-string (or (min (:length %) 2000) 255))
    }
    {
