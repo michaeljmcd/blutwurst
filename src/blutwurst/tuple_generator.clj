@@ -1,5 +1,5 @@
 (ns blutwurst.tuple-generator
-  (:import (java.util Random))
+  (:import (java.util Random Date))
   (:require [taoensso.timbre :as timbre :refer [trace error]]))
 
 (defn- random-integer []
@@ -26,6 +26,11 @@
                 #(nth valid-chars (.nextInt r max-char-index))))
  ))
 
+(defn- random-datetime []
+ (let [r (Random.)]
+  (Date. (mod (.nextLong r) 4102466400000))
+ ))
+
 (def value-generation-strategies
   ^{ :private true }
   [
@@ -43,6 +48,11 @@
        :name "Random Decimal Generator"
        :determiner #(some #{(:type %)} '("DECIMAL" "DOUBLE"))
        :generator (fn [c] (random-decimal)) ; TODO account for column's max value
+   }
+   {
+       :name "Random Date / Timestamp Generator"
+       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP"))
+       :generator (fn [c] (random-datetime))
    }
   ])
 

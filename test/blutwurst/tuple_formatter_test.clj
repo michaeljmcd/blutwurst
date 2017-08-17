@@ -1,4 +1,5 @@
 (ns blutwurst.tuple-formatter-test
+  (:import (java.util Date))
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
             [blutwurst.logging-fixture :refer :all]
@@ -30,10 +31,22 @@
            table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
            rows `({:table ~table
                    :tuples ({:A 1 :B  "Then O'Kelly came in with the \t hatchett."})})]
-             (is (= '({:table {:name "Example" :schema "foo" :columns ({:name "A" :type "INTEGER"} {:name "B" :type "VARCHAR"})}
+             (is (= `({:table ~table
                       :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'Then O''Kelly came in with the \t hatchett.');\n"]})
                     (format-rows spec rows)))
-   )))
+     ))
+
+     (testing "SQL generation formats DATE values."
+       (let [spec {:format :sql}
+           table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "DATE"})}
+           rows `({:table ~table
+                   :tuples ({:A 1 :B ~(Date. 1109741401000)})
+                  })]
+             (is (= `({:table ~table
+                      :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'2005-03-01T23:30:01.000-06:00');\n"]})
+                  ; TODO: handle timezone in test
+                    (format-rows spec rows))))
+     ))
 
 (deftest json-formatter-test
   (testing "Basic JSON generation."

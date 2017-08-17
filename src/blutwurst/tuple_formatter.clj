@@ -1,4 +1,5 @@
 (ns blutwurst.tuple-formatter
+    (:import (java.util Date) (java.text SimpleDateFormat))
     (:require [clojure.data.csv :as csv]
               [clojure.core.strint :refer [<<]]
               [cheshire.core :as json]
@@ -34,16 +35,30 @@
  ))
 
 (defn- sql-value-string [values]
- (map (fn [x]
-       (if (string? x)
-        (str "'" (clojure.string/replace x "'" "''") "'")
-        x))
+ (map #(if (string? %)
+        (str "'" (clojure.string/replace % "'" "''") "'")
+        %)
+      values))
+
+(defn- format-date [date]
+ (let [simple-format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")]
+  (.format simple-format date)
+ ))
+
+(defn- sql-date [values]
+ (map #(if (instance? Date %)
+        (str "'" (format-date %) "'")
+        %)
       values))
 
 (defn- build-tuples [table]
  (comma-delimit
- (mapv (fn [tuple] (->> tuple sql-value-string comma-delimit parenthesize))
-  (extract-data-from-table-tuples table))
+     (mapv (fn [tuple] (->> tuple 
+                            sql-value-string 
+                            sql-date 
+                            comma-delimit 
+                            parenthesize))
+           (extract-data-from-table-tuples table))
  ))
 
 (defn- sql-formatter 
