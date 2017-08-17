@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Added
 - Command-line option to control the number of rows generated for each table.
+- Support for date / datetime / timestamp generators.
+- Improved number type recognition so that types like BIGINT and DOUBLE would be recognized.
 
 ## [0.2.0] - 2017-08-17
 ### Added
