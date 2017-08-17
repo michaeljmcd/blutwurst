@@ -10,8 +10,9 @@
 (deftest csv-formatter-test
   (testing "Generating a CSV from rows."
     (let [spec {:format :csv}
-          rows '({:table "test" :tuples ({:A 1 :B 2})})]
-        (is (= '({:table "test" :tuples ["1,2\n"]})
+          table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
+          rows `({:table ~table :tuples ({:A 1 :B 2})})]
+        (is (= `[{:table ~table :tuples ["A,B\n1,2\n"]}]
                (format-rows spec rows)))
       )))
 

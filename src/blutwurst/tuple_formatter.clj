@@ -12,7 +12,12 @@
 
 (defn- csv-formatter [spec table]
    {:table (:table table)
-    :tuples (vector (with-out-str (csv/write-csv *out* (extract-data-from-table-tuples table)))) })
+    :tuples (vector (with-out-str 
+                       (csv/write-csv *out* 
+                                      (concat (vector (map #(:name %) (:columns (:table table))))
+                                              (extract-data-from-table-tuples table)))
+                       ))
+   })
 
 (defn- comma-delimit [values]
  (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))
