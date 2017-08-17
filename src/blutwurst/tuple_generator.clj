@@ -1,6 +1,6 @@
 (ns blutwurst.tuple-generator
   (:import (java.util Random))
-  (:require [taoensso.timbre :as timbre :refer [trace]]))
+  (:require [taoensso.timbre :as timbre :refer [trace error]]))
 
 (defn- random-integer []
  (let [random (Random.)]
@@ -36,12 +36,12 @@
    }
    {
        :name "Random Integer Generator"
-       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT"))
+       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT" "BIGINT"))
        :generator (fn [c] (random-integer)) ; TODO account for column's max value
    }
    {
        :name "Random Decimal Generator"
-       :determiner #(= (:type %) "DECIMAL")
+       :determiner #(some #{(:type %)} '("DECIMAL" "DOUBLE"))
        :generator (fn [c] (random-decimal)) ; TODO account for column's max value
    }
   ])
@@ -81,10 +81,17 @@
  (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (:dependencies table))
        value-generators (map #(hash-map :column % :generator (-> % select-generators-for-column :generator)) 
                              (value-columns table))]
+
+    (doseq [c value-generators]
+     (if (nil? (:generator c))
+     (error "Unable to find generator for column " (:column c))))
+
     (fn []
      (apply hash-map
             (flatten (concat (map #(%) dependency-selectors)
-                             (map (fn [a] (list (-> a :column :name keyword) ((:generator a) (:column a)))) value-generators)
+                             (map (fn [a] (list (-> a :column :name keyword) 
+                                                ((:generator a) (:column a)))) 
+                                  value-generators)
               )))
     )
   ))
