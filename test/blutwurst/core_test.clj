@@ -14,8 +14,16 @@
   (let [args (list "test.jar" "-s" "S1" "-s" "S2")
         result (parse-opts args core/cli-options)]
     (is (= (list "S2" "S1") (-> result :options :schema)))
-  )
- ))
+    (is (= (list "S2" "S1") (:included-schemas (core/build-spec (:options result)))))
+  ))
+
+  (testing "Parses options for row count."
+    (let [args (list "test.jar" "-n" "30")
+          result (parse-opts args core/cli-options)]
+      (is (= 30 (-> result :options :number-of-rows)))
+      (is (= 30 (:number-of-rows (core/build-spec (:options result)))))
+    ))
+ )
 
  ; TODO: make test useful
 (deftest integration-tests

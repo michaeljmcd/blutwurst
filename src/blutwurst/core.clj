@@ -21,16 +21,22 @@
    ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
     :parse-fn #(keyword %)
     :default :csv]
+   ["-n" "--number-of-rows NUMBER" "Number of rows to be generated for each table."
+    :default 100
+    :parse-fn #(Integer/parseInt %)
+    :id :number-of-rows
+   ]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
 
-(defn- build-spec [options] 
+(defn build-spec [options] 
   {
    :connection-string (:connection-string options)
    :format (:format options)
    :output-file (:output options)
    :output-directory (:output-dir options)
    :included-schemas (:schema options)
+   :number-of-rows (:number-of-rows options)
   })
 
 (defn- usage [option-summary]

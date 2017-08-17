@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Command-line option to control the number of rows generated for each table.
 
 ## [0.2.0] - 2017-08-17
 ### Added
