@@ -28,7 +28,7 @@
 
 (defn- random-datetime []
  (let [r (Random.)]
-  (Date. (mod (.nextLong r) 4102466400000))
+  (Date. (mod (.nextLong r) 4102466400000)) ; Makes sure that our date stays under 2100-01-01.
  ))
 
 (def value-generation-strategies
