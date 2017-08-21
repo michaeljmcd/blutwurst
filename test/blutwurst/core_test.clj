@@ -23,6 +23,18 @@
       (is (= 30 (-> result :options :number-of-rows)))
       (is (= 30 (:number-of-rows (core/build-spec (:options result)))))
     ))
+
+  (testing "Parses option to list generators."
+   (let [args (list "test.jar" "--list-generators")
+         result (parse-opts args core/cli-options)]
+    (is (= true (-> result :options :list-generators)))
+  ))
+
+  (testing "List generators is not the default."
+    (let [args (list "test.jar" "--list-gens")
+             result (parse-opts args core/cli-options)]
+        (is (= nil (-> result :options :list-generators)))
+      ))
  )
 
  ; TODO: make test useful

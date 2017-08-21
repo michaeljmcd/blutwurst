@@ -71,3 +71,10 @@
      )))
 ; TODO: build a negative test with an unknown data type
 
+(deftest generator-list-test
+ (testing "Module returns a valid list of known generators."
+   (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
+    (let [expected (list "Random String Generator" "Random Integer Generator" "Random Decimal Generator")]
+     (is (= expected (retrieve-registered-generators)))
+   ))
+ ))

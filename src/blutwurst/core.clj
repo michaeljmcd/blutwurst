@@ -4,7 +4,7 @@
 			[taoensso.timbre :as timbre :refer [log  trace with-level]]
             [blutwurst.database :refer [retrieve-table-graph]]
             [blutwurst.planner :refer [create-data-generation-plan]]
-            [blutwurst.tuple-generator :refer [generate-tuples-for-plan]]
+            [blutwurst.tuple-generator :refer [generate-tuples-for-plan retrieve-registered-generators]]
             [blutwurst.tuple-formatter :refer [format-rows]]
             [blutwurst.sink :refer [make-sink]])
   (:gen-class))
@@ -24,8 +24,8 @@
    ["-n" "--number-of-rows NUMBER" "Number of rows to be generated for each table."
     :default 100
     :parse-fn #(Integer/parseInt %)
-    :id :number-of-rows
-   ]
+    :id :number-of-rows]
+   [nil "--list-generators" "List out registered generators."]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
 
@@ -53,6 +53,12 @@
                 (string/join \newline)))
  (System/exit 0))
 
+(defn- print-generator-list []
+ (let [generators (retrieve-registered-generators)]
+  (println (->> generators (string/join \newline)))
+  (System/exit 0)
+ ))
+
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
@@ -64,10 +70,10 @@
             (trace parsed-input)
             (trace spec)
 
-            (if (-> parsed-input :options :help)
-              (usage (:summary parsed-input))
-
-              (->> spec
+            (cond 
+             (-> parsed-input :options :help) (usage (:summary parsed-input))
+             (-> parsed-input :options :list-generators) (print-generator-list)
+             :else (->> spec
                    retrieve-table-graph
                    create-data-generation-plan
                    (generate-tuples-for-plan spec)

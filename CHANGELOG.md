@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. This change
 - Added headers to CSV output.
 - Added random generators to select first and last names from U.S. Census Data.
 - Added composite generator for full names.
+- Added `--list-generators` command-line option so that the user can see what generators are provided.
 
 ## [0.2.0] - 2017-08-17
 ### Added

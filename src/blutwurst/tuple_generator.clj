@@ -156,3 +156,5 @@
  (trace "Beginning tuple generation for execution plan.")
  (generate-tuples-for-plan* (:number-of-rows spec) execution-plan '()))
  
+(defn retrieve-registered-generators [] 
+ (map :name value-generation-strategies)) 
