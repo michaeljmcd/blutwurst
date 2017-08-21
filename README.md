@@ -31,6 +31,16 @@ In order to get a full list of the arguments supported by this application, run 
 
 Stay tuned.
 
+## Data Sources
+
+The data used the random selection generators (like the person names or state names) was sourced
+from the following locations:
+
+* https://statetable.com/ (states, provinces and territories of the United States and Canada).
+* https://www.census.gov/topics/population/genealogy/data/2010_surnames.html (Surnames in the 2010 United States Census).
+* https://www.census.gov/topics/population/genealogy/data/1990_census/1990_census_namefiles.html (Personal names in the 1990 United States Census).
+* https://sourceforge.net/p/squirrel-sql/git/ci/master/tree/sql12/core/src/net/sourceforge/squirrel_sql/client/resources/defaults/default_drivers.xml (classnames for various JDBC drivers).
+
 ### Bugs
 
 No reported bugs, as yet.
