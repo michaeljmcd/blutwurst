@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. This change
 - Added command line option (`-s`) to limit the schemas being scanned. By default, all schemas are scanned but provision of a list of schemas will limit scans to those.
 - Added pair of command line options (`--column` and `--generator`) to allow a user to override the matched generators.
 - Added option (`-K`, `--config`) to source command line options from a file.
+- Generators for state names and state abbreviations, from both the U.S. and Canada.
 
 ## [0.2.0] - 2017-08-17
 ### Added

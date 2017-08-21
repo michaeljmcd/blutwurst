@@ -49,8 +49,13 @@
   ^{ :private true }
   [
    { 
-     :name "Random State Selector (U.S. and Canada)"
+     :name "Random State Abbreviation Selector (U.S. and Canada)"
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "STATE"))
+     :generator (make-resource-generator-fn "state_table.csv" 1 2)
+   }
+   { 
+     :name "Random State Name Selector (U.S. and Canada)"
+     :determiner #(do % nil)
      :generator (make-resource-generator-fn "state_table.csv" 1 1)
    }
    {
