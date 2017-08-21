@@ -49,12 +49,19 @@
   ^{ :private true }
   [
    {
-     :name "Random First Name Selector"
+     :name "Random Full Name Selector (U.S.)"
+     :determiner #(and (column-is-string? %) (string/includes? (:name %) "FULL") (string/includes? (:name %) "NAME"))
+     :generator (let [last-name-fn (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3)
+                      first-name-fn (make-resource-generator-fn "census-derived-all-first.csv" 0)]
+                  #(str (last-name-fn %) " " (first-name-fn %)))
+   }
+   {
+     :name "Random First Name Selector (U.S.)"
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "FIRST"))
      :generator (make-resource-generator-fn "census-derived-all-first.csv" 0)
    }
    {
-      :name "Random Last Name Selector"
+      :name "Random Last Name Selector (U.S.)"
       :determiner #(and (column-is-string? %) (string/includes? (:name %) "LAST"))
       :generator (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3)
    }

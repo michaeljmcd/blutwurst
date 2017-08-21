@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. This change
 - Improved number type recognition so that types like BIGINT and DOUBLE would be recognized.
 - Added headers to CSV output.
 - Added random generators to select first and last names from U.S. Census Data.
+- Added composite generator for full names.
 
 ## [0.2.0] - 2017-08-17
 ### Added
