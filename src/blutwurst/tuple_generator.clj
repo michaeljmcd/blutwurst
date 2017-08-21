@@ -103,10 +103,15 @@
      ))
 
 (defn- find-override-for-column [spec column]
- (:generator-name (first (filter #(re-matches (:column-pattern %) (:name column)) (:column-generator-overrides spec)))))
+ (->> (:column-generator-overrides spec)
+      (filter #(re-matches (re-pattern (:column-pattern %)) (:name column)))
+      first
+      :generator-name))
 
 (defn- find-generator-by-name [generator-name strategies]
- (first (filter #(= (:name %) generator-name) strategies)))
+ (->> strategies
+      (filter #(= (:name %) generator-name))
+      first))
 
 (defn- select-generators-for-column [spec column]
   (let [override-name (find-override-for-column spec column)]

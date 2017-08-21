@@ -13,8 +13,8 @@
  (testing "Schema options accumulate."
   (let [args (list "test.jar" "-s" "S1" "-s" "S2")
         result (parse-opts args core/cli-options)]
-    (is (= (list "S2" "S1") (-> result :options :schema)))
-    (is (= (list "S2" "S1") (:included-schemas (core/build-spec (:options result)))))
+    (is (= ["S1" "S2"] (-> result :options :schema)))
+    (is (= ["S1" "S2"] (:included-schemas (core/build-spec (:options result)))))
   ))
 
   (testing "Parses options for row count."
@@ -35,6 +35,29 @@
              result (parse-opts args core/cli-options)]
         (is (= nil (-> result :options :list-generators)))
       )))
+
+(deftest spec-building-tests
+ (testing "Handles column - generator pairs."
+  (let [args (list "test.jar" "--column" "ASDF" "--generator" "foobar" "--column" "123" "--generator" "baz")
+        result (core/build-spec (:options (parse-opts args core/cli-options)))]
+    (is (= (list {:column-pattern "ASDF" :generator-name "foobar"} 
+             {:column-pattern "123" :generator-name "baz"})
+           (:column-generator-overrides result)))
+    ))
+
+ (testing "Handles receiving too many columns"
+    (let [args (list "test.jar" "--column" "ASDF" "--generator" "foobar" "--column" "baz")
+            result (core/build-spec (:options (parse-opts args core/cli-options)))]
+        (is (= (list {:column-pattern "ASDF" :generator-name "foobar"})
+               (:column-generator-overrides result)))
+        ))
+
+ (testing "Handles receiving too many generators."
+    (let [args (list "test.jar" "--column" "ASDF" "--generator" "foobar" "--generator" "baz")
+            result (core/build-spec (:options (parse-opts args core/cli-options)))]
+        (is (= (list {:column-pattern "ASDF" :generator-name "foobar"})
+               (:column-generator-overrides result)))
+        )))
 
  ; TODO: make test useful
 (deftest integration-tests

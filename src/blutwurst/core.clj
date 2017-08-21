@@ -9,13 +9,15 @@
             [blutwurst.sink :refer [make-sink]])
   (:gen-class))
 
+(def ^:private accumulate-arguments #(update-in %1 [%2] conj %3))
+
 (def cli-options 
   [["-o" "--output OUTPUT_FILE" "Individual file to which to write the generated data."
     :default "-"]
    ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
    ["-s" "--schema SCHEMA" "Database schemas to include in the database scan."
-    :default '()
-    :assoc-fn #(update-in %1 [%2] conj %3)]
+    :default []
+    :assoc-fn accumulate-arguments]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
@@ -26,12 +28,11 @@
     :parse-fn #(Integer/parseInt %)
     :id :number-of-rows]
    [nil "--column PATTERN" "Specifies a Java-style regex to be used in assigning a generator to a column."
-    :default '()
-    :parse-fn re-pattern
-    :assoc-fn #(update-in %1 [%2] conj %3)]
+    :default []
+    :assoc-fn accumulate-arguments]
    [nil "--generator NAME" "Specifies that columns matching the pattern given previously must use the generator name."
-    :default '()
-    :assoc-fn #(update-in %1 [%2] conj %3)]
+    :default []
+    :assoc-fn accumulate-arguments]
    [nil "--list-generators" "List out registered generators."]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
