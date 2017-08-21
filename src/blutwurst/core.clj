@@ -7,6 +7,7 @@
             [blutwurst.tuple-generator :refer [generate-tuples-for-plan retrieve-registered-generators]]
             [blutwurst.tuple-formatter :refer [format-rows]]
             [blutwurst.sink :refer [make-sink]])
+  (:import (java.util StringTokenizer))
   (:gen-class))
 
 (def ^:private accumulate-arguments #(update-in %1 [%2] conj %3))
@@ -14,6 +15,7 @@
 (def cli-options 
   [["-o" "--output OUTPUT_FILE" "Individual file to which to write the generated data."
     :default "-"]
+   ["-K" "--config CONFIG_FILE" "Use options in CONFIG_FILE as though they were command line options."]
    ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
    ["-s" "--schema SCHEMA" "Database schemas to include in the database scan."
     :default []
@@ -70,16 +72,33 @@
   (System/exit 0)
  ))
 
+(defn- tokenize-file [input-text]
+ (let [tokenizer (StringTokenizer. input-text "\"' \t\f\n\r" false)]
+  (repeatedly (.countTokens tokenizer)
+              #(.nextToken tokenizer))
+ ))
+
+(defn- derive-effective-arguments [args]
+ (let [options (parse-opts args cli-options :no-defaults ["-K" "--config"])
+       result (if (-> options :options :config)
+                (concat args (-> options :options :config slurp tokenize-file))
+                args)]
+   (trace "Effective command-line arguments: " result)
+   result
+ ))
+
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
-      (let [parsed-input (parse-opts args cli-options)
+      (let [effective-args (derive-effective-arguments args)
+            parsed-input (parse-opts effective-args cli-options)
             spec (build-spec (:options parsed-input))
             sink (make-sink spec)]
 
           (with-level (if (-> parsed-input :options :verbose) :trace :fatal)
-            (trace parsed-input)
-            (trace spec)
+            (trace "Effective arguments after file handling: " (pr-str (seq effective-args)))
+            (trace "Parsed arguments: " parsed-input)
+            (trace "Finalized spec: " spec)
 
             (cond 
              (-> parsed-input :options :help) (usage (:summary parsed-input))
