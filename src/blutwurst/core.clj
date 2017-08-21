@@ -25,6 +25,13 @@
     :default 100
     :parse-fn #(Integer/parseInt %)
     :id :number-of-rows]
+   [nil "--column PATTERN" "Specifies a Java-style regex to be used in assigning a generator to a column."
+    :default '()
+    :parse-fn re-pattern
+    :assoc-fn #(update-in %1 [%2] conj %3)]
+   [nil "--generator NAME" "Specifies that columns matching the pattern given previously must use the generator name."
+    :default '()
+    :assoc-fn #(update-in %1 [%2] conj %3)]
    [nil "--list-generators" "List out registered generators."]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
@@ -37,6 +44,9 @@
    :output-directory (:output-dir options)
    :included-schemas (:schema options)
    :number-of-rows (:number-of-rows options)
+   :column-generator-overrides (map #(hash-map :column-pattern %1 :generator-name %2) 
+                                    (:column options) 
+                                    (:generator options)) ; TODO: add validation around this.
   })
 
 (defn- usage [option-summary]

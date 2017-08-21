@@ -34,8 +34,7 @@
     (let [args (list "test.jar" "--list-gens")
              result (parse-opts args core/cli-options)]
         (is (= nil (-> result :options :list-generators)))
-      ))
- )
+      )))
 
  ; TODO: make test useful
 (deftest integration-tests
