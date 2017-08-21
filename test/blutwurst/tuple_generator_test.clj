@@ -78,3 +78,18 @@
      (is (= expected (retrieve-registered-generators)))
    ))
  ))
+
+(deftest generator-overrides
+ (testing "Generator override is used."
+   (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
+    (let [spec {:column-generator-overrides (list {:column-pattern "^ID$" :generator-name "Random Decimal Generator"})
+                :number-of-rows 5}
+          tables '({
+                          :name "Destination"
+                          :schema "foo"
+                          :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
+                                     {:name "ID" :type "INTEGER" :length 3 :nullable true})
+                          })]
+      (is (= `({:table ~(first tables) :tuples ~(repeat 5 {:Address1 "asdf" :ID 1.7})})
+              (generate-tuples-for-plan spec tables)))
+    ))))
