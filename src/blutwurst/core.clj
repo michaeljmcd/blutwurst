@@ -72,11 +72,14 @@
   (System/exit 0)
  ))
 
+; Base regex from
+; https://stackoverflow.com/questions/366202/regex-for-splitting-a-string-using-space-when-not-surrounded-by-single-or-double
 (defn- tokenize-file [input-text]
- (let [tokenizer (StringTokenizer. input-text "\"' \t\f\n\r" false)]
-  (repeatedly (.countTokens tokenizer)
-              #(.nextToken tokenizer))
- ))
+ (map #(cond
+        (not (nil? (nth % 1))) (nth % 1)
+        (not (nil? (nth % 2))) (nth % 2)
+        :else (first %)) 
+      (re-seq #"[^\s\"']+|\"([^\"]*)\"|'([^']*)'" input-text)))
 
 (defn- derive-effective-arguments [args]
  (let [options (parse-opts args cli-options :no-defaults ["-K" "--config"])
