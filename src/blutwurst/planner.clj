@@ -53,7 +53,10 @@
       flatten
       distinct))
 
-(defn create-data-generation-plan [schema]
+(defn create-data-generation-plan 
+ "Accepts a schema of entities of the form {:tables [...]} and then sorts them topologically by dependency.
+  This presupposes that the graph is non-cyclical. A cyclical graph will result in a nil value."
+ [schema]
  (trace schema)
 
  (let [nodes (:tables schema)
