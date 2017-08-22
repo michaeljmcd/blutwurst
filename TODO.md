@@ -4,8 +4,12 @@
 
 - Add street address generator (e.g. "123 Main Street") with some common variants.
 - Add city name generator from real examples.
-- Add a regex generator that allows a user to provide a regex and generate values from it (Generex looks like a good library for this).
 - Externalize data sources so that they can be tweaked.
+- Add support for SQL Server's datetimeoffset types.
+
+## Fixes
+
+- Add error checking on command line arguments.
 
 ## General
 

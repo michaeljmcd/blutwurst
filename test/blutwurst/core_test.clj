@@ -57,7 +57,16 @@
             result (core/build-spec (:options (parse-opts args core/cli-options)))]
         (is (= (list {:column-pattern "ASDF" :generator-name "foobar"})
                (:column-generator-overrides result)))
-        )))
+        ))
+
+ (testing "Handles regex generator argument pairs.."
+  (let [args (list "test.jar" "--generator-name" "ASDF" "--generator-regex" "foobar" "--generator-name" "123" "--generator-regex" "baz")
+        result (core/build-spec (:options (parse-opts args core/cli-options)))]
+    (is (= (list {:name "ASDF" :regex "foobar"} 
+                 {:name "123" :regex "baz"})
+           (:regex-generators result)))
+    ))
+ )
 
  ; TODO: make test useful
 (deftest integration-tests

@@ -10,8 +10,8 @@
    { 
      :name generator-name
      :determiner #(do % nil)
-     :generator #(let [g (.Generex regex)]
-                    (.random g))
+     :generator #(let [g (Generex. regex)]
+                    % (.random g))
    })
 
 (defn- random-integer []
@@ -110,9 +110,9 @@
  (concat (map #(create-regex-generator (:name %) (:regex %)) (:regex-generators spec))
           generators))
 
-(defn create-generators [spec] ; TODO: memoize?
- (->> value-generation-strategies
-      (accrete-regex-generators spec)))
+(def create-generators (memoize (fn [spec]
+                                 (->> value-generation-strategies
+                                      (accrete-regex-generators spec)))))
 
 (defn retrieve-registered-generators [spec] 
  (map :name (create-generators spec))) 

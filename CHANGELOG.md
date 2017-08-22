@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. This change
 - Added pair of command line options (`--column` and `--generator`) to allow a user to override the matched generators.
 - Added option (`-K`, `--config`) to source command line options from a file.
 - Generators for state names and state abbreviations, from both the U.S. and Canada.
+- Added regex-based generators, allowing for custom strings to be generated.
 
 ## [0.2.0] - 2017-08-17
 ### Added

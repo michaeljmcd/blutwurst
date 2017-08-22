@@ -36,6 +36,12 @@
    [nil "--generator NAME" "Specifies that columns matching the pattern given previously must use the generator name."
     :default []
     :assoc-fn accumulate-arguments]
+   [nil "--generator-name NAME" "Specifies the name of a generator to be created through command line arguments."
+    :default []
+    :assoc-fn accumulate-arguments]
+   [nil "--generator-regex REGEX" "Specifies a regex to be used when generating data."
+     :default []
+     :assoc-fn accumulate-arguments]
    [nil "--list-generators" "List out registered generators."]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
@@ -50,7 +56,8 @@
    :number-of-rows (:number-of-rows options)
    :column-generator-overrides (map #(hash-map :column-pattern %1 :generator-name %2) 
                                     (:column options) 
-                                    (:generator options)) ; TODO: add validation around this.
+                                    (:generator options))
+   :regex-generators (map #(hash-map :name %1 :regex %2) (:generator-name options) (:generator-regex options))
   })
 
 (defn- usage [option-summary]
