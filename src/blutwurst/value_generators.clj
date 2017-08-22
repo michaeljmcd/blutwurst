@@ -106,8 +106,13 @@
    }
   ])
 
+(defn- accrete-regex-generators [spec generators]
+ (concat (map #(create-regex-generator (:name %) (:regex %)) (:regex-generators spec))
+          generators))
+
 (defn create-generators [spec] ; TODO: memoize?
- value-generation-strategies)
+ (->> value-generation-strategies
+      (accrete-regex-generators spec)))
 
 (defn retrieve-registered-generators [spec] 
  (map :name (create-generators spec))) 

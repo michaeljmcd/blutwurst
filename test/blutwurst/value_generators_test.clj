@@ -1,5 +1,6 @@
 (ns blutwurst.value-generators-test
   (:require [clojure.test :refer :all]
+            [clojure.pprint :refer :all]
             [blutwurst.value-generators :as vg]))
 
 (def fixed-generators
@@ -35,4 +36,19 @@
      (is (= expected (vg/retrieve-registered-generators nil)))
    ))
  ))
+
+(deftest generator-creation-test
+  (testing "Generators passed through."
+    (with-redefs [vg/value-generation-strategies fixed-generators]
+     (let [result (vg/create-generators {:format :csv})]
+      (is (= 3 (count result)))
+    ))
+  )
+
+  (testing "Regex generators are added."
+    (with-redefs [vg/value-generation-strategies fixed-generators]
+     (let [result (vg/create-generators {:regex-generators [{:name "asdf" :regex "asdf"}]})]
+      (is (= 4 (count result)))
+    ))
+  ))
 
