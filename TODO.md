@@ -10,6 +10,8 @@
 ## Fixes
 
 - Add error checking on command line arguments.
+- Ensure that regex string generation respects column sizes.
+- Handle column size in integer / decimal generators.
 
 ## General
 
