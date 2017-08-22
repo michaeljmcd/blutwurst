@@ -4,8 +4,9 @@
 			[taoensso.timbre :as timbre :refer [log  trace with-level]]
             [blutwurst.database :refer [retrieve-table-graph]]
             [blutwurst.planner :refer [create-data-generation-plan]]
-            [blutwurst.tuple-generator :refer [generate-tuples-for-plan retrieve-registered-generators]]
+            [blutwurst.tuple-generator :refer [generate-tuples-for-plan]]
             [blutwurst.tuple-formatter :refer [format-rows]]
+            [blutwurst.value-generators :refer [retrieve-registered-generators]]
             [blutwurst.sink :refer [make-sink]])
   (:import (java.util StringTokenizer))
   (:gen-class))
@@ -66,8 +67,8 @@
                 (string/join \newline)))
  (System/exit 0))
 
-(defn- print-generator-list []
- (let [generators (retrieve-registered-generators)]
+(defn- print-generator-list [spec]
+ (let [generators (retrieve-registered-generators spec)]
   (println (->> generators (string/join \newline)))
   (System/exit 0)
  ))
@@ -105,7 +106,7 @@
 
             (cond 
              (-> parsed-input :options :help) (usage (:summary parsed-input))
-             (-> parsed-input :options :list-generators) (print-generator-list)
+             (-> parsed-input :options :list-generators) (print-generator-list spec)
              :else (->> spec
                    retrieve-table-graph
                    create-data-generation-plan

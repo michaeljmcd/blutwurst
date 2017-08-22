@@ -3,6 +3,7 @@
             [clojure.pprint :refer :all]
             [taoensso.timbre :as timbre :refer [trace]]
             [blutwurst.logging-fixture :refer :all]
+            [blutwurst.value-generators :as vg]
             [blutwurst.tuple-generator :refer :all]))
 
 (def fixed-generators
@@ -27,16 +28,10 @@
 
 (use-fixtures :each logging-fixture)
 
-(deftest random-string-test
- (testing "Basic random string generation."
-   (let [value (random-string 10)]
-    (is (< (count value) 10)))
- ))
-
 (deftest generate-tuples-from-plan-test   
     (testing "Multiple data types."
-      (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
-        (let [table-spec '({
+    (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
+      #(let [table-spec '({
                           :name "Destination" 
                           :schema "foo" 
                           :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
@@ -71,18 +66,10 @@
      )))
 ; TODO: build a negative test with an unknown data type
 
-(deftest generator-list-test
- (testing "Module returns a valid list of known generators."
-   (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
-    (let [expected (list "Random String Generator" "Random Integer Generator" "Random Decimal Generator")]
-     (is (= expected (retrieve-registered-generators)))
-   ))
- ))
-
 (deftest generator-overrides
  (testing "Generator override is used."
-   (with-redefs [blutwurst.tuple-generator/value-generation-strategies fixed-generators]
-    (let [spec {:column-generator-overrides (list {:column-pattern "^ID$" :generator-name "Random Decimal Generator"})
+   (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
+     #(let [spec {:column-generator-overrides (list {:column-pattern "^ID$" :generator-name "Random Decimal Generator"})
                 :number-of-rows 5}
           tables '({
                           :name "Destination"

@@ -10,6 +10,7 @@
                  [org.clojure/tools.trace "0.7.9"]
                  [org.clojure/core.incubator "0.1.4"]
                  [com.taoensso/timbre "4.10.0"]
+                 [com.github.mifmif/generex "1.0.2"]
                  [cheshire "5.7.1"]
                  [com.h2database/h2 "1.4.195" :scope "test"]]
   :plugins [[quickie "0.4.1"] 
