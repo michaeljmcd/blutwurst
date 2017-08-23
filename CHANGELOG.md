@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file. This change
 - Generators for state names and state abbreviations, from both the U.S. and Canada.
 - Added regex-based generators, allowing for custom strings to be generated.
 
+### Fixed
+
+- Integer generation will not exceed the specified size.
+
 ## [0.2.0] - 2017-08-17
 ### Added
 - SQL `INSERT` statement generation.

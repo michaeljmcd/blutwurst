@@ -1,5 +1,6 @@
 (ns blutwurst.value-generators
   (:import (java.util Random Date)
+           (java.lang Math)
            (com.mifmif.common.regex Generex))
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
@@ -19,9 +20,9 @@
    (.nextInt random)
  ))
 
-(defn random-integer-under-value [value]
+(defn random-integer-under-value [max-value]
   (let [random (Random.)]
-     (.nextInt random value)
+     (mod (.nextLong random) max-value)
    ))
 
 (defn- random-decimal []
@@ -52,6 +53,14 @@
   (trace values)
   (fn [c]
    (string/trimr (nth (nth values (random-integer-under-value value-count)) value-index)))
+ ))
+
+(defn- max-integer-value-for-column [c]
+ (cond 
+  (= (:type c) "TINYINT") (long 255)
+  (= (:type c) "SMALLINT") (long (- (Math/pow 2 15) 1))
+  (= (:type c) "BIGINT") (long (- (Math/pow 2 63) 1))
+  :else (long (- (Math/pow 2 32) 1))
  ))
 
 (def value-generation-strategies
@@ -91,8 +100,8 @@
    }
    {
        :name "Random Integer Generator"
-       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT" "BIGINT"))
-       :generator (fn [c] (random-integer)) ; TODO account for column's max value
+       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT"))
+       :generator #(random-integer-under-value (max-integer-value-for-column %))
    }
    {
        :name "Random Decimal Generator"
