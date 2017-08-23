@@ -31,13 +31,8 @@
 ))
 
 (defn random-string [max-length]
- (let [r (Random.)
-       valid-chars (map char (range 97 123)) ; TODO make this a little cleaner
-       max-char-index (- (count valid-chars) 1)]
-    (apply str
-    (repeatedly (.nextInt r (- max-length 1))
-                #(nth valid-chars (.nextInt r max-char-index))))
- ))
+ (let [g (Generex. "([A-Za-z0-9'\" \\n\\t!@#$%&*()])+")]
+  (.random g (max 0 (- max-length (* 0.5 max-length))) max-length)))
 
 (defn- random-datetime []
  (let [r (Random.)]
