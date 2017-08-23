@@ -68,5 +68,4 @@
                            (find-nodes-without-incoming-connections nodes edges) 
                            edges 
                            '())
-  ; TODO: error check
  ))

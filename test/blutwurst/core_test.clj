@@ -3,6 +3,7 @@
             [clojure.pprint :refer :all]
             [clojure.tools.trace :as trace]
             [clojure.tools.cli :refer [parse-opts]]
+            [clojure.string :as string]
             [blutwurst.core :as core]
             [blutwurst.logging-fixture :refer :all]
             [blutwurst.in-memory-db-utilities :refer :all]))
@@ -68,9 +69,12 @@
     ))
  )
 
- ; TODO: make test useful
 (deftest integration-tests
  (testing "End to end flow."
-  (with-out-str
-    (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-v"))
+  (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
+   (is (and (string/includes? output "CATEGORY,NAME")
+            (string/includes? output "ID,NAME")
+            (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")
+            (= 12 (count (string/split-lines output) )))
+    ))
   ))
