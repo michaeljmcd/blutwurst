@@ -41,7 +41,7 @@ There are a number of other options. Running
 
     java -cp '.;lib/*;blutwurst-0.3.0-standalone.jar' blutwurst.core --help
 
-Will print out a list of options.
+Will print out a list of options. Please see the [manual](doc/intro.md) for a more comprehensive overview.
 
 ## Data Sources
 
