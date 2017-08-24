@@ -16,7 +16,4 @@
 
 ## General
 
-- Write initial user's manual.
-- Add process to build an archive from Leiningen.
-- Create shell / batch scripts from which to invoke Blutwurst.
-- Clean up in-code TODOs.
+- Clean up in-code to-dos.
