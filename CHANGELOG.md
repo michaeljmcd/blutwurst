@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
+## [Unreleased]
+
 ## [0.3.0] - 2017-08-24
 ### Added
 - Command-line option to control the number of rows generated for each table.
@@ -43,6 +45,7 @@ All notable changes to this project will be documented in this file. This change
 - Support for dumping generated data to standard out.
 - Basic data generators for integers, decimals and strings.
 
-[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/michaeljmcd/blutwurst/compare/e92f36c4...v0.1.0

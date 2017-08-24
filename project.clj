@@ -1,4 +1,4 @@
-(defproject blutwurst "0.3.0"
+(defproject blutwurst "0.4.0-SNAPSHOT"
   :description "A command-line utility to populate database tables with test data."
   :url "https://www.github.com/michaeljmcd/blutwurst"
   :license {:name "MIT"
