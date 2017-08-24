@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This change
 ### Added
 - Convenience scripts to invoke Blutwurst in both bash and Windows Cmd.
 - Wrote a basic user manual in `doc/intro.md`.
+- Added city and email value generators.
 
 ## [0.3.0] - 2017-08-24
 ### Added

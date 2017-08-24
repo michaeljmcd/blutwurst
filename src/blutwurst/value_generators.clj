@@ -1,6 +1,7 @@
 (ns blutwurst.value-generators
   (:import (java.util Random Date)
            (java.lang Math)
+           (com.thedeanda.lorem LoremIpsum)
            (com.mifmif.common.regex Generex))
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
@@ -87,6 +88,16 @@
       :name "Random Last Name Selector (U.S.)"
       :determiner #(and (column-is-string? %) (string/includes? (:name %) "LAST"))
       :generator (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3 0)
+   }
+   {
+       :name "Random City Generator"
+       :determiner #(and (column-is-string? %) (string/includes? (:name %) "CITY"))
+       :generator (let [l (LoremIpsum.)] (fn [c] (.getCity l)))
+   }
+   {
+       :name "Random Email Generator"
+       :determiner #(and (column-is-string? %) (string/includes? (:name %) "EMAIL"))
+       :generator (let [l (LoremIpsum.)] (fn [c] (.getEmail l)))
    }
    {
       :name "Random String Generator"
