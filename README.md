@@ -29,7 +29,19 @@ In order to get a full list of the arguments supported by this application, run 
 
 ## Examples
 
-Stay tuned.
+Imagine you have a [Derby](https://db.apache.org/derby/) database on your local machine. Running a command like so:
+
+    java -cp '.;lib/*;blutwurst-0.3.0-standalone.jar' blutwurst.core --connection-string 'jdbc:derby:test.db' --format csv --directory mydata 
+
+Will cause Blutwurst to start up, connect to Derby, scan the tables, generate data and export it as a CSV file per 
+table in the `mydata` directory. This assumes that you have permissions to `test.db` and that the JAR files for the Derby client
+are in the `lib` folder.
+
+There are a number of other options. Running
+
+    java -cp '.;lib/*;blutwurst-0.3.0-standalone.jar' blutwurst.core --help
+
+Will print out a list of options.
 
 ## Data Sources
 
