@@ -47,15 +47,20 @@
       ))))
 
 (deftest generate-tuples-with-foreign-keys
-    (testing "Foreign key values are all found in source table."
+ (testing "Passing an unknown type."
+  (let [a-table '{:name "ASDF" :schema "foo" :columns ({:name "BAZ" :type "IXIAN"})}
+        result (generate-tuples-for-plan {} (list a-table))]
+    (is (thrown? NullPointerException (pr-str (seq result))))
+  ))
+
+   (testing "Foreign key values are all found in source table."
       (let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
                                                                     {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
             hero-table '{:name "Hero" :schema "asdf" :columns ({:name "Name" :type "VARCHAR" :length 200}
                                                                 {:name "PrimaryWeaponID" :type "INTEGER" :length 3})
                          :dependencies [
                            {:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}
-                         ]
-                        }
+                         ]}
             spec {:number-of-rows 100}
             result (generate-tuples-for-plan spec (list weapon-table hero-table))
             generated-weapons (-> result first :tuples)]
@@ -64,7 +69,6 @@
                     (map #(some (fn [c] (= (:ID c) (:PrimaryWeaponID %))) generated-weapons) 
                          (-> result second :tuples))))
      )))
-; TODO: build a negative test with an unknown data type
 
 (deftest generator-overrides
  (testing "Generator override is used."
