@@ -106,6 +106,16 @@
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getEmail l))))
    }
    {
+       :name "Phone Number Generator"
+       :determiner #(and (column-is-string? %) (string/includes? (:name %) "PHONE"))
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getPhone l))))
+   }
+   {
+       :name "Postal Code Generator"
+       :determiner #(and (column-is-string? %) (string/includes? (:name %) "ZIP"))
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getZipCode l))))
+   }
+   {
       :name "Random Text Generator"
       :determiner column-is-string?
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (or (:length c) 10)))))
