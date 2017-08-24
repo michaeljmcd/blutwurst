@@ -7,6 +7,7 @@
 - Externalize data sources so that they can be tweaked.
 - Add support for SQL Server's datetimeoffset types.
 - Add support for SQL Server geography types.
+- Change string generation to be lorem ipsum based.
 
 ## Fixes
 
