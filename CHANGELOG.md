@@ -7,6 +7,12 @@ All notable changes to this project will be documented in this file. This change
 - Wrote a basic user manual in `doc/intro.md`.
 - Added city and email value generators.
 
+### Changed
+- Change string generation to be lorem ipsum based.
+
+### Fixed
+- Ensure that regex string generation respects column sizes.
+
 ## [0.3.0] - 2017-08-24
 ### Added
 - Command-line option to control the number of rows generated for each table.

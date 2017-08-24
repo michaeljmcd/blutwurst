@@ -8,12 +8,18 @@
             [clojure.string :as string]
             [taoensso.timbre :as timbre :refer [trace error]]))
 
+(defn- crop-to-column-size [column input-string]
+ (if (or (nil? input-string) (empty? input-string))
+  input-string
+  (subs input-string 0 (min (count input-string) (or (:length column) 20)))
+ ))
+
 (defn- create-regex-generator [generator-name regex]
    { 
      :name generator-name
      :determiner #(do % nil)
      :generator #(let [g (Generex. regex)]
-                    % (.random g))
+                    (crop-to-column-size % (.random g)))
    })
 
 (defn- random-integer []
@@ -43,20 +49,20 @@
 (defn- column-is-string? [column]
   (some #{(:type column)} '("VARCHAR" "NVARCHAR" "CHAR")))
 
-(defn- make-resource-generator-fn [resource garbage-rows value-index]
- (let [values (drop garbage-rows (-> resource io/resource io/reader csv/read-csv))
-       value-count (count values)]
-  (trace values)
-  (fn [c]
-   (string/trimr (nth (nth values (random-integer-under-value value-count)) value-index)))
- ))
-
 (defn- max-integer-value-for-column [c]
  (cond 
   (= (:type c) "TINYINT") (long 255)
   (= (:type c) "SMALLINT") (long (- (Math/pow 2 15) 1))
   (= (:type c) "BIGINT") (long (- (Math/pow 2 63) 1))
   :else (long (- (Math/pow 2 32) 1))
+ ))
+
+(defn- make-resource-generator-fn [resource garbage-rows value-index]
+ (let [values (drop garbage-rows (-> resource io/resource io/reader csv/read-csv))
+       value-count (count values)]
+  (trace values)
+  (fn [c]
+   (crop-to-column-size c (string/trimr (nth (nth values (random-integer-under-value value-count)) value-index))))
  ))
 
 (def value-generation-strategies
@@ -77,7 +83,7 @@
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "FULL") (string/includes? (:name %) "NAME"))
      :generator (let [last-name-fn (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3 0)
                       first-name-fn (make-resource-generator-fn "census-derived-all-first.csv" 0 0)]
-                  #(str (last-name-fn %) " " (first-name-fn %)))
+                  #(crop-to-column-size % (str (last-name-fn %) " " (first-name-fn %))))
    }
    {
      :name "Random First Name Selector (U.S.)"
@@ -92,12 +98,17 @@
    {
        :name "Random City Generator"
        :determiner #(and (column-is-string? %) (string/includes? (:name %) "CITY"))
-       :generator (let [l (LoremIpsum.)] (fn [c] (.getCity l)))
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getCity l))))
    }
    {
        :name "Random Email Generator"
        :determiner #(and (column-is-string? %) (string/includes? (:name %) "EMAIL"))
-       :generator (let [l (LoremIpsum.)] (fn [c] (.getEmail l)))
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getEmail l))))
+   }
+   {
+      :name "Random Text Generator"
+      :determiner column-is-string?
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (or (:length c) 10)))))
    }
    {
       :name "Random String Generator"
