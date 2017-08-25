@@ -60,7 +60,7 @@
                (:column-generator-overrides result)))
         ))
 
- (testing "Handles regex generator argument pairs.."
+ (testing "Handles regex generator argument pairs."
   (let [args (list "test.jar" "--generator-name" "ASDF" "--generator-regex" "foobar" "--generator-name" "123" "--generator-regex" "baz")
         result (core/build-spec (:options (parse-opts args core/cli-options)))]
     (is (= (list {:name "ASDF" :regex "foobar"} 
@@ -70,11 +70,18 @@
  )
 
 (deftest integration-tests
- (testing "End to end flow."
-  (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
-   (is (and (string/includes? output "CATEGORY,NAME")
-            (string/includes? output "ID,NAME")
-            (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")
-            (= 12 (count (string/split-lines output) )))
-    ))
+  (testing "Handles bad options."
+    (with-redefs-fn {#'core/exit-with-code (fn [c] c)}
+    #(let [output (with-out-str (core/-main "app.jar" "--darby-ogill-and-the-little-people" "sputnik"))]
+      (pprint output)
+      (is (= "Unknown option: \"--darby-ogill-and-the-little-people\"\n" output))
+      )))
+
+  (testing "End to end flow."
+   (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
+    (is (and (string/includes? output "CATEGORY,NAME")
+             (string/includes? output "ID,NAME")
+             (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")
+             (= 11 (count (string/split-lines output) )))
+     ))
   ))

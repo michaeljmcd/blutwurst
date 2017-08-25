@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. This change
 - Convenience scripts to invoke Blutwurst in both bash and Windows Cmd.
 - Wrote a basic user manual in `doc/intro.md`.
 - Added phone, city and email value generators.
+- Errors are now printed for bad command-line inputs.
 
 ### Changed
 - Change string generation to be lorem ipsum based.

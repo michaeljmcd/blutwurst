@@ -9,7 +9,6 @@
 
 ## Fixes
 
-- Add error checking on command line arguments.
 - Handle column size in decimal generators.
 
 ## General

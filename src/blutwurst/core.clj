@@ -60,6 +60,9 @@
    :regex-generators (map #(hash-map :name %1 :regex %2) (:generator-name options) (:generator-regex options))
   })
 
+(defn- exit-with-code [code]
+  (System/exit code))
+
 (defn- usage [option-summary]
  (println (->> ["Usage: java -jar blutwurst.jar [options]"
                 ""
@@ -72,12 +75,12 @@
                 ""
                 "Please report bugs or issues at https://github.com/michaeljmcd/blutwurst"]
                 (string/join \newline)))
- (System/exit 0))
+ (exit-with-code 0))
 
 (defn- print-generator-list [spec]
  (let [generators (retrieve-registered-generators spec)]
   (println (->> generators (string/join \newline)))
-  (System/exit 0)
+  (exit-with-code 0)
  ))
 
 ; Base regex from
@@ -94,9 +97,13 @@
        result (if (-> options :options :config)
                 (concat args (-> options :options :config slurp tokenize-file))
                 args)]
-   (trace "Effective command-line arguments: " result)
    result
  ))
+
+(defn- print-parsing-error [parsed]
+  (doseq [err (:errors parsed)]
+    (println err))
+  (exit-with-code 1))
 
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
@@ -112,6 +119,7 @@
             (trace "Finalized spec: " spec)
 
             (cond 
+             (not (empty? (:errors parsed-input))) (print-parsing-error parsed-input)
              (-> parsed-input :options :help) (usage (:summary parsed-input))
              (-> parsed-input :options :list-generators) (print-generator-list spec)
              :else (->> spec
