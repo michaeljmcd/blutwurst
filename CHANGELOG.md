@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.4.1] - 2017-08-25
 ### Fixed
 - The wrong output directory option was listed in the quickstart. This has been fixed.
 
@@ -62,7 +64,8 @@ All notable changes to this project will be documented in this file. This change
 - Support for dumping generated data to standard out.
 - Basic data generators for integers, decimals and strings.
 
-[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.1.0...v0.2.0
