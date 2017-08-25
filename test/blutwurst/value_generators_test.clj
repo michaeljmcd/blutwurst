@@ -24,12 +24,15 @@
    }
   ])
 
+(defn- find-generator-fn-by-name [generator-name]
+    (->> vg/value-generation-strategies
+                             (filter #(= generator-name (:name %)))
+                             first
+                             :generator))
+
 (deftest random-value-test
  (testing "Basic random number generator respects size of smallint."
-  (let [generator-fn (->> vg/value-generation-strategies
-                         (filter #(= "Integer Generator" (:name %)))
-                         first
-                         :generator)]
+  (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
     (dotimes [iter 100]
      (let [value (generator-fn {:name "foo" :type "TINYINT"})]
        (is (and (<= value 255)
@@ -60,9 +63,17 @@
     ))
    ))
 
+  (testing "String generators stay within text limits."
+      (let [generator-fn (find-generator-fn-by-name "City Generator")
+            column {:name "asdf" :type "asdf" :length 200}]
+       (dotimes [iter 10]
+        (let [value (generator-fn column)]
+          (is (<= (count value) 200))
+       ))))
+
  (testing "Basic random string generation."
    (let [value (vg/random-string 10)]
-    (is (< (count value) 10)))
+    (is (<= (count value) 10)))
  ))
 
 (deftest generator-list-test
