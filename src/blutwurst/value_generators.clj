@@ -137,7 +137,7 @@
    }
    {
        :name "Random Date / Timestamp Generator"
-       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP"))
+       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2"))
        :generator (fn [c] (random-datetime))
    }
   ])
