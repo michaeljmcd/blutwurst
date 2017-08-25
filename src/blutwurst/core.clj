@@ -17,7 +17,7 @@
   [["-o" "--output OUTPUT_FILE" "Individual file to which to write the generated data."
     :default "-"]
    ["-K" "--config CONFIG_FILE" "Use options in CONFIG_FILE as though they were command line options."]
-   ["-d" "--output-dir OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
+   ["-d" "--directory OUTPUT_DIRECTORY" "Output directory to which to write individual table-named files."]
    ["-s" "--schema SCHEMA" "Database schemas to include in the database scan."
     :default []
     :assoc-fn accumulate-arguments]
@@ -51,7 +51,7 @@
    :connection-string (:connection-string options)
    :format (:format options)
    :output-file (:output options)
-   :output-directory (:output-dir options)
+   :output-directory (:directory options)
    :included-schemas (:schema options)
    :number-of-rows (:number-of-rows options)
    :column-generator-overrides (map #(hash-map :column-pattern %1 :generator-name %2) 

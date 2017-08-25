@@ -38,6 +38,12 @@
       )))
 
 (deftest spec-building-tests
+ (testing "Output directory chosen from correct input."
+  (let [args (list "test.jar" "--column" "ASDF" "--output-dir" "foo" "--directory" "baz")
+        result (core/build-spec (:options (parse-opts args core/cli-options)))]
+   (is (= "baz" (:output-directory result)))
+  ))
+
  (testing "Handles column - generator pairs."
   (let [args (list "test.jar" "--column" "ASDF" "--generator" "foobar" "--column" "123" "--generator" "baz")
         result (core/build-spec (:options (parse-opts args core/cli-options)))]

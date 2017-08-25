@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Changed the long option for the output directory to `--directory` for `--output-dir`.
 
 ## [0.4.1] - 2017-08-25
 ### Fixed

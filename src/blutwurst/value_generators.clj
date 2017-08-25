@@ -143,6 +143,11 @@
        :determiner (partial list-contains-type '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET"))
        :generator (fn [c] (random-datetime))
    }
+   {
+       :name "Null Value Generator"
+       :determiner #(do % nil)
+       :generator #(do % nil)
+   }
   ])
 
 (defn- accrete-regex-generators [spec generators]

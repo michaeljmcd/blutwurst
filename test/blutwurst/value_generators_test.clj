@@ -31,6 +31,12 @@
                              :generator))
 
 (deftest random-value-test
+ (testing "Null generator always returns null"
+  (let [generator-fn (find-generator-fn-by-name "Null Value Generator")]
+   (dotimes [iter 5]
+    (is (nil? (generator-fn {:name "foo" :type "FROBNITZ" }))))
+  ))
+
  (testing "Basic random number generator respects size of smallint."
   (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
     (dotimes [iter 100]
