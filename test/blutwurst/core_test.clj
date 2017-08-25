@@ -74,7 +74,7 @@
     (with-redefs-fn {#'core/exit-with-code (fn [c] c)}
     #(let [output (with-out-str (core/-main "app.jar" "--darby-ogill-and-the-little-people" "sputnik"))]
       (pprint output)
-      (is (= "Unknown option: \"--darby-ogill-and-the-little-people\"\n" output))
+      (is (= "Unknown option: \"--darby-ogill-and-the-little-people\"" (string/trim output)))
       )))
 
   (testing "End to end flow."
