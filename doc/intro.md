@@ -35,14 +35,14 @@ The provided epic database has the following schema:
 Assuming you are running from the base of the install directory, you can begin
 a data generation with this command:
 
-    .\bin\blutwurst.cmd --connection-string "jdbc:derby:samples/epic.db" --format csv --directory .
+    .\bin\blutwurst.cmd --connection-string "jdbc:derby:samples/epic.db" --format csv --output-dir .
 
 This will generate CSV files in the current directory, one for each of the three
 tables.
 
 If we were to change the command to 
 
-    .\bin\blutwurst.cmd --connection-string "jdbc:derby:samples/epic.db" --format json --directory .
+    .\bin\blutwurst.cmd --connection-string "jdbc:derby:samples/epic.db" --format json --output-dir .
 
 We would instead have JSON files generated. Obviously, this is just a quick
 overview. The sections below give more of a standard listing out of functionality available. At any time,
