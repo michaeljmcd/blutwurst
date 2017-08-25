@@ -8,8 +8,11 @@ database or adding to unit tests.
 
 ## Installation
 
-No installation archives exist (yet). We will add them once we reach a certain
-level of completion on this project. In the meantime, clone this repository and run:
+To install, simply unpack an archive and add any needed JDBC drivers to the
+`lib` folder. 
+
+To build from source, you will need the Java runtime and Leiningen. With these
+prerequisites, simply build with `lein`.
 
     lein uberjar
 
