@@ -64,7 +64,7 @@
   (System/exit code))
 
 (defn- usage [option-summary]
- (println (->> ["Usage: java -jar blutwurst.jar [options]"
+ (println (->> ["Usage: blutwurst [options]"
                 ""
                 option-summary
                 ""
