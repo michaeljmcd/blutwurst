@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. This change
 ### Added
 - Convenience scripts to invoke Blutwurst in both bash and Windows Cmd.
 - Wrote a basic user manual in `doc/intro.md`.
-- Added phone, city and email value generators.
+- Added phone, city, URL, zip code and email value generators.
 - Errors are now printed for bad command-line inputs.
 
 ### Changed
