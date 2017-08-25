@@ -21,10 +21,9 @@
        (:classname (second (first driver-entries)))
       ))
 
-(defn- load-driver-for-connection-string-inner [connection-string]
+(def ^:private load-driver-for-connection-string (memoize (fn [connection-string]
   (.newInstance (Class/forName (find-class-for-spec connection-string))))
-
-(def ^:private load-driver-for-connection-string (memoize load-driver-for-connection-string-inner))
+ ))
 
 (defmacro with-jdbc-meta-data 
  "Accepts a specification object and a function accepting a single argument (metadata).
@@ -71,13 +70,16 @@
 (defn- read-columns [rs result]
   (if (not (.next rs))
     result
-    (recur rs (cons { 
-                     :name (.getString rs "COLUMN_NAME") 
-                     :type (.toString (JDBCType/valueOf (.getInt rs "DATA_TYPE")) )
-                     :length (.getInt rs "COLUMN_SIZE")
-                     :nullable (string->boolean (.getString rs "IS_NULLABLE"))
-                    } 
-                    result))
+    (do
+      (trace "Found column " (.getString rs "COLUMN_NAME") " with type " (.getString rs "TYPE_NAME"))
+
+      (recur rs (cons { 
+                       :name (.getString rs "COLUMN_NAME") 
+                       :type (.getString rs "TYPE_NAME")
+                       :length (.getInt rs "COLUMN_SIZE")
+                       :nullable (string->boolean (.getString rs "IS_NULLABLE"))
+                      } 
+                      result)))
     ))
 
 (defn- retrieve-columns-for-table [meta-data table]
