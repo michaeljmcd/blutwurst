@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. This change
 ### Fixed
 - Ensure that regex string generation respects column sizes.
 - Support for SQL Server's datetimeoffset type.
+- Added support for detecting types not returned in all-caps.
 
 ## [0.3.0] - 2017-08-24
 ### Added

@@ -42,13 +42,13 @@
  ))
 
 (defn- column-is-string? [column]
-  (some #{(:type column)} '("VARCHAR" "NVARCHAR" "CHAR")))
+  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "INT IDENTITY")))
 
 (defn- max-integer-value-for-column [c]
  (cond 
-  (= (:type c) "TINYINT") (long 255)
-  (= (:type c) "SMALLINT") (long (- (Math/pow 2 15) 1))
-  (= (:type c) "BIGINT") (long (- (Math/pow 2 63) 1))
+  (= (string/upper-case (:type c)) "TINYINT") (long 255)
+  (= (string/upper-case (:type c)) "SMALLINT") (long (- (Math/pow 2 15) 1))
+  (= (string/upper-case (:type c)) "BIGINT") (long (- (Math/pow 2 63) 1))
   :else (long (- (Math/pow 2 32) 1))
  ))
 
@@ -59,6 +59,9 @@
   (fn [c]
    (crop-to-column-size c (string/trimr (nth (nth values (random-integer-under-value value-count)) value-index))))
  ))
+
+(defn- list-contains-type [type-list column]
+  (some #{(string/upper-case (:type column))} type-list))
 
 (def value-generation-strategies
   ^{ :private true }
@@ -111,6 +114,11 @@
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getZipCode l))))
    }
    {
+       :name "URL Generator"
+       :determiner #(and (column-is-string? %) (string/includes? (:name %) "URL"))
+       :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getUrl l))))
+   }
+   {
       :name "Text Generator"
       :determiner column-is-string?
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (or (:length c) 10)))))
@@ -122,17 +130,17 @@
    }
    {
        :name "Integer Generator"
-       :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT"))
+       :determiner (partial list-contains-type '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT"))
        :generator #(random-integer-under-value (max-integer-value-for-column %))
    }
    {
        :name "Decimal Generator"
-       :determiner #(some #{(:type %)} '("DECIMAL" "DOUBLE"))
+       :determiner (partial list-contains-type '("DECIMAL" "DOUBLE"))
        :generator (fn [c] (random-decimal)) ; TODO account for column's max value
    }
    {
        :name "Date / Timestamp Generator"
-       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET"))
+       :determiner (partial list-contains-type '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET"))
        :generator (fn [c] (random-datetime))
    }
   ])
