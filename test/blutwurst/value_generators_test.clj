@@ -42,14 +42,14 @@
      (let [value (generator-fn {:name "foo" :type "SMALLINT"})]
        (is (and (<= value (- (Math/pow 2 15) 1))
                 (>= value 0))
-           "INTEGER must be in the range of values for 4 bytes.")
+           "INTEGER must be in the range of values for 2 bytes.")
     ))
 
     (dotimes [iter 100]
      (let [value (generator-fn {:name "foo" :type "BIGINT"})]
        (is (and (<= value (- (Math/pow 2 63) 1))
                 (>= value 0))
-           "INTEGER must be in the range of values for 4 bytes.")
+           "INTEGER must be in the range of values for 8 bytes.")
     ))
 
     (dotimes [iter 100]
