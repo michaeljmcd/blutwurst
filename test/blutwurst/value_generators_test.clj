@@ -27,7 +27,7 @@
 (deftest random-value-test
  (testing "Basic random number generator respects size of smallint."
   (let [generator-fn (->> vg/value-generation-strategies
-                         (filter #(= "Random Integer Generator" (:name %)))
+                         (filter #(= "Integer Generator" (:name %)))
                          first
                          :generator)]
     (dotimes [iter 100]

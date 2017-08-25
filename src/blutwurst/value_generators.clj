@@ -22,11 +22,6 @@
                     (crop-to-column-size % (.random g)))
    })
 
-(defn- random-integer []
- (let [random (Random.)]
-   (.nextInt random)
- ))
-
 (defn random-integer-under-value [max-value]
   (let [random (Random.)]
      (mod (.nextLong random) max-value)
@@ -69,39 +64,39 @@
   ^{ :private true }
   [
    { 
-     :name "Random State Abbreviation Selector (U.S. and Canada)"
+     :name "State Abbreviation Selector (U.S. and Canada)"
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "STATE"))
      :generator (make-resource-generator-fn "state_table.csv" 1 2)
    }
    { 
-     :name "Random State Name Selector (U.S. and Canada)"
+     :name "State Name Selector (U.S. and Canada)"
      :determiner #(do % nil)
      :generator (make-resource-generator-fn "state_table.csv" 1 1)
    }
    {
-     :name "Random Full Name Selector (U.S.)"
+     :name "Full Name Selector (U.S.)"
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "FULL") (string/includes? (:name %) "NAME"))
      :generator (let [last-name-fn (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3 0)
                       first-name-fn (make-resource-generator-fn "census-derived-all-first.csv" 0 0)]
                   #(crop-to-column-size % (str (last-name-fn %) " " (first-name-fn %))))
    }
    {
-     :name "Random First Name Selector (U.S.)"
+     :name "First Name Selector (U.S.)"
      :determiner #(and (column-is-string? %) (string/includes? (:name %) "FIRST"))
      :generator (make-resource-generator-fn "census-derived-all-first.csv" 0 0)
    }
    {
-      :name "Random Last Name Selector (U.S.)"
+      :name "Last Name Selector (U.S.)"
       :determiner #(and (column-is-string? %) (string/includes? (:name %) "LAST"))
       :generator (make-resource-generator-fn "Names_2010Census_Top1000.csv" 3 0)
    }
    {
-       :name "Random City Generator"
+       :name "City Generator"
        :determiner #(and (column-is-string? %) (string/includes? (:name %) "CITY"))
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getCity l))))
    }
    {
-       :name "Random Email Generator"
+       :name "Email Generator"
        :determiner #(and (column-is-string? %) (string/includes? (:name %) "EMAIL"))
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getEmail l))))
    }
@@ -116,28 +111,28 @@
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getZipCode l))))
    }
    {
-      :name "Random Text Generator"
+      :name "Text Generator"
       :determiner column-is-string?
        :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (or (:length c) 10)))))
    }
    {
-      :name "Random String Generator"
+      :name "String Generator"
       :determiner column-is-string?
       :generator #(random-string (or (min (:length %) 2000) 255))
    }
    {
-       :name "Random Integer Generator"
+       :name "Integer Generator"
        :determiner #(some #{(:type %)} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT"))
        :generator #(random-integer-under-value (max-integer-value-for-column %))
    }
    {
-       :name "Random Decimal Generator"
+       :name "Decimal Generator"
        :determiner #(some #{(:type %)} '("DECIMAL" "DOUBLE"))
        :generator (fn [c] (random-decimal)) ; TODO account for column's max value
    }
    {
-       :name "Random Date / Timestamp Generator"
-       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2"))
+       :name "Date / Timestamp Generator"
+       :determiner #(some #{(:type %)} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET"))
        :generator (fn [c] (random-datetime))
    }
   ])

@@ -109,19 +109,19 @@ To view available generators, including those specified at the command line, run
 
 This will print something like the following:
 
-    Random State Abbreviation Selector (U.S. and Canada)
-    Random State Name Selector (U.S. and Canada)
-    Random Full Name Selector (U.S.)
-    Random First Name Selector (U.S.)
-    Random Last Name Selector (U.S.)
-    Random String Generator
-    Random Integer Generator
-    Random Decimal Generator
-    Random Date / Timestamp Generator
+    State Abbreviation Selector (U.S. and Canada)
+    State Name Selector (U.S. and Canada)
+    Full Name Selector (U.S.)
+    First Name Selector (U.S.)
+    Last Name Selector (U.S.)
+    String Generator
+    Integer Generator
+    Decimal Generator
+    Date / Timestamp Generator
 
 These names are the names of the different generators. You can force a generator to be used like so:
 
-    blutwurst --column '.*_NOM' --generator 'Random Last Name Selector (U.S.)'
+    blutwurst --column '.*_NOM' --generator 'Last Name Selector (U.S.)'
 
 Be aware that most databases give the columns in all caps.
 
