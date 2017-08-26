@@ -135,8 +135,9 @@ the list is provided below.
 
 	  -o, --output OUTPUT_FILE            -             Individual file to which to write the generated data.
 	  -K, --config CONFIG_FILE                          Use options in CONFIG_FILE as though they were command line options.
-	  -d, --directory OUTPUT_DIRECTORY                 Output directory to which to write individual table-named files.
+	  -d, --directory OUTPUT_DIRECTORY                  Output directory to which to write individual table-named files.
 	  -s, --schema SCHEMA                 []            Database schemas to include in the database scan.
+	  -t, --table TABLE                   []            Database tables to include in the database scan. If provided, only listed tables are included.
 	  -c, --connection-string CONNECTION  jdbc:h2:mem:  Connection string to scan.
 	  -f, --format FORMAT                 :csv          Format to which test data should be exported. Valid options are csv, json and sql.
 	  -n, --number-of-rows NUMBER         100           Number of rows to be generated for each table.
