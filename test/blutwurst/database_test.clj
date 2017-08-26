@@ -8,6 +8,13 @@
 
 (use-fixtures :each db-fixture logging-fixture)
 
+(def person-table {:name "PERSON",
+                         :schema "DBO",
+                         :dependencies []
+                         :columns
+                         [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
+                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]})
+
 (def full-expected-graph {:tables
                        [{:name "PURCHASETYPE" :schema "DBO" 
                          :columns [
@@ -45,16 +52,17 @@
                           {:name "PURCHASETYPENAME" :type "VARCHAR" :length 50 :nullable true}
                           {:name "AMOUNT", :type "DECIMAL", :length 65535, :nullable true}
                           {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
-                        {:name "PERSON",
-                         :schema "DBO",
-                         :dependencies []
-                         :columns
-                         [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
-                          {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
+                          person-table
                         ]
                        })
 
 (deftest table-graph-tests
+  (testing "Returns only specified tables when a list is provided."
+    (let [spec {:connection-string connection-string :included-tables '("PERSON")}
+          table-graph (retrieve-table-graph spec)]
+      (is (= {:tables [person-table]} table-graph))
+    ))
+
   (testing "Connects to an in-memory database and returns basic table list."
      (let [spec {:connection-string connection-string}
            table-graph (retrieve-table-graph spec)]

@@ -55,10 +55,16 @@
 
 (defn- retrieve-tables [spec]
  (with-jdbc-meta-data spec
-    #(if (empty? (:included-schemas spec))
-        (build-table-list (.getTables % nil nil nil (into-array ["TABLE"])) [])
+   #(cond 
+      (not (empty? (:included-tables spec)))
+        (mapcat (fn [s] (build-table-list (.getTables % nil nil s (into-array ["TABLE"])) [])) 
+                        (:included-tables spec))
+      (not (empty? (:included-schemas spec)))
         (mapcat (fn [s] (build-table-list (.getTables % nil s nil (into-array ["TABLE"])) [])) 
-                (:included-schemas spec))
+                        (:included-schemas spec))
+      :else
+        (build-table-list (.getTables % nil nil nil (into-array ["TABLE"])) [])
+
      )))
 
 (defn- string->boolean [input]
