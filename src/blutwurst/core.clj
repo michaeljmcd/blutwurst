@@ -21,6 +21,9 @@
    ["-s" "--schema SCHEMA" "Database schemas to include in the database scan."
     :default []
     :assoc-fn accumulate-arguments]
+   ["-t" "--table TABLE" "Database tables to include in the database scan. If provided, only listed tables are included."
+    :default []
+    :assoc-fn accumulate-arguments]
    ["-c" "--connection-string CONNECTION" "Connection string to scan."
      :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
@@ -53,6 +56,7 @@
    :output-file (:output options)
    :output-directory (:directory options)
    :included-schemas (:schema options)
+   :included-tables (:table options)
    :number-of-rows (:number-of-rows options)
    :column-generator-overrides (map #(hash-map :column-pattern %1 :generator-name %2) 
                                     (:column options) 

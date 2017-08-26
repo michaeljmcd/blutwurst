@@ -38,6 +38,12 @@
       )))
 
 (deftest spec-building-tests
+  (testing "Builds out included tables list."
+    (let [args (list "test.jar" "--table" "T1" "-s" "a" "-t" "T2")
+          result (core/build-spec (:options (parse-opts args core/cli-options)))]
+      (is (= (list "T1" "T2") (:included-tables result)))
+      ))
+
  (testing "Output directory chosen from correct input."
   (let [args (list "test.jar" "--column" "ASDF" "--output-dir" "foo" "--directory" "baz")
         result (core/build-spec (:options (parse-opts args core/cli-options)))]

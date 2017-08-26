@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Changed
 - Changed the long option for the output directory to `--directory` for `--output-dir`.
+- Added the option to pass in a fixed list of tables from the command line rather than scanning the full database.
 
 ## [0.4.1] - 2017-08-25
 ### Fixed
