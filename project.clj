@@ -16,6 +16,7 @@
                  [com.h2database/h2 "1.4.195" :scope "test"]]
   :plugins [[quickie "0.4.1"] 
             [lein-print "0.1.0"]
+            [lein-cljfmt "0.5.7"]
             [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
