@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Fixed
 - Corrected the identification of SQL Server's "INT IDENTITY" as a string.
+- Added limits to prevent usage of the lorem ipsum text generator from causing stack overflow exceptions on large column inputs.
 
 ### Added
 - Added the option to pass in a fixed list of tables from the command line rather than scanning the full database.

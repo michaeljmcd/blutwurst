@@ -56,6 +56,10 @@
 (defn- list-contains-type [type-list column]
   (some #{(string/upper-case (:type column))} type-list))
 
+(defn- calculate-maximum-word-count [column]
+  (let [base-count (or (:length column) 255)]
+    (min base-count 2000)))
+
 (def value-generation-strategies
   ^{:private true}
   [{:name "State Abbreviation Selector (U.S. and Canada)"
@@ -92,7 +96,7 @@
     :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getUrl l))))}
    {:name "Text Generator"
     :determiner column-is-string?
-    :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (or (:length c) 10)))))}
+    :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (calculate-maximum-word-count c)))))}
    {:name "String Generator"
     :determiner column-is-string?
     :generator #(random-string (or (min (:length %) 2000) 255))}
