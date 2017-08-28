@@ -146,6 +146,7 @@ the list is provided below.
 		  --generator-name NAME           []            Specifies the name of a generator to be created through command line arguments.
 		  --generator-regex REGEX         []            Specifies a regex to be used when generating data.
 		  --list-generators                             List out registered generators.
+	  -i, --ignore COLUMN                 []            Ignore a column entirely when generating data.
 	  -v, --verbose
 	  -h, --help
 
