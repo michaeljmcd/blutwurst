@@ -80,6 +80,20 @@
                (generate-tuples-for-plan spec (list weapon-table))))
     )))
 
+ (testing "Ignores columns that are passed in the ignore list when they are also foreign keys."
+   (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
+     #(let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
+                                                                    {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
+            hero-table '{:name "Hero" :schema "asdf" :columns ({:name "Name" :type "VARCHAR" :length 200}
+                                                                {:name "PrimaryWeaponID" :type "INTEGER" :length 3})
+                         :dependencies [
+                           {:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}
+                         ]}
+            spec {:number-of-rows 1 :ignored-columns ["PrimaryWeaponID"]}
+            result (generate-tuples-for-plan spec (list weapon-table hero-table))]
+        (is (= (list {:Name "asdf"}) (:tuples (nth result 1))))
+    )))
+
  (testing "Generator override is used."
    (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
      #(let [spec {:column-generator-overrides (list {:column-pattern "^ID$" :generator-name "Random Decimal Generator"})

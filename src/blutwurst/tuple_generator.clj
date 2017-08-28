@@ -1,5 +1,6 @@
 (ns blutwurst.tuple-generator
   (:require [taoensso.timbre :as timbre :refer [trace error]]
+            [clojure.pprint :refer :all]
             [blutwurst.value-generators :refer [create-generators random-integer-under-value]]))
 
 (defn- generator-search [column strategies]
@@ -53,8 +54,18 @@
           (:columns table))
  ))
 
+(defn- dependency-contains-ignored-column [spec dep]
+ (some (fn [x] (some #(let [re (re-pattern %)]
+                       (or (re-matches re (first x)) 
+                           (re-matches re (second x))))
+                     (:ignored-columns spec)))
+       (:links dep)))
+
+(defn- filter-ignored-columns [spec dependencies]
+ (remove (partial dependency-contains-ignored-column spec) dependencies))
+
 (def ^:private build-generator-fn (memoize (fn [spec table generated-data]
- (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (:dependencies table))
+ (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (filter-ignored-columns spec (:dependencies table)))
        value-generators (map #(hash-map :column % 
                                         :generator (->> % (select-generators-for-column spec) :generator)) 
                              (value-columns spec table))]
