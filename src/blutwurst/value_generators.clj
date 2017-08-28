@@ -37,7 +37,7 @@
 ))
 
 (defn- column-is-string? [column]
-  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "TEXT")))
+  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "TEXT" "STRING")))
 
 (defn- max-integer-value-for-column [c]
   (cond
