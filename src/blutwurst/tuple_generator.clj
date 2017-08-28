@@ -46,16 +46,18 @@
     ))
  ))
 
-(defn- value-columns [table]
+(defn- value-columns [spec table]
  (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]
-  (remove #(some (fn [x] (= (:name %) x)) linked-columns) (:columns table))
+  (remove #(or (some (fn [x] (= (:name %) x)) linked-columns) 
+               (some (fn [x] (re-matches (re-pattern x) (:name %))) (:ignored-columns spec)))
+          (:columns table))
  ))
 
-(defn- build-generator-fn [spec table generated-data]
+(def ^:private build-generator-fn (memoize (fn [spec table generated-data]
  (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (:dependencies table))
        value-generators (map #(hash-map :column % 
                                         :generator (->> % (select-generators-for-column spec) :generator)) 
-                             (value-columns table))]
+                             (value-columns spec table))]
 
     (doseq [c value-generators]
      (if (nil? (:generator c))
@@ -69,7 +71,7 @@
                                   value-generators)
               )))
     )
-  ))
+  ))))
 
 (defn- generate-tuples-for-table [table-descriptor spec generated-data]
   (let [table-generator (build-generator-fn spec table-descriptor generated-data)]

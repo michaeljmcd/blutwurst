@@ -38,6 +38,12 @@
       )))
 
 (deftest spec-building-tests
+  (testing "Builds out ignored columns list."
+   (let [args (list "test.jar" "-v" "-i" "COL2" "--ignore" "COL1")
+         result (core/build-spec (:options (parse-opts args core/cli-options)))]
+    (is (= (list "COL2" "COL1") (:ignored-columns result)))
+   ))
+
   (testing "Builds out included tables list."
     (let [args (list "test.jar" "--table" "T1" "-s" "a" "-t" "T2")
           result (core/build-spec (:options (parse-opts args core/cli-options)))]

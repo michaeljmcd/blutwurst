@@ -46,6 +46,9 @@
      :default []
      :assoc-fn accumulate-arguments]
    [nil "--list-generators" "List out registered generators."]
+   ["-i" "--ignore COLUMN" "Ignore a column entirely when generating data."
+     :default []
+     :assoc-fn accumulate-arguments]
    ["-v" "--verbose" :id :verbose]
    ["-h" "--help"]])
 
@@ -62,6 +65,7 @@
                                     (:column options) 
                                     (:generator options))
    :regex-generators (map #(hash-map :name %1 :regex %2) (:generator-name options) (:generator-regex options))
+   :ignored-columns (:ignore options)
   })
 
 (defn- exit-with-code [code]

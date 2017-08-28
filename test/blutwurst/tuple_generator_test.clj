@@ -71,6 +71,15 @@
      )))
 
 (deftest generator-overrides
+ (testing "Ignores columns that are passed in the ignore list."
+   (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
+     #(let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
+                                                                 {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
+            spec {:number-of-rows 2 :ignored-columns ["I.*"]}]
+        (is (= `({:table ~weapon-table :tuples ~(repeat 2 {:Name "asdf"})})
+               (generate-tuples-for-plan spec (list weapon-table))))
+    )))
+
  (testing "Generator override is used."
    (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
      #(let [spec {:column-generator-overrides (list {:column-pattern "^ID$" :generator-name "Random Decimal Generator"})
