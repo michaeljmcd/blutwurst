@@ -27,7 +27,7 @@
  (str "UNKNOWN" @unknown-count))
 
 (defn- extract-basics [schema]
- {:schema (get schema "$schema") :name (or (get schema "title") (create-name-for-entity)) :dependencies []}) 
+ {:schema nil :name (or (get schema "title") (create-name-for-entity)) :dependencies []}) 
 
 (defn- determine-nullability-for-column [schema column]
  (let [required-columns (set (get schema "required"))]

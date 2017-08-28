@@ -3,6 +3,7 @@
             [clojure.string :as string]
             [taoensso.timbre :as timbre :refer [log  trace with-level]]
             [blutwurst.database :refer [retrieve-table-graph]]
+            [blutwurst.jsonschema :refer [parse-json-schema-from-spec]]
             [blutwurst.planner :refer [create-data-generation-plan]]
             [blutwurst.tuple-generator :refer [generate-tuples-for-plan]]
             [blutwurst.tuple-formatter :refer [format-rows]]
@@ -24,7 +25,7 @@
    ["-t" "--table TABLE" "Database tables to include in the database scan. If provided, only listed tables are included."
     :default []
     :assoc-fn accumulate-arguments]
-   ["-c" "--connection-string CONNECTION" "Connection string to scan."
+   ["-c" "--connection-string CONNECTION" "Connection string to scan. If a connection that is not a JDBC connection string is passed, it is assumed to be a JSON Schema instead."
     :default "jdbc:h2:mem:"]
    ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json and sql."
     :parse-fn #(keyword %)
@@ -109,6 +110,11 @@
     (println err))
   (exit-with-code 1))
 
+(defn- discover-schema [spec]
+ (if (string/starts-with? (:connection-string spec) "jdbc:")
+  (retrieve-table-graph spec)
+  (parse-json-schema-from-spec spec)))
+
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
   [& args]
@@ -127,7 +133,7 @@
         (-> parsed-input :options :help) (usage (:summary parsed-input))
         (-> parsed-input :options :list-generators) (print-generator-list spec)
         :else (->> spec
-                   retrieve-table-graph
+                   discover-schema
                    create-data-generation-plan
                    (generate-tuples-for-plan spec)
                    (format-rows spec)

@@ -7,7 +7,7 @@
 (deftest json-schema-parsing
   (testing "Basic JSON Schema parsing tests."
    (let [spec {:connection-string (io/resource "address.json")}
-         expected {:tables [{:name "UNKNOWN1" :schema "http://json-schema.org/draft-06/schema#" :dependencies []
+         expected {:tables [{:name "UNKNOWN1" :schema nil :dependencies []
                    :columns [{:name "post-office-box" :type "STRING" :nullable true}
                              {:name "extended-address" :type "STRING" :nullable true}
                              {:name "street-address" :type "STRING" :nullable true}
