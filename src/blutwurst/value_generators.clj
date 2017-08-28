@@ -37,7 +37,7 @@
 ))
 
 (defn- column-is-string? [column]
-  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "INT IDENTITY")))
+  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "TEXT")))
 
 (defn- max-integer-value-for-column [c]
   (cond
@@ -97,10 +97,10 @@
     :determiner column-is-string?
     :generator #(random-string (or (min (:length %) 2000) 255))}
    {:name "Integer Generator"
-    :determiner (partial list-contains-type '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT"))
+    :determiner (partial list-contains-type '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY"))
     :generator #(random-integer-under-value (max-integer-value-for-column %))}
    {:name "Decimal Generator"
-    :determiner (partial list-contains-type '("DECIMAL" "DOUBLE"))
+    :determiner (partial list-contains-type '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY"))
     :generator (fn [c] (random-decimal)) ; TODO account for column's max value
 }
    {:name "Date / Timestamp Generator"
