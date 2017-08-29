@@ -40,7 +40,9 @@
     (fn []
       (let [chosen-row (nth (:tuples targeted-table) (random-integer-under-value tuple-count))
             column-values (map #(list (keyword (first %)) (get chosen-row (keyword (second %)))) (:links dependency))]
-        column-values))))
+        (if (= :embedded (-> dependency :links first second))
+          (list (keyword (-> dependency :links first first)) chosen-row)
+          column-values)))))
 
 (defn- value-columns [spec table]
   (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]

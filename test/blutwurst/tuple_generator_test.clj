@@ -9,7 +9,7 @@
 (def fixed-generators
   ^{:private true}
   [{:name "Random String Generator"
-    :determiner #(= (:type %) "VARCHAR")
+    :determiner #(or (= (:type %) "VARCHAR") (= (:type %) "STRING"))
     :generator (fn [x] "asdf")}
    {:name "Random Integer Generator"
     :determiner #(= (:type %) "INTEGER")
@@ -38,6 +38,18 @@
     (let [a-table '{:name "ASDF" :schema "foo" :columns ({:name "BAZ" :type "IXIAN"})}
           result (generate-tuples-for-plan {} (list a-table))]
       (is (thrown? NullPointerException (pr-str (seq result))))))
+
+  (testing "Embeds full objects for that kind of dependency."
+    (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
+      #(let [address-table {:name "Address" :schema nil :columns [{:name "Address1" :type "STRING" :length 10}
+                                                                  {:name "City" :type "STRING" :length 10}]}
+             person-table {:name "Person" :schema nil :columns [{:name "Address" :type "OBJECT"} {:name "Name" :type "STRING"}]
+                           :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
+             spec {:number-of-rows 2}
+             result (generate-tuples-for-plan spec (list address-table person-table))]
+         (is (= `({:table ~address-table :tuples ~(repeat 2 {:Address1 "asdf" :City "asdf"})}
+                  {:table ~person-table :tuples ~(repeat 2 {:Name "asdf" :Address {:Address1 "asdf" :City "asdf"}})})
+                result)))))
 
   (testing "Foreign key values are all found in source table."
     (let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
