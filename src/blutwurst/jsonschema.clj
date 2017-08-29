@@ -15,11 +15,14 @@
 (defn- is-json-array? [prop]
  (= "ARRAY" (string/upper-case (-> prop second first second))))
 
+(defn- parse-json-array-property [prop]
+  {:name (first prop) :container "array" :type (-> prop second (get "items") (get "type") lookup-type)})
+
 (defn- extract-properties [schema res]
   (assoc res :columns
          (mapv (fn [prop] 
                 (if (is-json-array? prop)
-                  {:name (first prop) :container "array" :type (-> prop second (get "items") (get "type") lookup-type)}
+                  (parse-json-array-property prop)
                   {:name (first prop) :type (lookup-type (-> prop second first second))}))
                (get schema "properties"))))
 
