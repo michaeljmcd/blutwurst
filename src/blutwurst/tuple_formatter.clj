@@ -17,10 +17,10 @@
     (mapv extract-data-from-row rows)))
 
 (defn- extract-column-names [prefix row]
-    (map  #(if (map? (second %)) 
+    (flatten (map  #(if (map? (second %)) 
                      (extract-column-names (name (first %)) (second %))
                      (if (not (empty? prefix)) (str prefix "." (-> % first name)) (-> % first name))) 
-            row)
+            row))
 )
 
 (defn- create-csv-column-list [table]
@@ -28,7 +28,6 @@
       :tuples
       first
       (extract-column-names nil)
-      flatten
       vector))
 
 (defn- csv-formatter [spec table]
@@ -53,8 +52,11 @@
 (defn- parenthesize [v] (str "(" v ")"))
 
 (defn- build-columns [table]
-  (->> (-> table :table :columns)
-       (mapv (fn [column] (sql-identifier (:name column))))
+  (->> table
+       :tuples
+       first
+       (extract-column-names nil)
+       (mapv (fn [column] (sql-identifier column)))
        comma-delimit
        parenthesize))
 
