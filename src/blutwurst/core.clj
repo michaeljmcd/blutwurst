@@ -111,9 +111,9 @@
   (exit-with-code 1))
 
 (defn- discover-schema [spec]
- (if (string/starts-with? (:connection-string spec) "jdbc:")
-  (retrieve-table-graph spec)
-  (parse-json-schema-from-spec spec)))
+  (if (string/starts-with? (:connection-string spec) "jdbc:")
+    (retrieve-table-graph spec)
+    (parse-json-schema-from-spec spec)))
 
 (defn -main
   "Main command line interface that will pass in arguments and kick off the data generation process."
