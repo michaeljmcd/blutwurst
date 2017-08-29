@@ -7,36 +7,35 @@
 
 (defn- extract-data-from-row [row]
   (->> row
-       (mapv #(if (map? (second %)) 
-               (extract-data-from-row (second %))
-               (second %)))
-       flatten)) 
+       (mapv #(if (map? (second %))
+                (extract-data-from-row (second %))
+                (second %)))
+       flatten))
 
 (defn- extract-data-from-table-tuples [table]
   (let [rows (:tuples table)]
     (mapv extract-data-from-row rows)))
 
 (defn- extract-column-names [prefix row]
-    (flatten (map  #(if (map? (second %)) 
-                     (extract-column-names (name (first %)) (second %))
-                     (if (not (empty? prefix)) (str prefix "." (-> % first name)) (-> % first name))) 
-            row))
-)
+  (flatten (map  #(if (map? (second %))
+                    (extract-column-names (name (first %)) (second %))
+                    (if (not (empty? prefix)) (str prefix "." (-> % first name)) (-> % first name)))
+                 row)))
 
 (defn- create-csv-column-list [table]
- (->> table
-      :tuples
-      first
-      (extract-column-names nil)
-      vector))
+  (->> table
+       :tuples
+       first
+       (extract-column-names nil)
+       vector))
 
 (defn- csv-formatter [spec table]
- (let [column-list (create-csv-column-list table)]
-  {:table (:table table)
-   :tuples (vector (with-out-str
-                     (csv/write-csv *out*
-                                    (concat column-list
-                                            (extract-data-from-table-tuples table)))))}))
+  (let [column-list (create-csv-column-list table)]
+    {:table (:table table)
+     :tuples (vector (with-out-str
+                       (csv/write-csv *out*
+                                      (concat column-list
+                                              (extract-data-from-table-tuples table)))))}))
 
 (defn- comma-delimit [values]
   (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))
