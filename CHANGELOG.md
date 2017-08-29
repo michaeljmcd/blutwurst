@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file. This change
 - Added a command line option (`--ignore` / `-i`) to ignore a column during data generation.
 - Added a null data generation option to give the user a way to force a column to null.
 - Money / currency types to the list recognized by the decimal generator.
+- Basic support for JSON Schema input.
 
 ### Changed
 - Changed the long option for the output directory to `--directory` for `--output-dir`.
