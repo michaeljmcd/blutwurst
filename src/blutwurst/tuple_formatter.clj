@@ -5,16 +5,39 @@
             [cheshire.core :as json]
             [taoensso.timbre :as timbre :refer [trace]]))
 
+(defn- extract-data-from-row [row]
+  (->> row
+       (mapv #(if (map? (second %)) 
+               (extract-data-from-row (second %))
+               (second %)))
+       flatten)) 
+
 (defn- extract-data-from-table-tuples [table]
   (let [rows (:tuples table)]
-    (mapv (fn [r] (mapv #(second %) r)) rows)))
+    (mapv extract-data-from-row rows)))
+
+(defn- extract-column-names [prefix row]
+    (map  #(if (map? (second %)) 
+                     (extract-column-names (name (first %)) (second %))
+                     (if (not (empty? prefix)) (str prefix "." (-> % first name)) (-> % first name))) 
+            row)
+)
+
+(defn- create-csv-column-list [table]
+ (->> table
+      :tuples
+      first
+      (extract-column-names nil)
+      flatten
+      vector))
 
 (defn- csv-formatter [spec table]
+ (let [column-list (create-csv-column-list table)]
   {:table (:table table)
    :tuples (vector (with-out-str
                      (csv/write-csv *out*
-                                    (concat (vector (map #(-> % first name) (first (:tuples table))))
-                                            (extract-data-from-table-tuples table)))))})
+                                    (concat column-list
+                                            (extract-data-from-table-tuples table)))))}))
 
 (defn- comma-delimit [values]
   (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))

@@ -13,7 +13,16 @@
           table {:name "Example" :schema "foo" :columns '({:name "A" :type "INTEGER"} {:name "B" :type "INTEGER"})}
           rows `({:table ~table :tuples ({:A 1 :B 2})})]
       (is (= `[{:table ~table :tuples ["A,B\n1,2\n"]}]
-             (format-rows spec rows))))))
+             (format-rows spec rows)))))
+  
+  (testing "Flattens out embedded objects."
+   (let [spec {:format :csv}
+             person-table {:name "Person" :schema nil :columns [{:name "Address" :type "OBJECT"} {:name "Name" :type "STRING"}]
+                           :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
+            data `({:table ~person-table :tuples ~(list {:name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
+     (is (= [{:table person-table :tuples ["name,Address.Address1,Address.City\nJohn Doe,123 Main,Springfield\n"]}]
+           (format-rows spec data)))
+   )))
 
 (deftest sql-formatter-test
   (testing "Basic SQL generation with integer-only values."
