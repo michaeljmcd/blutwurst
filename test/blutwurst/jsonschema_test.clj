@@ -2,7 +2,10 @@
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
             [clojure.java.io :as io]
+            [blutwurst.logging-fixture :refer :all]
             [blutwurst.jsonschema :refer :all]))
+
+(use-fixtures :each logging-fixture)
 
 (deftest json-schema-parsing
   (testing "Basic JSON Schema parsing tests."
@@ -16,7 +19,6 @@
                              {:name "postal-code" :type "STRING" :nullable true}
                              {:name "country-name" :type "STRING" :nullable false}]}]}
          result (parse-json-schema-from-spec spec)]
-         (pprint result)
     (is (= expected result))))
   
   (testing "Handles 2-ply objects."

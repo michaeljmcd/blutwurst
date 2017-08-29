@@ -15,7 +15,6 @@
   )))
 
 (defn- extract-properties [schema res] 
- (pprint schema)
  (assoc res :columns
      (mapv (fn [prop] {:name (first prop) :type (lookup-type prop)})
            (get schema "properties"))))
@@ -39,13 +38,30 @@
 (defn- extract-dependencies [schema res] 
  res)
 
-(defn- map-schema [schema]
- { :tables (vector 
-     (->> schema
-          extract-basics
-          (extract-properties schema)
-          (determine-nullabilty schema)
-          (extract-dependencies schema)))})
+(defn- find-child-schemas [schema]
+ (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))]
+  (map #(if (nil? (get (second %) "title"))
+          (assoc (second %) "title" (first %))
+          (second %)
+             ) aggregate-properties)
+ )
+)
+
+(defn- map-schema [schema-list result]
+ (if (empty? schema-list)
+  result
+(let [schema (first schema-list)
+ mapped-schema 
+  (->> schema
+       extract-basics
+       (extract-properties schema)
+       (determine-nullabilty schema)
+       (extract-dependencies schema))
+
+       child-schemas (find-child-schemas schema)]
+  (recur (concat (rest schema-list) child-schemas)
+   (conj result mapped-schema)))
+))
 
 (defn parse-json-schema 
  "Accepts location, which should be coercible to a reader via clojure.java.io.reader,
@@ -53,7 +69,7 @@
  [location] 
  (with-open [r (io/reader location)]
   (let [json-document (json/parse-stream r)]
-   (map-schema json-document))))
+   {:tables (map-schema (list json-document) [])})))
 
 (defn parse-json-schema-from-spec [spec] 
  (-> spec
