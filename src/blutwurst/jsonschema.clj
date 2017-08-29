@@ -35,8 +35,16 @@
 (defn- determine-nullabilty [schema res] 
  (assoc res :columns (mapv (partial determine-nullability-for-column schema) (:columns res))))
 
+(defn- create-dependency-for-aggregate-property [prop]
+ {:target-schema nil :target-name (if (nil? (get (second prop) "title")) (first prop) (get (second prop) "title")) 
+     :dependency-name nil :links {(first prop) :embedded}}
+)
+
 (defn- extract-dependencies [schema res] 
- res)
+ (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))
+       aggregate-dependencies (mapv create-dependency-for-aggregate-property aggregate-properties)]
+   (assoc res :dependencies aggregate-dependencies)
+ ))
 
 (defn- find-child-schemas [schema]
  (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))]
