@@ -5,17 +5,22 @@
             [clojure.pprint :refer :all]
             [taoensso.timbre :as timbre :refer [trace]]))
 
-(defn- lookup-type [prop]
-  (let [raw-value (second (first (second prop)))]
+(defn- lookup-type [raw-value]
     (case (string/upper-case raw-value)
       "STRING" "STRING"
       "NUMBER" "DECIMAL"
       "INTEGER" "INTEGER"
-      "OBJECT" "OBJECT")))
+      "OBJECT" "OBJECT"))
+
+(defn- is-json-array? [prop]
+ (= "ARRAY" (string/upper-case (-> prop second first second))))
 
 (defn- extract-properties [schema res]
   (assoc res :columns
-         (mapv (fn [prop] {:name (first prop) :type (lookup-type prop)})
+         (mapv (fn [prop] 
+                (if (is-json-array? prop)
+                  {:name (first prop) :container "array" :type (-> prop second (get "items") (get "type") lookup-type)}
+                  {:name (first prop) :type (lookup-type (-> prop second first second))}))
                (get schema "properties"))))
 
 (def ^:private unknown-count (atom 0))
@@ -35,8 +40,14 @@
   (assoc res :columns (mapv (partial determine-nullability-for-column schema) (:columns res))))
 
 (defn- create-dependency-for-aggregate-property [prop]
-  {:target-schema nil :target-name (if (nil? (get (second prop) "title")) (first prop) (get (second prop) "title"))
-   :dependency-name nil :links {(first prop) :embedded}})
+  {
+    :target-schema nil 
+    :target-name (if (nil? (get (second prop) "title")) 
+                   (first prop) 
+                   (get (second prop) "title"))
+    :dependency-name nil 
+    :links {(first prop) :embedded}
+   })
 
 (defn- extract-dependencies [schema res]
   (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))

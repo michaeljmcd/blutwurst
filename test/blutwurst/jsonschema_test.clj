@@ -21,6 +21,16 @@
           result (parse-json-schema-from-spec spec)]
       (is (= expected result))))
 
+  (testing "Handles arrays."
+   (let [spec {:connection-string (io/resource "arrays.json")}
+         result (parse-json-schema-from-spec spec)]
+     (is (= {:tables [{:name "Arrays" :schema nil :dependencies []
+                       :columns [{:name "id" :type "INTEGER" :nullable true}
+                                 {:name "tags" :type "STRING" :nullable true :container "array"}]
+                                 }]} result))
+   )
+  )
+
   (testing "Handles 2-ply objects."
     (let [spec {:connection-string (io/resource "hero.json")}
           expected {:tables [{:name "Hero" :schema nil

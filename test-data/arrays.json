@@ -1,0 +1,14 @@
+{
+    "title": "Arrays",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
+}
