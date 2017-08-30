@@ -1,0 +1,21 @@
+{
+    "title": "Arrays",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "tag-sets": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "foo": { "type": "string" },
+                        "baz": { "type" : "array", "items": {"type": "number"}}
+                    }
+                }
+            }
+        }
+    }
+}

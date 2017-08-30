@@ -10,6 +10,7 @@
       "STRING" "STRING"
       "NUMBER" "DECIMAL"
       "INTEGER" "INTEGER"
+      "ARRAY" "ARRAY"
       "OBJECT" "OBJECT"))
 
 (defn- is-json-array? [prop]
@@ -57,11 +58,23 @@
         aggregate-dependencies (mapv create-dependency-for-aggregate-property aggregate-properties)]
     (assoc res :dependencies aggregate-dependencies)))
 
+(defn- extract-schemas-from-array-properties [schema]
+    (->> (get schema "properties") 
+                                  (map #(if (= "ARRAY" (string/upper-case (-> % second (get "type"))))
+                                            (if (= "OBJECT" (string/upper-case (-> % second (get "items") (get "type"))))
+                                             [(first %) (-> % second (get "items"))]
+                                             nil)
+                                            nil))
+                                  (remove nil?)))
+
 (defn- find-child-schemas [schema]
-  (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))]
+  (let [aggregate-properties (filter #(= "object" (get (second %) "type")) (get schema "properties"))
+        array-properties (extract-schemas-from-array-properties schema)]
+        (pprint array-properties)
     (map #(if (nil? (get (second %) "title"))
             (assoc (second %) "title" (first %))
-            (second %)) aggregate-properties)))
+            (second %)) 
+         (concat aggregate-properties array-properties))))
 
 (defn- map-schema [schema-list result]
   (if (empty? schema-list)

@@ -21,7 +21,7 @@
           result (parse-json-schema-from-spec spec)]
       (is (= expected result))))
 
-  (testing "Handles arrays."
+  (testing "Handles simple arrays."
    (let [spec {:connection-string (io/resource "arrays.json")}
          result (parse-json-schema-from-spec spec)]
      (is (= {:tables [{:name "Arrays" :schema nil :dependencies []
@@ -30,6 +30,19 @@
                                  }]} result))
    )
   )
+
+    (testing "Handles complex arrays."
+       (let [spec {:connection-string (io/resource "arrays2.json")}
+             result (parse-json-schema-from-spec spec)]
+         (is (= {:tables [{:name "Arrays" :schema nil :dependencies [{:target-schema nil :target-name "UNKNOWN1" :dependency-name nil :links {"tags" :embedded}}]
+                           :columns [{:name "id" :type "INTEGER" :nullable true}
+                                     {:name "tag-sets" :type "OBJECT" :nullable true :container "array"}]
+                                     },
+                          {:name "UNKNOWN1" :schema nil :dependencies []
+                           :columns [{:name "foo" :type "STRING" :nullable true}
+                                     {:name "baz" :type "DECIMAL" :nullable true :container "array"}]}]} result))
+       )
+      )
 
   (testing "Handles 2-ply objects."
     (let [spec {:connection-string (io/resource "hero.json")}
