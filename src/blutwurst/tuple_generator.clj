@@ -71,7 +71,9 @@
                                                    value-generators (map #(hash-map :column %
                                                                                     :generator (->> % (select-generators-for-column spec) :generator))
                                                                          (value-columns spec table))
-                                                   complex-generators (map #(fn[] (list (-> % :name keyword) ((build-generator-fn spec % generated-data)))) (complex-columns table))]
+                                                   complex-generators (map #(let [compound-generator (build-generator-fn spec % generated-data)]
+                                                                              (fn[] (list (-> % :name keyword) (compound-generator)))) 
+                                                                           (complex-columns table))]
                                                (doseq [c value-generators]
                                                  (if (nil? (:generator c))
                                                    (error "Unable to find generator for column " (:column c))))
