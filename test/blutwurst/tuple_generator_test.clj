@@ -9,13 +9,13 @@
 (def fixed-generators
   ^{:private true}
   [{:name "Random String Generator"
-    :determiner #(or (= (:type %) :string) (= (:type %) :string))
+    :determiner #(= (:type %) :string)
     :generator (fn [x] "asdf")}
    {:name "Random Integer Generator"
     :determiner #(= (:type %) :integer)
     :generator (fn [c] 100)}
    {:name "Random Decimal Generator"
-    :determiner #(= (:type %) "DECIMAL")
+    :determiner #(= (:type %) :decimal)
     :generator (fn [c] 1.7)}])
 
 (use-fixtures :each logging-fixture)

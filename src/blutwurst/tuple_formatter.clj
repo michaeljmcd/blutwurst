@@ -36,7 +36,7 @@
 
 (defn- csv-formatter [spec table]
   (let [column-list (create-csv-column-list table)]
-    {:table (:table table)
+    {:entity (:entity table)
      :tuples (vector (with-out-str
                        (csv/write-csv *out*
                                       (concat column-list
@@ -49,9 +49,9 @@
   (str "\"" token "\""))
 
 (defn- make-table-name [table]
-  (keyword (str (-> table :table :schema)
+  (keyword (str (-> table :entity :schema)
                 "."
-                (-> table :table :name))))
+                (-> table :entity :name))))
 
 (defn- parenthesize [v] (str "(" v ")"))
 
@@ -92,18 +92,18 @@
 (defn- sql-formatter
   "This will generate SQL-1999 insert statements for the attached table and return it as a string."
   [spec table]
-  (let [schema (if (not (empty? (-> table :table :schema)))
-                 (str (sql-identifier (-> table :table :schema)) ".")
+  (let [schema (if (not (empty? (-> table :entity :schema)))
+                 (str (sql-identifier (-> table :entity :schema)) ".")
                  "")
-        table-name (-> table :table :name)
+        table-name (-> table :entity :name)
         columns (build-columns table)
         tuples (build-tuples table)]
 
-    {:table (:table table)
+    {:entity (:entity table)
      :tuples (vector (<< "INSERT INTO ~{schema}\"~{table-name}\" ~{columns} VALUES ~{tuples};\n"))}))
 
 (defn- json-formatter [spec table]
-  {:table (:table table)
+  {:entity (:entity table)
    :tuples (vector (json/generate-string (:tuples table)))})
 
 (defn format-rows [spec tables]

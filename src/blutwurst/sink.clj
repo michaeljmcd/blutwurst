@@ -14,9 +14,9 @@
       (doseq [x tables]
         (let [path (str base-dir
                         java.io.File/separator
-                        (or (-> x :table :schema) "NOSCHEMA")
+                        (or (-> x :entity :schema) "NOSCHEMA")
                         "_"
-                        (-> x :table :name)
+                        (-> x :entity :name)
                         "."
                         extension)]
           (spit path (apply str (:tuples x))))))))
