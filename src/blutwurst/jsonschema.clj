@@ -17,12 +17,12 @@
 (defn- determine-type [prop]
  (let [prop-type (string/upper-case (or (get prop "type") ""))]
   (cond 
-   (and (empty? prop-type) (contains? prop "properties")) :object
+   (and (empty? prop-type) (contains? prop "properties")) :complex
    (empty? prop-type) nil
    (= prop-type "STRING") :string
    (= prop-type "NUMBER") :decimal
    (= prop-type "INTEGER") :integer
-   (= prop-type "OBJECT") :object
+   (= prop-type "OBJECT") :complex
    (= prop-type "ARRAY") :sequence)
  )
 )
@@ -40,8 +40,12 @@
 (defn- create-property-from-entry [schema prop]
 (let [basic-data
 {:name (first prop) :type (determine-type (second prop)) :constraints (build-constraints-for-property schema prop) }]
-(if (= (:type basic-data) :sequence)
+(cond
+(= (:type basic-data) :sequence)
  (assoc basic-data :properties (vector (map-schema "items" (get (second prop) "items"))))
+(= (:type basic-data) :complex)
+ (assoc basic-data :properties (vector (map-schema (first prop) (second prop))))
+ :else
  basic-data
 )
 ))
