@@ -46,11 +46,23 @@
 
 (testing "Handles 2-ply objects."
     (let [spec {:connection-string (io/resource "hero.json")}
-          expected {:entities [{:name "Hero" :schema nil
-                              :dependencies []
-                              :properties [{:name "name" :type :string :constraints {:nullable true} }
-                                        {:name "weapon" :type :complex :constraints {:nullable true} :properties [
-                              {:name "type" :type :string :constraints {:nullable true}}
-                                        {:name "range" :type :decimal :constraints {:nullable true}}]}]}]}
+          expected  {:entities '({:dependencies []
+                       :name "Hero"
+                       :properties [{:constraints {:nullable true}
+                                     :name "name"
+                                     :type :string}
+                                    {:constraints {:nullable true}
+                                     :dependencies []
+                                     :name "weapon"
+                                     :properties [{:constraints {:nullable true}
+                                                   :name "type"
+                                                   :type :string}
+                                                  {:constraints {:nullable true}
+                                                   :name "range"
+                                                   :type :decimal}]
+                                     :schema nil
+                                     :type :complex}]
+                       :schema nil
+                       :type :complex})}
           result (parse-json-schema-from-spec spec)]
       (is (= expected result)))))

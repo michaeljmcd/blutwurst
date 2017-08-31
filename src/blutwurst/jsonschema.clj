@@ -44,7 +44,7 @@
 (= (:type basic-data) :sequence)
  (assoc basic-data :properties (vector (map-schema "items" (get (second prop) "items"))))
 (= (:type basic-data) :complex)
- (assoc basic-data :properties (vector (map-schema (first prop) (second prop))))
+(assoc (map-schema (first prop) (second prop))  :constraints (build-constraints-for-property schema prop) )
  :else
  basic-data
 )
