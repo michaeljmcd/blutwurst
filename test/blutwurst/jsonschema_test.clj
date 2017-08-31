@@ -31,16 +31,24 @@
    )
   )
 
-#_(testing "Handles complex arrays."
+(testing "Handles complex arrays."
        (let [spec {:connection-string (io/resource "arrays2.json")}
              result (parse-json-schema-from-spec spec)]
-         (is (= {:tables [{:name "Arrays" :schema nil :dependencies [{:target-schema nil :target-name "UNKNOWN1" :dependency-name nil :links {"tags" :embedded}}]
-                           :columns [{:name "id" :type "INTEGER" :nullable true}
-                                     {:name "tag-sets" :type "OBJECT" :nullable true :container "array"}]
-                                     },
-                          {:name "UNKNOWN1" :schema nil :dependencies []
-                           :columns [{:name "foo" :type "STRING" :nullable true}
-                                     {:name "baz" :type "DECIMAL" :nullable true :container "array"}]}]} result))
+         (is (=  {:entities ({:dependencies []
+                       :name "Arrays"
+                       :properties [{:constraints {:nullable true}
+                                     :name "id"
+                                     :type :integer}
+                                    {:constraints {:nullable true}
+                                     :name "tag-sets"
+                                     :properties [{:dependencies []
+                                                   :name "items"
+                                                   :properties []
+                                                   :schema nil
+                                                   :type :sequence}]
+                                     :type :sequence}]
+                       :schema nil
+                       :type :complex})} result))
        )
       )
 
