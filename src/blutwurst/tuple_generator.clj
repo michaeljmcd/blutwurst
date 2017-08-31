@@ -33,8 +33,8 @@
         (find-generator-by-name override-name generators)))))
 
 (defn- build-dependency-selector-fn [generated-data dependency]
-  (let [targeted-table (first (filter #(and (= (-> % :table :schema) (:target-schema dependency))
-                                            (= (-> % :table :name) (:target-name dependency)))
+  (let [targeted-table (first (filter #(and (= (-> % :entity :schema) (:target-schema dependency))
+                                            (= (-> % :entity :name) (:target-name dependency)))
                                       generated-data))
         tuple-count (count (:tuples targeted-table))]
     (fn []
