@@ -31,26 +31,27 @@
   (testing "Basic random number generator respects size of smallint."
     (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type :integer})] ; TINYINT
+        (let [value (generator-fn {:name "foo" :type :integer :constraints {:minimum-value 0 :maximum-value 255}})] ; TINYINT
           (is (and (<= value 255)
                    (>= value 0))
               "SMALLINT must be in the range of values for one byte.")))
 
     ; TODO: these should all allow for negative values.
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type :integer})] ; SMALLINT
+        (let [value (generator-fn {:name "foo" :type :integer
+                     :constraints {:minimum-value 0 :maximum-value (- (Math/pow 2 15) 1)}})] ; SMALLINT
           (is (and (<= value (- (Math/pow 2 15) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 2 bytes.")))
 
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type :integer})] ; "BIGINT"
+        (let [value (generator-fn {:name "foo" :type :integer :constraints {:minimum-value 0 :maximum-value (- (Math/pow 2 63) 1)}})] ; "BIGINT"
           (is (and (<= value (- (Math/pow 2 63) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 8 bytes.")))
 
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type :integer})] ; integer
+        (let [value (generator-fn {:name "foo" :type :integer :constraints {:minimum-value 0 :maximum-value (- (Math/pow 2 32) 1)}})] ; integer
           (is (and (<= value (- (Math/pow 2 32) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 4 bytes.")))))

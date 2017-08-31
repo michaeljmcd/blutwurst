@@ -1,6 +1,6 @@
 (ns blutwurst.value-generators
   (:import (java.util Random Date)
-           (java.lang Math)
+           (java.lang Math Integer)
            (com.thedeanda.lorem LoremIpsum)
            (com.mifmif.common.regex Generex))
   (:require [clojure.data.csv :as csv]
@@ -95,7 +95,7 @@
     :generator #(random-string (or (min (:length %) 2000) 255))}
    {:name "Integer Generator"
     :determiner #(= (:type %) :integer)
-    :generator #(random-integer-under-value (-> % :constraints :maximum-value))}
+    :generator #(random-integer-under-value (or (-> % :constraints :maximum-value) Integer/MAX_VALUE))}
    {:name "Decimal Generator"
     :determiner #(= (:type %) :decimal)
     :generator (fn [c] (random-decimal)) ; TODO account for column's max value
