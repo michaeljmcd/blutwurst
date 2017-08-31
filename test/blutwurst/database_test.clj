@@ -11,14 +11,14 @@
 (def person-table {:name "PERSON",
                    :schema "DBO",
                    :dependencies []
-                   :columns
-                   [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
-                    {:name "ID", :type "INTEGER", :length 10, :nullable true}]})
+                   :properties
+                   [{:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
+                    {:name "ID", :type :integer, :constraints {:nullable true :maximum-length 10}}]})
 
-(def full-expected-graph {:tables
+(def full-expected-graph {:entities
                           [{:name "PURCHASETYPE" :schema "DBO"
-                            :columns [{:name "CATEGORY" :type "VARCHAR" :length 50 :nullable true}
-                                      {:name "NAME" :type "VARCHAR" :length 50 :nullable true}]
+                            :properties [{:name "CATEGORY" :type :string  :constraints {:nullable true :maximum-length 50}}
+                                      {:name "NAME" :type :string :constraints {:nullable true :maximum-length 50}}]
                             :dependencies []}
                            {:name "PURCHASE",
                             :schema "DBO",
@@ -31,22 +31,23 @@
                                             :target-schema "DBO"
                                             :links {"PURCHASETYPENAME" "NAME"
                                                     "PURCHASETYPECATEGORY" "CATEGORY"}}]
-                            :columns
+                            :properties
                             [{:name "PURCHASEDBYID",
-                              :type "INTEGER",
-                              :length 10,
-                              :nullable false}
-                             {:name "PURCHASETYPECATEGORY" :type "VARCHAR" :length 50 :nullable true}
-                             {:name "PURCHASETYPENAME" :type "VARCHAR" :length 50 :nullable true}
-                             {:name "AMOUNT", :type "DECIMAL", :length 65535, :nullable true}
-                             {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
+                              :type :integer,
+                              :constraints {
+                              :maximum-length 10,
+                              :nullable false}}
+                             {:name "PURCHASETYPECATEGORY" :type :string :constraints {:nullable true :maximum-length 50}}
+                             {:name "PURCHASETYPENAME" :type :string :constraints {:nullable true :maximum-length 50}}
+                             {:name "AMOUNT", :type :decimal,  :constraints {:nullable true :maximum-length 65535}}
+                             {:name "ID", :type :integer,  :constraints {:nullable true :maximum-length 10}}]}
                            person-table]})
 
 (deftest table-graph-tests
   (testing "Returns only specified tables when a list is provided."
     (let [spec {:connection-string connection-string :included-tables '("PERSON")}
           table-graph (retrieve-table-graph spec)]
-      (is (= {:tables [person-table]} table-graph))))
+      (is (= {:entities [person-table]} table-graph))))
 
   (testing "Connects to an in-memory database and returns basic table list."
     (let [spec {:connection-string connection-string}
@@ -56,7 +57,7 @@
   (testing "Table scans exclude schemas when at least one is provided."
     (let [spec {:connection-string connection-string :included-schemas '("FOOBAR")}
           table-graph (retrieve-table-graph spec)]
-      (is (= {:tables []} table-graph))))
+      (is (= {:entities []} table-graph))))
 
   (testing "Table scans include schemas when at least one is provided."
     (let [spec {:connection-string connection-string :included-schemas '("DBO")}

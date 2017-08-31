@@ -33,6 +33,8 @@
         required-properties (get schema "required")]
     {:nullable (nil? (some #(= property-name %) required-properties))}))
 
+(declare map-schema)
+
 (defn- create-property-from-entry [schema prop]
   (let [basic-data
         {:name (first prop) :type (determine-type (second prop)) :constraints (build-constraints-for-property schema prop)}]

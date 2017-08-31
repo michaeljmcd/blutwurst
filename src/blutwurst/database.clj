@@ -65,16 +65,37 @@
     "NO" false
     nil))
 
+(defn- determine-type [input-type]
+ (let [a-type (cstring/upper-case (or input-type ""))]
+  (cond 
+   (empty? a-type) :string
+   (some #{a-type} '("NVARCHAR" "CHAR" "VARCHAR" "TEXT" "STRING")) :string
+   (some #{a-type} '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY")) :decimal
+   (some #{a-type} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY")) :integer
+   (some #{a-type} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET")) :datetime
+   :else :string
+ )
+))
+
+(defn- add-type-hints [rs result]
+ (if (= (cstring/upper-case (or (.getString rs "TYPE_NAME") "")) "INT IDENTITY")
+  (assoc result :type-hints (vector :identity))
+  result)
+)
+
 (defn- read-columns [rs result]
   (if (not (.next rs))
     result
-    (do
+    (let [column (->> {:name (.getString rs "COLUMN_NAME")
+                       :type (determine-type (.getString rs "TYPE_NAME"))
+                       :constraints {
+                           :maximum-length (.getInt rs "COLUMN_SIZE")
+                           :nullable (string->boolean (.getString rs "IS_NULLABLE"))}
+                       }
+                       (add-type-hints rs))]
       (trace "Found column " (.getString rs "COLUMN_NAME") " with type " (.getString rs "TYPE_NAME"))
 
-      (recur rs (cons {:name (.getString rs "COLUMN_NAME")
-                       :type (.getString rs "TYPE_NAME")
-                       :length (.getInt rs "COLUMN_SIZE")
-                       :nullable (string->boolean (.getString rs "IS_NULLABLE"))}
+      (recur rs (cons column
                       result)))))
 
 (defn- retrieve-columns-for-table [meta-data table]
@@ -90,7 +111,7 @@
 (defn- retrieve-columns [spec tables]
   (with-jdbc-meta-data spec
     #(mapv (fn [table]
-             (assoc table :columns (retrieve-columns-for-table % table)))
+             (assoc table :properties (retrieve-columns-for-table % table)))
            tables)))
 
 ; This code is gnarly. Need to find a better way to represent what is going on
@@ -142,4 +163,4 @@
                         retrieve-tables
                         (retrieve-columns spec)
                         (retrieve-keys spec))]
-    {:tables table-list}))
+    {:entities table-list}))
