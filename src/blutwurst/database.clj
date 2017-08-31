@@ -77,10 +77,50 @@
  )
 ))
 
-(defn- add-type-hints [rs result]
+(defn- max-integer-value-for-column [type-name]
+  (cond
+    (= type-name "TINYINT") (long 255)
+    (= type-name "SMALLINT") (long (- (Math/pow 2 15) 1))
+    (= type-name "BIGINT") (long (- (Math/pow 2 63) 1))
+    :else (long (- (Math/pow 2 32) 1)))
+  )
+
+(defn- check-for-identity [rs result]
  (if (= (cstring/upper-case (or (.getString rs "TYPE_NAME") "")) "INT IDENTITY")
   (assoc result :type-hints (vector :identity))
   result)
+)
+
+(defn- add-type-hints [rs result]
+ (->> result
+      (check-for-identity rs)
+      )
+)
+
+(defn- add-nullable-constraint [rs result]
+    (assoc-in result [:constraints :nullable] (string->boolean (.getString rs "IS_NULLABLE")))
+)
+
+(defn- add-maximum-length [rs result]
+  (if (= :string (:type result)) 
+   (assoc-in result [:constraints :maximum-length] (.getInt rs "COLUMN_SIZE"))
+  result)
+)
+
+(defn- add-integer-constraints [rs result]
+ (if (= :integer (:type result))
+  (-> result
+      (assoc-in [:constraints :maximum-value] (max-integer-value-for-column (cstring/upper-case (.getString rs "TYPE_NAME"))))
+      (assoc-in [:constraints :minimum-value] 0) ; TODO: add negative values here
+      )
+  result)
+)
+
+(defn- add-constraints [rs result]
+ (->> result
+      (add-nullable-constraint rs)
+      (add-maximum-length rs)
+      (add-integer-constraints rs))
 )
 
 (defn- read-columns [rs result]
@@ -88,10 +128,8 @@
     result
     (let [column (->> {:name (.getString rs "COLUMN_NAME")
                        :type (determine-type (.getString rs "TYPE_NAME"))
-                       :constraints {
-                           :maximum-length (.getInt rs "COLUMN_SIZE")
-                           :nullable (string->boolean (.getString rs "IS_NULLABLE"))}
                        }
+                       (add-constraints rs)
                        (add-type-hints rs))]
       (trace "Found column " (.getString rs "COLUMN_NAME") " with type " (.getString rs "TYPE_NAME"))
 

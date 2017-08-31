@@ -48,7 +48,7 @@
   (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]
     (remove #(or (some (fn [x] (= (:name %) x)) linked-columns)
                  (some (fn [x] (re-matches (re-pattern x) (:name %))) (:ignored-columns spec)))
-            (:columns table))))
+            (:properties table))))
 
 (defn- dependency-contains-ignored-column [spec dep]
   (some (fn [x] (some #(let [re (re-pattern %)]
@@ -79,7 +79,7 @@
 
 (defn- generate-tuples-for-table [table-descriptor spec generated-data]
   (let [table-generator (build-generator-fn spec table-descriptor generated-data)]
-    {:table table-descriptor :tuples (repeatedly (:number-of-rows spec) table-generator)}))
+    {:entity table-descriptor :tuples (repeatedly (:number-of-rows spec) table-generator)}))
 
 (defn- generate-tuples-for-plan* [spec execution-plan result]
   (if (empty? execution-plan)

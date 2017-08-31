@@ -13,7 +13,7 @@
                    :dependencies []
                    :properties
                    [{:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
-                    {:name "ID", :type :integer, :constraints {:nullable true :maximum-length 10}}]})
+                    {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]})
 
 (def full-expected-graph {:entities
                           [{:name "PURCHASETYPE" :schema "DBO"
@@ -35,12 +35,13 @@
                             [{:name "PURCHASEDBYID",
                               :type :integer,
                               :constraints {
-                              :maximum-length 10,
+                              :minimum-value 0
+                              :maximum-value 4294967295,
                               :nullable false}}
                              {:name "PURCHASETYPECATEGORY" :type :string :constraints {:nullable true :maximum-length 50}}
                              {:name "PURCHASETYPENAME" :type :string :constraints {:nullable true :maximum-length 50}}
-                             {:name "AMOUNT", :type :decimal,  :constraints {:nullable true :maximum-length 65535}}
-                             {:name "ID", :type :integer,  :constraints {:nullable true :maximum-length 10}}]}
+                             {:name "AMOUNT", :type :decimal,  :constraints {:nullable true}}
+                             {:name "ID", :type :integer,  :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]}
                            person-table]})
 
 (deftest table-graph-tests

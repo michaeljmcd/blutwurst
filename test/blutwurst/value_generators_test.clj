@@ -26,38 +26,38 @@
   (testing "Null generator always returns null"
     (let [generator-fn (find-generator-fn-by-name "Null Value Generator")]
       (dotimes [iter 5]
-        (is (nil? (generator-fn {:name "foo" :type "FROBNITZ"}))))))
+        (is (nil? (generator-fn {:name "foo" :type :frobnitz}))))))
 
   (testing "Basic random number generator respects size of smallint."
     (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type "TINYINT"})]
+        (let [value (generator-fn {:name "foo" :type :integer})] ; TINYINT
           (is (and (<= value 255)
                    (>= value 0))
               "SMALLINT must be in the range of values for one byte.")))
 
     ; TODO: these should all allow for negative values.
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type "SMALLINT"})]
+        (let [value (generator-fn {:name "foo" :type :integer})] ; SMALLINT
           (is (and (<= value (- (Math/pow 2 15) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 2 bytes.")))
 
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type "BIGINT"})]
+        (let [value (generator-fn {:name "foo" :type :integer})] ; "BIGINT"
           (is (and (<= value (- (Math/pow 2 63) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 8 bytes.")))
 
       (dotimes [iter 100]
-        (let [value (generator-fn {:name "foo" :type "INTEGER"})]
+        (let [value (generator-fn {:name "foo" :type :integer})] ; integer
           (is (and (<= value (- (Math/pow 2 32) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 4 bytes.")))))
 
   (testing "String generators stay within text limits."
     (let [generator-fn (find-generator-fn-by-name "City Generator")
-          column {:name "asdf" :type "asdf" :length 200}]
+          column {:name "asdf" :type "asdf" :constraints {:maximum-length 200}}]
       (dotimes [iter 10]
         (let [value (generator-fn column)]
           (is (<= (count value) 200))))))

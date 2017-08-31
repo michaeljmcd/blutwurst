@@ -37,14 +37,7 @@
 ))
 
 (defn- column-is-string? [column]
-  (some #{(string/upper-case (:type column))} '("VARCHAR" "NVARCHAR" "CHAR" "TEXT" "STRING")))
-
-(defn- max-integer-value-for-column [c]
-  (cond
-    (= (string/upper-case (:type c)) "TINYINT") (long 255)
-    (= (string/upper-case (:type c)) "SMALLINT") (long (- (Math/pow 2 15) 1))
-    (= (string/upper-case (:type c)) "BIGINT") (long (- (Math/pow 2 63) 1))
-    :else (long (- (Math/pow 2 32) 1))))
+  (= :string (:type column)))
 
 (defn- make-resource-generator-fn [resource garbage-rows value-index]
   (let [values (drop garbage-rows (-> resource io/resource io/reader csv/read-csv))
@@ -101,14 +94,14 @@
     :determiner column-is-string?
     :generator #(random-string (or (min (:length %) 2000) 255))}
    {:name "Integer Generator"
-    :determiner (partial list-contains-type '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY"))
-    :generator #(random-integer-under-value (max-integer-value-for-column %))}
+    :determiner #(= (:type %) :integer)
+    :generator #(random-integer-under-value (-> % :constraints :maximum-value))}
    {:name "Decimal Generator"
-    :determiner (partial list-contains-type '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY"))
+    :determiner #(= (:type %) :decimal)
     :generator (fn [c] (random-decimal)) ; TODO account for column's max value
 }
    {:name "Date / Timestamp Generator"
-    :determiner (partial list-contains-type '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET"))
+    :determiner #(= (:type %) :datetime) 
     :generator (fn [c] (random-datetime))}
    {:name "Null Value Generator"
     :determiner #(do % nil)

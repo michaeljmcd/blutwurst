@@ -9,10 +9,10 @@
 (def fixed-generators
   ^{:private true}
   [{:name "Random String Generator"
-    :determiner #(or (= (:type %) "VARCHAR") (= (:type %) "STRING"))
+    :determiner #(or (= (:type %) :string) (= (:type %) :string))
     :generator (fn [x] "asdf")}
    {:name "Random Integer Generator"
-    :determiner #(= (:type %) "INTEGER")
+    :determiner #(= (:type %) :integer)
     :generator (fn [c] 100)}
    {:name "Random Decimal Generator"
     :determiner #(= (:type %) "DECIMAL")
@@ -25,37 +25,37 @@
     (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
       #(let [table-spec '({:name "Destination"
                            :schema "foo"
-                           :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
-                                     {:name "ID" :type "INTEGER" :length 3 :nullable true})})
+                           :properties ({:name "Address1" :type :string :constraints {:maximum-length 20 :nullable false}}
+                                     {:name "ID" :type :integer :constraints {:maximum-length 3 :nullable true}})})
              spec {:number-of-rows 10}]
 
-         (is (= `({:table ~(first table-spec)
+         (is (= `({:entity ~(first table-spec)
                    :tuples ~(repeat 10 {:Address1 "asdf" :ID 100})})
                 (generate-tuples-for-plan spec table-spec)))))))
 
 (deftest generate-tuples-with-foreign-keys
   (testing "Passing an unknown type."
-    (let [a-table '{:name "ASDF" :schema "foo" :columns ({:name "BAZ" :type "IXIAN"})}
+    (let [a-table '{:name "ASDF" :schema "foo" :properties ({:name "BAZ" :type :ixian})}
           result (generate-tuples-for-plan {} (list a-table))]
       (is (thrown? NullPointerException (pr-str (seq result))))))
 
   (testing "Embeds full objects for that kind of dependency."
     (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
-      #(let [address-table {:name "Address" :schema nil :columns [{:name "Address1" :type "STRING" :length 10}
-                                                                  {:name "City" :type "STRING" :length 10}]}
-             person-table {:name "Person" :schema nil :columns [{:name "Address" :type "OBJECT"} {:name "Name" :type "STRING"}]
+      #(let [address-table {:name "Address" :schema nil :properties [{:name "Address1" :type :string :constraints {:maximum-length 10}}
+                                                                  {:name "City" :type :string :constraints {:maximum-length 10}}]}
+             person-table {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]
                            :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
              spec {:number-of-rows 2}
              result (generate-tuples-for-plan spec (list address-table person-table))]
-         (is (= `({:table ~address-table :tuples ~(repeat 2 {:Address1 "asdf" :City "asdf"})}
-                  {:table ~person-table :tuples ~(repeat 2 {:Name "asdf" :Address {:Address1 "asdf" :City "asdf"}})})
+         (is (= `({:entity ~address-table :tuples ~(repeat 2 {:Address1 "asdf" :City "asdf"})}
+                  {:entity ~person-table :tuples ~(repeat 2 {:Name "asdf" :Address {:Address1 "asdf" :City "asdf"}})})
                 result)))))
 
   (testing "Foreign key values are all found in source table."
-    (let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
-                                                                 {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
-          hero-table '{:name "Hero" :schema "asdf" :columns ({:name "Name" :type "VARCHAR" :length 200}
-                                                             {:name "PrimaryWeaponID" :type "INTEGER" :length 3})
+    (let [weapon-table '{:name "Weapon" :schema "asdf" :properties ({:name "ID" :type :integer :constraints {:maximum-length 3 :nullable false}}
+                                                                 {:name "Name" :type :string :constraints {:maximum-length 3 :nullable false}})}
+          hero-table '{:name "Hero" :schema "asdf" :properties ({:name "Name" :type :string :constraints {:maximum-length 200}}
+                                                             {:name "PrimaryWeaponID" :type :integer :constraints {:maximum-length 3}})
                        :dependencies [{:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}]}
           spec {:number-of-rows 100}
           result (generate-tuples-for-plan spec (list weapon-table hero-table))
@@ -68,18 +68,18 @@
 (deftest generator-overrides
   (testing "Ignores columns that are passed in the ignore list."
     (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
-      #(let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
-                                                                    {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
+      #(let [weapon-table '{:name "Weapon" :schema "asdf" :properties ({:name "ID" :type :integer :constraints {:maximum-length 3 :nullable false}}
+                                                                    {:name "Name" :type :string :constraints {:maximum-length 3 :nullable false}})}
              spec {:number-of-rows 2 :ignored-columns ["I.*"]}]
-         (is (= `({:table ~weapon-table :tuples ~(repeat 2 {:Name "asdf"})})
+         (is (= `({:entity ~weapon-table :tuples ~(repeat 2 {:Name "asdf"})})
                 (generate-tuples-for-plan spec (list weapon-table)))))))
 
   (testing "Ignores columns that are passed in the ignore list when they are also foreign keys."
     (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
-      #(let [weapon-table '{:name "Weapon" :schema "asdf" :columns ({:name "ID" :type "INTEGER" :length 3 :nullable false}
-                                                                    {:name "Name" :type "VARCHAR" :length 3 :nullable false})}
-             hero-table '{:name "Hero" :schema "asdf" :columns ({:name "Name" :type "VARCHAR" :length 200}
-                                                                {:name "PrimaryWeaponID" :type "INTEGER" :length 3})
+      #(let [weapon-table '{:name "Weapon" :schema "asdf" :properties ({:name "ID" :type :integer :constraints {:maximum-length 3 :nullable false}}
+                                                                    {:name "Name" :type :string :constraints {:maximum-length 3 :nullable false}})}
+             hero-table '{:name "Hero" :schema "asdf" :properties ({:name "Name" :type :string :constraints {:maximum-length 200}}
+                                                                {:name "PrimaryWeaponID" :type :integer :constraints {:maximum-length 3}})
                           :dependencies [{:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}]}
              spec {:number-of-rows 1 :ignored-columns ["PrimaryWeaponID"]}
              result (generate-tuples-for-plan spec (list weapon-table hero-table))]
@@ -91,7 +91,7 @@
                    :number-of-rows 5}
              tables '({:name "Destination"
                        :schema "foo"
-                       :columns ({:name "Address1" :type "VARCHAR" :length 20 :nullable false}
-                                 {:name "ID" :type "INTEGER" :length 3 :nullable true})})]
-         (is (= `({:table ~(first tables) :tuples ~(repeat 5 {:Address1 "asdf" :ID 1.7})})
+                       :properties ({:name "Address1" :type :string :constraints {:maximum-length 20 :nullable false}}
+                                 {:name "ID" :type :integer :constraints {:maximum-length 3 :nullable true}})})]
+         (is (= `({:entity ~(first tables) :tuples ~(repeat 5 {:Address1 "asdf" :ID 1.7})})
                 (generate-tuples-for-plan spec tables)))))))
