@@ -31,7 +31,7 @@
   (testing "Handles complex arrays."
     (let [spec {:connection-string (io/resource "arrays2.json")}
           result (parse-json-schema-from-spec spec)]
-      (is (=  {:entities ({:dependencies []
+      (is (=  {:entities '({:dependencies []
                            :name "Arrays"
                            :properties [{:constraints {:nullable true}
                                          :name "id"
