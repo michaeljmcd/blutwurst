@@ -18,12 +18,12 @@
 
 (defn- extract-column-names [prefix row]
   (flatten (map  #(if (map? (second %))
-                    (extract-column-names (if (nil? prefix) 
-                                            (name (first %)) 
-                                            (str prefix "." (name (first %)))) 
-                                           (second %))
-                    (if (not (empty? prefix)) 
-                      (str prefix "." (-> % first name)) 
+                    (extract-column-names (if (nil? prefix)
+                                            (name (first %))
+                                            (str prefix "." (name (first %))))
+                                          (second %))
+                    (if (not (empty? prefix))
+                      (str prefix "." (-> % first name))
                       (-> % first name)))
                  row)))
 
