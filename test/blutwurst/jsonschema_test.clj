@@ -26,7 +26,7 @@
          result (parse-json-schema-from-spec spec)]
      (is (= {:entities [{:name "Arrays" :schema nil :type :object :dependencies []
                        :properties [{:name "id" :type :integer :constraints {:nullable true}}
-                                 {:name "tags" :type :sequence :constraints {:nullable true} :properties [{:type :string}]}]
+                                 {:name "tags" :type :sequence :constraints {:nullable true} :properties [{:type :string :dependencies [] :schema nil :name "items" :properties []}]}]
                                  }]} result))
    )
   )

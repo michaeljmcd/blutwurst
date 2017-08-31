@@ -37,11 +37,18 @@
  {:nullable (nil? (some #(= property-name %) required-properties))}
 ))
 
+(defn- create-property-from-entry [schema prop]
+(let [basic-data
+{:name (first prop) :type (determine-type (second prop)) :constraints (build-constraints-for-property schema prop) }]
+(if (= (:type basic-data) :sequence)
+ (assoc basic-data :properties (vector (map-schema "items" (get (second prop) "items"))))
+ basic-data
+)
+))
+
 (defn- map-properties [schema result]
  (assoc result :properties
- (mapv (fn [prop]
-       {:name (first prop) :type (determine-type (second prop)) :constraints (build-constraints-for-property schema prop) }
-       ) (get schema "properties")))
+ (mapv (partial create-property-from-entry schema) (get schema "properties")))
 )
 
 (defn- map-schema [hint schema]
