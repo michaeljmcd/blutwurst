@@ -45,8 +45,12 @@
       basic-data)))
 
 (defn- map-properties [schema result]
-  (assoc result :properties
-         (mapv (partial create-property-from-entry schema) (get schema "properties"))))
+  (if (= (:type result) :sequence)
+   (assoc result :properties (vector (map-schema nil (get schema "items"))))
+  (assoc result 
+         :properties
+         (mapv (partial create-property-from-entry schema) 
+                 (get schema "properties")))))
 
 (defn- map-schema [hint schema]
   (->> schema
