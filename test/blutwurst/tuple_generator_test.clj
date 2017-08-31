@@ -52,10 +52,10 @@
                 result)))))
 
   (testing "Foreign key values are all found in source table."
-    (let [weapon-table '{:name "Weapon" :schema "asdf" :properties ({:name "ID" :type :integer :constraints {:maximum-length 3 :nullable false}}
+    (let [weapon-table '{:name "Weapon" :schema "asdf" :properties ({:name "ID" :type :integer :constraints {:maximum-value 255 :nullable false}}
                                                                  {:name "Name" :type :string :constraints {:maximum-length 3 :nullable false}})}
           hero-table '{:name "Hero" :schema "asdf" :properties ({:name "Name" :type :string :constraints {:maximum-length 200}}
-                                                             {:name "PrimaryWeaponID" :type :integer :constraints {:maximum-length 3}})
+                                                             {:name "PrimaryWeaponID" :type :integer :constraints {:maximum-value 255}})
                        :dependencies [{:target-name "Weapon" :target-schema "asdf" :links {"PrimaryWeaponID" "ID"}}]}
           spec {:number-of-rows 100}
           result (generate-tuples-for-plan spec (list weapon-table hero-table))
