@@ -10,10 +10,10 @@
   (testing "Testing the process of sequencing tables."
     (let [person-table-def {:name "PERSON",
                             :schema "DBO",
-                            :columns
+                            :properties
                             [{:name "NAME", :type "VARCHAR", :length 100, :nullable true}
                              {:name "ID", :type "INTEGER", :length 10, :nullable true}]}
-          simple-schema {:tables (list person-table-def)}]
+          simple-schema {:entities (list person-table-def)}]
 
       (is (= (list person-table-def)
              (create-data-generation-plan simple-schema)))))
@@ -25,15 +25,15 @@
     (is (= '() (create-data-generation-plan (list)))))
 
   (testing "Planning should account for foreign key relationships when buidling out a plan."
-    (let [city-table-definition {:name "CITY" :schema "ASDF" :columns '({:name "STATE"} {:name "COUNTRY"} {:name "NAME"})
+    (let [city-table-definition {:name "CITY" :schema "ASDF" :properties '({:name "STATE"} {:name "COUNTRY"} {:name "NAME"})
                                  :dependencies [{:dependency-name "D1" :target-name "STATE"
                                                  :target-schema "ASDF" :links {"STATE" "NAME"}}
                                                 {:dependency-name "D2" :target-name "COUNTRY"
                                                  :target-schema "ASDF" :links {"COUNTRY" "NAME"}}]}
-          country-table-definition {:name "COUNTRY" :schema "ASDF" :columns '({:name "NAME"}) :dependencies []}
-          state-table-definition {:name "STATE" :schema "ASDF" :columns '({:name "NAME"})
+          country-table-definition {:name "COUNTRY" :schema "ASDF" :properties '({:name "NAME"}) :dependencies []}
+          state-table-definition {:name "STATE" :schema "ASDF" :properties '({:name "NAME"})
                                   :dependencies []}
-          foreign-key-schema {:tables (list country-table-definition city-table-definition state-table-definition)}
+          foreign-key-schema {:entities (list country-table-definition city-table-definition state-table-definition)}
           result (create-data-generation-plan foreign-key-schema)]
 
       (trace "Table order: " (pr-str (seq (map #(str (:schema %) "." (:name %)) result))))
@@ -42,14 +42,14 @@
              result))))
 
   (testing "Planning should work for multiple nested levels of keys."
-    (let [city-table-definition {:name "CITY" :schema "ASDF" :columns '({:name "STATE"}  {:name "NAME"})
+    (let [city-table-definition {:name "CITY" :schema "ASDF" :properties '({:name "STATE"}  {:name "NAME"})
                                  :dependencies [{:dependency-name "D1" :target-name "STATE"
                                                  :target-schema "ASDF" :links {"STATE" "NAME"}}]}
-          country-table-definition {:name "COUNTRY" :schema "ASDF" :columns '({:name "NAME"}) :dependencies []}
-          state-table-definition {:name "STATE" :schema "ASDF" :columns '({:name "NAME"} {:name "COUNTRY"})
+          country-table-definition {:name "COUNTRY" :schema "ASDF" :properties '({:name "NAME"}) :dependencies []}
+          state-table-definition {:name "STATE" :schema "ASDF" :properties '({:name "NAME"} {:name "COUNTRY"})
                                   :dependencies [{:dependency-name "D2" :target-name "COUNTRY"
                                                   :target-schema "ASDF" :links {"COUNTRY" "NAME"}}]}
-          foreign-key-schema {:tables (list country-table-definition city-table-definition state-table-definition)}
+          foreign-key-schema {:entities (list country-table-definition city-table-definition state-table-definition)}
           result (create-data-generation-plan foreign-key-schema)]
 
       (trace "Table order: " (pr-str (seq (map #(str (:schema %) "." (:name %)) result))))
