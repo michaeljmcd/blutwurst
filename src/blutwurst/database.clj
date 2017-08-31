@@ -66,71 +66,60 @@
     nil))
 
 (defn- determine-type [input-type]
- (let [a-type (cstring/upper-case (or input-type ""))]
-  (cond 
-   (empty? a-type) :string
-   (some #{a-type} '("NVARCHAR" "CHAR" "VARCHAR" "TEXT" "STRING")) :string
-   (some #{a-type} '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY")) :decimal
-   (some #{a-type} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY")) :integer
-   (some #{a-type} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET")) :datetime
-   :else :string
- )
-))
+  (let [a-type (cstring/upper-case (or input-type ""))]
+    (cond
+      (empty? a-type) :string
+      (some #{a-type} '("NVARCHAR" "CHAR" "VARCHAR" "TEXT" "STRING")) :string
+      (some #{a-type} '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY")) :decimal
+      (some #{a-type} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY")) :integer
+      (some #{a-type} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET")) :datetime
+      :else :string)))
 
 (defn- max-integer-value-for-column [type-name]
   (cond
     (= type-name "TINYINT") (long 255)
     (= type-name "SMALLINT") (long (- (Math/pow 2 15) 1))
     (= type-name "BIGINT") (long (- (Math/pow 2 63) 1))
-    :else (long (- (Math/pow 2 32) 1)))
-  )
+    :else (long (- (Math/pow 2 32) 1))))
 
 (defn- check-for-identity [rs result]
- (if (= (cstring/upper-case (or (.getString rs "TYPE_NAME") "")) "INT IDENTITY")
-  (assoc result :type-hints (vector :identity))
-  result)
-)
+  (if (= (cstring/upper-case (or (.getString rs "TYPE_NAME") "")) "INT IDENTITY")
+    (assoc result :type-hints (vector :identity))
+    result))
 
 (defn- add-type-hints [rs result]
- (->> result
-      (check-for-identity rs)
-      )
-)
+  (->> result
+       (check-for-identity rs)))
 
 (defn- add-nullable-constraint [rs result]
-    (assoc-in result [:constraints :nullable] (string->boolean (.getString rs "IS_NULLABLE")))
-)
+  (assoc-in result [:constraints :nullable] (string->boolean (.getString rs "IS_NULLABLE"))))
 
 (defn- add-maximum-length [rs result]
-  (if (= :string (:type result)) 
-   (assoc-in result [:constraints :maximum-length] (.getInt rs "COLUMN_SIZE"))
-  result)
-)
+  (if (= :string (:type result))
+    (assoc-in result [:constraints :maximum-length] (.getInt rs "COLUMN_SIZE"))
+    result))
 
 (defn- add-integer-constraints [rs result]
- (if (= :integer (:type result))
-  (-> result
-      (assoc-in [:constraints :maximum-value] (max-integer-value-for-column (cstring/upper-case (.getString rs "TYPE_NAME"))))
-      (assoc-in [:constraints :minimum-value] 0) ; TODO: add negative values here
-      )
-  result)
+  (if (= :integer (:type result))
+    (-> result
+        (assoc-in [:constraints :maximum-value] (max-integer-value-for-column (cstring/upper-case (.getString rs "TYPE_NAME"))))
+        (assoc-in [:constraints :minimum-value] 0) ; TODO: add negative values here
 )
+    result))
 
 (defn- add-constraints [rs result]
- (->> result
-      (add-nullable-constraint rs)
-      (add-maximum-length rs)
-      (add-integer-constraints rs))
-)
+  (->> result
+       (add-nullable-constraint rs)
+       (add-maximum-length rs)
+       (add-integer-constraints rs)))
 
 (defn- read-columns [rs result]
   (if (not (.next rs))
     result
     (let [column (->> {:name (.getString rs "COLUMN_NAME")
-                       :type (determine-type (.getString rs "TYPE_NAME"))
-                       }
-                       (add-constraints rs)
-                       (add-type-hints rs))]
+                       :type (determine-type (.getString rs "TYPE_NAME"))}
+                      (add-constraints rs)
+                      (add-type-hints rs))]
       (trace "Found column " (.getString rs "COLUMN_NAME") " with type " (.getString rs "TYPE_NAME"))
 
       (recur rs (cons column

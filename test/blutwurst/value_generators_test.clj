@@ -39,7 +39,7 @@
     ; TODO: these should all allow for negative values.
       (dotimes [iter 100]
         (let [value (generator-fn {:name "foo" :type :integer
-                     :constraints {:minimum-value 0 :maximum-value (- (Math/pow 2 15) 1)}})] ; SMALLINT
+                                   :constraints {:minimum-value 0 :maximum-value (- (Math/pow 2 15) 1)}})] ; SMALLINT
           (is (and (<= value (- (Math/pow 2 15) 1))
                    (>= value 0))
               "INTEGER must be in the range of values for 2 bytes.")))

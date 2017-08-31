@@ -18,7 +18,7 @@
 (def full-expected-graph {:entities
                           [{:name "PURCHASETYPE" :schema "DBO"
                             :properties [{:name "CATEGORY" :type :string  :constraints {:nullable true :maximum-length 50}}
-                                      {:name "NAME" :type :string :constraints {:nullable true :maximum-length 50}}]
+                                         {:name "NAME" :type :string :constraints {:nullable true :maximum-length 50}}]
                             :dependencies []}
                            {:name "PURCHASE",
                             :schema "DBO",
@@ -34,10 +34,9 @@
                             :properties
                             [{:name "PURCHASEDBYID",
                               :type :integer,
-                              :constraints {
-                              :minimum-value 0
-                              :maximum-value 4294967295,
-                              :nullable false}}
+                              :constraints {:minimum-value 0
+                                            :maximum-value 4294967295,
+                                            :nullable false}}
                              {:name "PURCHASETYPECATEGORY" :type :string :constraints {:nullable true :maximum-length 50}}
                              {:name "PURCHASETYPENAME" :type :string :constraints {:nullable true :maximum-length 50}}
                              {:name "AMOUNT", :type :decimal,  :constraints {:nullable true}}

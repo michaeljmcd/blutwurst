@@ -32,34 +32,34 @@
     (let [spec {:connection-string (io/resource "arrays2.json")}
           result (parse-json-schema-from-spec spec)]
       (is (=  {:entities '({:dependencies []
-                       :name "Arrays"
-                       :properties [{:constraints {:nullable true}
-                                     :name "id"
-                                     :type :integer}
-                                    {:constraints {:nullable true}
-                                     :name "tag-sets"
-                                     :properties [{:dependencies []
-                                                   :name "items"
-                                                   :properties [{:dependencies []
-                                                                 :name "UNKNOWN2"
-                                                                 :properties [{:constraints {:nullable true}
-                                                                               :name "foo"
-                                                                               :type :string}
-                                                                              {:constraints {:nullable true}
-                                                                               :name "baz"
-                                                                               :properties [{:dependencies []
-                                                                                             :name "items"
-                                                                                             :properties []
-                                                                                             :schema nil
-                                                                                             :type :decimal}]
-                                                                               :type :sequence}]
-                                                                 :schema nil
-                                                                 :type :complex}]
-                                                   :schema nil
-                                                   :type :sequence}]
-                                     :type :sequence}]
-                       :schema nil
-                       :type :complex})} result))))
+                            :name "Arrays"
+                            :properties [{:constraints {:nullable true}
+                                          :name "id"
+                                          :type :integer}
+                                         {:constraints {:nullable true}
+                                          :name "tag-sets"
+                                          :properties [{:dependencies []
+                                                        :name "items"
+                                                        :properties [{:dependencies []
+                                                                      :name "UNKNOWN2"
+                                                                      :properties [{:constraints {:nullable true}
+                                                                                    :name "foo"
+                                                                                    :type :string}
+                                                                                   {:constraints {:nullable true}
+                                                                                    :name "baz"
+                                                                                    :properties [{:dependencies []
+                                                                                                  :name "items"
+                                                                                                  :properties []
+                                                                                                  :schema nil
+                                                                                                  :type :decimal}]
+                                                                                    :type :sequence}]
+                                                                      :schema nil
+                                                                      :type :complex}]
+                                                        :schema nil
+                                                        :type :sequence}]
+                                          :type :sequence}]
+                            :schema nil
+                            :type :complex})} result))))
 
   (testing "Handles 2-ply objects."
     (let [spec {:connection-string (io/resource "hero.json")}

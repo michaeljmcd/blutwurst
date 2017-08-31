@@ -101,7 +101,7 @@
     :generator (fn [c] (random-decimal)) ; TODO account for column's max value
 }
    {:name "Date / Timestamp Generator"
-    :determiner #(= (:type %) :datetime) 
+    :determiner #(= (:type %) :datetime)
     :generator (fn [c] (random-datetime))}
    {:name "Null Value Generator"
     :determiner #(do % nil)

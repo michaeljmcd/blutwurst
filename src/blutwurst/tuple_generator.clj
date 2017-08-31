@@ -62,17 +62,16 @@
   (remove (partial dependency-contains-ignored-column spec) dependencies))
 
 (defn- complex-columns [table]
- (filter #(= :complex (:type %)) (:properties table))
-)
+  (filter #(= :complex (:type %)) (:properties table)))
 
 (def ^:private build-generator-fn (memoize (fn [spec table generated-data]
-                                             (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) 
+                                             (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data)
                                                                              (filter-ignored-columns spec (:dependencies table)))
                                                    value-generators (map #(hash-map :column %
                                                                                     :generator (->> % (select-generators-for-column spec) :generator))
                                                                          (value-columns spec table))
                                                    complex-generators (map #(let [compound-generator (build-generator-fn spec % generated-data)]
-                                                                              (fn[] (list (-> % :name keyword) (compound-generator)))) 
+                                                                              (fn [] (list (-> % :name keyword) (compound-generator))))
                                                                            (complex-columns table))]
                                                (doseq [c value-generators]
                                                  (if (nil? (:generator c))
