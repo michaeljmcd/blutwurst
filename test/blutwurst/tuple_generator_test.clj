@@ -41,14 +41,12 @@
 
   (testing "Embeds full objects for that kind of dependency."
     (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
-      #(let [address-table {:name "Address" :schema nil :properties [{:name "Address1" :type :string :constraints {:maximum-length 10}}
-                                                                  {:name "City" :type :string :constraints {:maximum-length 10}}]}
-             person-table {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]
-                           :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
+      #(let [person-table {:name "Person" :schema nil :properties [{:name "Address" :schema nil :properties [{:name "Address1" :type :string :constraints {:maximum-length 10}}
+                                                                  {:name "City" :type :string :constraints {:maximum-length 10}}] :type :complex} {:name "Name" :type :string}]
+                           :dependencies []}
              spec {:number-of-rows 2}
-             result (generate-tuples-for-plan spec (list address-table person-table))]
-         (is (= `({:entity ~address-table :tuples ~(repeat 2 {:Address1 "asdf" :City "asdf"})}
-                  {:entity ~person-table :tuples ~(repeat 2 {:Name "asdf" :Address {:Address1 "asdf" :City "asdf"}})})
+             result (generate-tuples-for-plan spec (list person-table))]
+         (is (= `({:entity ~person-table :tuples ~(repeat 2 {:Name "asdf" :Address {:Address1 "asdf" :City "asdf"}})})
                 result)))))
 
   (testing "Foreign key values are all found in source table."

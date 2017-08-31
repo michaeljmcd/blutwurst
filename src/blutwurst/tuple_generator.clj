@@ -47,6 +47,7 @@
 (defn- value-columns [spec table]
   (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]
     (remove #(or (some (fn [x] (= (:name %) x)) linked-columns)
+                 (= :complex (:type %))
                  (some (fn [x] (re-matches (re-pattern x) (:name %))) (:ignored-columns spec)))
             (:properties table))))
 
@@ -60,12 +61,17 @@
 (defn- filter-ignored-columns [spec dependencies]
   (remove (partial dependency-contains-ignored-column spec) dependencies))
 
+(defn- complex-columns [table]
+ (filter #(= :complex (:type %)) (:properties table))
+)
+
 (def ^:private build-generator-fn (memoize (fn [spec table generated-data]
-                                             (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) (filter-ignored-columns spec (:dependencies table)))
+                                             (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data) 
+                                                                             (filter-ignored-columns spec (:dependencies table)))
                                                    value-generators (map #(hash-map :column %
                                                                                     :generator (->> % (select-generators-for-column spec) :generator))
-                                                                         (value-columns spec table))]
-
+                                                                         (value-columns spec table))
+                                                   complex-generators (map #(fn[] (list (-> % :name keyword) ((build-generator-fn spec % generated-data)))) (complex-columns table))]
                                                (doseq [c value-generators]
                                                  (if (nil? (:generator c))
                                                    (error "Unable to find generator for column " (:column c))))
@@ -73,6 +79,7 @@
                                                (fn []
                                                  (apply hash-map
                                                         (flatten (concat (map #(%) dependency-selectors)
+                                                                         (map #(%) complex-generators)
                                                                          (map (fn [a] (list (-> a :column :name keyword)
                                                                                             ((:generator a) (:column a))))
                                                                               value-generators)))))))))
