@@ -64,26 +64,25 @@
 (defn- complex-columns [table]
   (filter #(= :complex (:type %)) (:properties table)))
 
-(def ^:private build-generator-fn (memoize (fn [spec table generated-data]
-                                             (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data)
-                                                                             (filter-ignored-columns spec (:dependencies table)))
-                                                   value-generators (map #(hash-map :column %
-                                                                                    :generator (->> % (select-generators-for-column spec) :generator))
-                                                                         (value-columns spec table))
-                                                   complex-generators (map #(let [compound-generator (build-generator-fn spec % generated-data)]
-                                                                              (fn [] (list (-> % :name keyword) (compound-generator))))
-                                                                           (complex-columns table))]
-                                               (doseq [c value-generators]
-                                                 (if (nil? (:generator c))
-                                                   (error "Unable to find generator for column " (:column c))))
+(def ^:private build-generator-fn 
+ (memoize 
+  (fn [spec table generated-data]
+     (let [dependency-selectors (map (partial build-dependency-selector-fn generated-data)
+                                     (filter-ignored-columns spec (:dependencies table)))
+           value-generators (map #(fn[] (list (-> % :name keyword) ((->> % (select-generators-for-column spec) :generator) %)))
+                                 (value-columns spec table))
+           complex-generators (map #(let [compound-generator (build-generator-fn spec % generated-data)]
+                                      (fn [] (list (-> % :name keyword) (compound-generator))))
+                                   (complex-columns table))]
+       (doseq [c value-generators]
+         (if (nil? (:generator c))
+           (error "Unable to find generator for column " (:column c))))
 
-                                               (fn []
-                                                 (apply hash-map
-                                                        (flatten (concat (map #(%) dependency-selectors)
-                                                                         (map #(%) complex-generators)
-                                                                         (map (fn [a] (list (-> a :column :name keyword)
-                                                                                            ((:generator a) (:column a))))
-                                                                              value-generators)))))))))
+       (fn []
+         (->> (concat dependency-selectors complex-generators value-generators)
+              (map #(%))
+              flatten
+              (apply hash-map)))))))
 
 (defn- generate-tuples-for-table [table-descriptor spec generated-data]
   (let [table-generator (build-generator-fn spec table-descriptor generated-data)]
