@@ -11,17 +11,19 @@
 (def person-table {:name "PERSON",
                    :schema "DBO",
                    :dependencies []
+                   :type :complex
                    :properties
                    [{:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
                     {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]})
 
 (def full-expected-graph {:entities
-                          [{:name "PURCHASETYPE" :schema "DBO"
+                          [{:name "PURCHASETYPE" :schema "DBO" :type :complex
                             :properties [{:name "CATEGORY" :type :string  :constraints {:nullable true :maximum-length 50}}
                                          {:name "NAME" :type :string :constraints {:nullable true :maximum-length 50}}]
                             :dependencies []}
                            {:name "PURCHASE",
                             :schema "DBO",
+                            :type :complex
                             :dependencies [{:dependency-name "CONSTRAINT_96"
                                             :target-name "PERSON"
                                             :target-schema "DBO"

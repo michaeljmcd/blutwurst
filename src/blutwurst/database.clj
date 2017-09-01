@@ -40,7 +40,8 @@
          ~result-name))))
 
 (defn- read-table-row [rs] {:name (.getString rs "TABLE_NAME")
-                            :schema (.getString rs "TABLE_SCHEM")})
+                            :schema (.getString rs "TABLE_SCHEM")
+                            :type :complex})
 
 (defn- build-table-list [rs result]
   (if (not (.next rs))

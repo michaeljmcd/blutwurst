@@ -25,7 +25,6 @@
 (defn- select-generators-for-column [spec column]
   (let [generators (create-generators spec)
         override-name (find-override-for-column spec column)]
-
     (if (nil? override-name)
       (generator-search column generators)
       (do
@@ -48,6 +47,7 @@
   (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]
     (remove #(or (some (fn [x] (= (:name %) x)) linked-columns)
                  (= :complex (:type %))
+                 (= :sequence (:type %))
                  (some (fn [x] (re-matches (re-pattern x) (:name %))) (:ignored-columns spec)))
             (:properties table))))
 
@@ -68,36 +68,51 @@
     (map (partial build-dependency-selector-fn generated-data)
                                      (filter-ignored-columns spec (:dependencies table))))
 
-(defn- create-value-generators [spec table]
+(defn- create-value-generators [spec columns]
     (map #(fn[] (list (-> % :name keyword) ((->> % (select-generators-for-column spec) :generator) %)))
-                                     (value-columns spec table)))
+         columns))
 
 (declare build-generator-fn)
 
-(defn- create-complex-generators [spec table generated-data]
+(defn- create-complex-property-generators [spec table generated-data]
     (map #(let [compound-generator (build-generator-fn spec % generated-data)]
                                           (fn [] (list (-> % :name keyword) (compound-generator))))
                                        (complex-columns table)))
 
-(def ^:private build-generator-fn 
- (memoize 
-  (fn [spec table generated-data]
+(defn- create-sequence-generators [spec table generated-data]
+ (map #(fn [] (list (-> % :name keyword) [1 2 3])) #_(fn [] (list % :name keyword) (repeatedly 5 (create-complex-generator spec (-> table :properties first) generated-data)))
+      (filter #(= :sequence (:type %)) (:properties table))))
+
+(defn- create-top-level-generators [spec table]
+ (if (some #{(:type table)} (list :string :decimal :datetime :integer))
+(create-value-generators spec (list table))
+ )
+)
+
+(defn- create-complex-generator [spec table generated-data]
      (let [dependency-selectors (create-dependency-selection-generators spec table generated-data)
-           value-generators (create-value-generators spec table)
-           complex-generators (create-complex-generators spec table generated-data)]
+           value-generators (create-value-generators spec (value-columns spec table))
+           self-generators (create-top-level-generators spec table)
+           sequence-generators (create-sequence-generators spec table generated-data)
+           complex-generators (create-complex-property-generators spec table generated-data)]
        (doseq [c value-generators]
          (if (nil? (:generator c))
            (error "Unable to find generator for column " (:column c))))
 
        (fn []
-         (->> (concat dependency-selectors complex-generators value-generators)
+         (->> (concat dependency-selectors complex-generators value-generators self-generators sequence-generators)
               (map #(%))
-              flatten
-              (apply hash-map)))))))
+#_(apply concat)
+              ((fn [a] (trace (pr-str (seq a))) a))
+#_flatten
+              (apply hash-map)))))
+
+(def ^:private build-generator-fn 
+ (memoize create-complex-generator))
 
 (defn- generate-tuples-for-table [table-descriptor spec generated-data]
   (let [table-generator (build-generator-fn spec table-descriptor generated-data)]
-    {:entity table-descriptor :tuples (repeatedly (:number-of-rows spec) table-generator)}))
+    {:entity table-descriptor :tuples (repeatedly (or (:number-of-rows spec) 10) table-generator)}))
 
 (defn- generate-tuples-for-plan* [spec execution-plan result]
   (if (empty? execution-plan)
