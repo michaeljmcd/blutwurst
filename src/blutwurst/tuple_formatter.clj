@@ -108,12 +108,18 @@
   {:entity (:entity table)
    :tuples (vector (json/generate-string (:tuples table)))})
 
+(declare create-xml-elements-for-property)
+
 (defn- create-xml-element-for-pair [pair]
   (let [tag-name (first pair)
         content (second pair)]
   (cond
-    (map? content) (xml/element tag-name nil (create-xml-elements-for-property content))
-    :else (xml/element tag-name nil content))))
+    (map? content) 
+      (xml/element tag-name nil (create-xml-elements-for-property content))
+    (sequential? content) 
+      (xml/element tag-name nil (map #(xml/element "item" nil %) content))
+    :else 
+      (xml/element tag-name nil content))))
 
 (defn- create-xml-elements-for-property [property]
   (map  create-xml-element-for-pair ; TODO: make this recursive to handle complex and sequence
