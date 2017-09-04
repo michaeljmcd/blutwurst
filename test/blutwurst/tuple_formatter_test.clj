@@ -8,6 +8,8 @@
 (use-fixtures :each logging-fixture)
 
 (def simple-schema {:name "Example" :schema "foo" :properties [{:name "A" :type :integer} {:name "B" :type :string}]})
+(def person-schema {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]
+                        :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]})
 
 (deftest csv-formatter-test
   (testing "Generating a CSV from rows."
@@ -19,10 +21,8 @@
 
   (testing "Flattens out embedded objects."
     (let [spec {:format :csv}
-          person-table {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]
-                        :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
-          data `({:entity ~person-table :tuples ~(list {:name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
-      (is (= [{:entity person-table :tuples ["name,Address.Address1,Address.City\nJohn Doe,123 Main,Springfield\n"]}]
+          data `({:entity ~person-schema :tuples ~(list {:name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
+      (is (= [{:entity person-schema :tuples ["name,Address.Address1,Address.City\nJohn Doe,123 Main,Springfield\n"]}]
              (format-rows spec data))))))
 
 (deftest sql-formatter-test
@@ -44,10 +44,8 @@
 
   (testing "SQL generation flattens out embedded objects."
     (let [spec {:format :sql}
-          person-table {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]
-                        :dependencies [{:target-schema nil :target-name "Address" :dependency-name nil :links {"Address" :embedded}}]}
-          data `({:entity ~person-table :tuples ~(list {:Name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
-      (is (= [{:entity person-table :tuples ["INSERT INTO \"Person\" (\"Name\",\"Address.Address1\",\"Address.City\") VALUES ('John Doe','123 Main','Springfield');\n"]}]
+          data `({:entity ~person-schema :tuples ~(list {:Name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
+      (is (= [{:entity person-schema :tuples ["INSERT INTO \"Person\" (\"Name\",\"Address.Address1\",\"Address.City\") VALUES ('John Doe','123 Main','Springfield');\n"]}]
              (format-rows spec data)))))
 
   (testing "SQL generation formats DATE values."
