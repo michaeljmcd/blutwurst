@@ -84,6 +84,7 @@
 
   (testing "End to end flow."
     (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
+      (pprint output)
       (is (and (string/includes? output "CATEGORY,NAME")
                (string/includes? output "ID,NAME")
                (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")

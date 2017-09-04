@@ -38,10 +38,10 @@
         tuple-count (count (:tuples targeted-table))]
     (fn []
       (let [chosen-row (nth (:tuples targeted-table) (random-integer-under-value tuple-count))
-            column-values (map #(list (keyword (first %)) (get chosen-row (keyword (second %)))) (:links dependency))]
+            column-values (map #(hash-map (keyword (first %)) (get chosen-row (keyword (second %)))) (:links dependency))]
         (if (= :embedded (-> dependency :links first second))
-          (list (keyword (-> dependency :links first first)) chosen-row)
-          column-values)))))
+          (hash-map (keyword (-> dependency :links first first)) chosen-row)
+          (apply merge column-values))))))
 
 (defn- value-columns [spec table]
   (let [linked-columns (flatten (map #(map first (:links %)) (:dependencies table)))]
@@ -66,21 +66,21 @@
 
 (defn- create-dependency-selection-generators [spec table generated-data]
     (map (partial build-dependency-selector-fn generated-data)
-                                     (filter-ignored-columns spec (:dependencies table))))
+         (filter-ignored-columns spec (:dependencies table))))
 
 (defn- create-value-generators [spec columns]
-    (map #(fn[] (list (-> % :name keyword) ((->> % (select-generators-for-column spec) :generator) %)))
+    (map #(fn[] (hash-map (-> % :name keyword) ((->> % (select-generators-for-column spec) :generator) %)))
          columns))
 
 (declare build-generator-fn)
 
 (defn- create-complex-property-generators [spec table generated-data]
     (map #(let [compound-generator (build-generator-fn spec % generated-data)]
-                                          (fn [] (list (-> % :name keyword) (compound-generator))))
+                                          (fn [] (hash-map (-> % :name keyword) (compound-generator))))
                                        (complex-columns table)))
 
 (defn- create-sequence-generators [spec table generated-data]
- (map #(fn [] (list (-> % :name keyword) [1 2 3])) #_(fn [] (list % :name keyword) (repeatedly 5 (create-complex-generator spec (-> table :properties first) generated-data)))
+ (map #(fn [] (hash-map (-> % :name keyword) [1 2 3])) #_(fn [] (hash-map % :name keyword) (repeatedly 5 (create-complex-generator spec (-> table :properties first) generated-data)))
       (filter #(= :sequence (:type %)) (:properties table))))
 
 (defn- create-top-level-generators [spec table]
@@ -95,17 +95,11 @@
            self-generators (create-top-level-generators spec table)
            sequence-generators (create-sequence-generators spec table generated-data)
            complex-generators (create-complex-property-generators spec table generated-data)]
-       (doseq [c value-generators]
-         (if (nil? (:generator c))
-           (error "Unable to find generator for column " (:column c))))
-
-       (fn []
+       ; TODO: log missing generators
+      (fn []
          (->> (concat dependency-selectors complex-generators value-generators self-generators sequence-generators)
               (map #(%))
-#_(apply concat)
-              ((fn [a] (trace (pr-str (seq a))) a))
-#_flatten
-              (apply hash-map)))))
+              (apply merge)))))
 
 (def ^:private build-generator-fn 
  (memoize create-complex-generator))

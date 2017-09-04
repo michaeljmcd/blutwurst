@@ -37,10 +37,11 @@
 (defn- csv-formatter [spec table]
   (let [column-list (create-csv-column-list table)]
     {:entity (:entity table)
-     :tuples (vector (with-out-str
-                       (csv/write-csv *out*
+     :tuples (vector (let [writer (new java.io.StringWriter)]
+                       (csv/write-csv writer
                                       (concat column-list
-                                              (extract-data-from-table-tuples table)))))}))
+                                              (extract-data-from-table-tuples table)))
+                       (.toString writer)))}))
 
 (defn- comma-delimit [values]
   (reduce (fn [a, b] (if (empty? (str a)) b (str a "," b))) values))
