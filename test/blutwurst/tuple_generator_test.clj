@@ -100,7 +100,6 @@
   (with-redefs-fn {#'vg/create-generators #(do % fixed-generators)}
   #(let [table {:name "foo" :type :string}
          result (generate-tuples-for-plan {:number-of-rows 2} (list table))]
-   (pprint result)
    (is (= `({:entity ~table :tuples ~(repeat 2 {:foo "asdf"})}) result))
   ))
  )
@@ -112,8 +111,7 @@
     #(let [spec {:format :csv :number-of-rows 2}
            plan '({:name "foo"  :type :complex :schema nil :properties ({:name "nums" :type :sequence :properties ({:name "items" :type "string"})})})
            result (generate-tuples-for-plan spec plan)]
-(pprint result)
-#_(is (= `({:entity ~(first plan) :tuples ~(repeat 2 {:nums (repeat 5 "asdf")})})
+(is (= `({:entity ~(first plan) :tuples ~(repeat 2 {:nums [1 2 3]})})
            result))
      )
   )))

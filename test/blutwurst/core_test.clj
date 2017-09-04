@@ -77,14 +77,14 @@
 
 (deftest integration-tests
   (testing "Handles bad options."
-    (with-redefs-fn {#'core/exit-with-code (fn [c] c)}
+    (with-redefs-fn {#'core/exit-with-code identity}
       #(let [output (with-out-str (core/-main "app.jar" "--darby-ogill-and-the-little-people" "sputnik"))]
          (pprint output)
          (is (= "Unknown option: \"--darby-ogill-and-the-little-people\"" (string/trim output))))))
 
   (testing "End to end flow."
+(core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2" "-v")
     (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
-      (pprint output)
       (is (and (string/includes? output "CATEGORY,NAME")
                (string/includes? output "ID,NAME")
                (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")

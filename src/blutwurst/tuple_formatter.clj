@@ -107,10 +107,10 @@
   {:entity (:entity table)
    :tuples (vector (json/generate-string (:tuples table)))})
 
-(defn format-rows [spec tables]
+(defn format-rows [spec entities]
   (mapv (partial (case (:format spec)
                    :csv csv-formatter
                    :json json-formatter
                    :sql sql-formatter)
                  spec)
-        tables))
+        entities))

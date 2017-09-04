@@ -20,4 +20,5 @@
             [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all} :dev {:resource-paths ["test-data"]}})
+  :profiles {:uberjar {:aot :all} 
+             :dev {:resource-paths ["test-data"]}})
