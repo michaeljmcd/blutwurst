@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. This change
 
 ### Changed
 - Changed the long option for the output directory to `--directory` for `--output-dir`.
+- Removed H2 from compiled application. It was still being included despite being a test dependency.
 
 ## [0.4.1] - 2017-08-25
 ### Fixed
