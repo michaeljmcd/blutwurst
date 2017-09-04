@@ -1,6 +1,7 @@
 (ns blutwurst.tuple-formatter
   (:import (java.util Date) (java.text SimpleDateFormat))
   (:require [clojure.data.csv :as csv]
+            [clojure.data.xml :as xml]
             [clojure.core.strint :refer [<<]]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre :refer [trace]]))
@@ -107,10 +108,30 @@
   {:entity (:entity table)
    :tuples (vector (json/generate-string (:tuples table)))})
 
+(defn- create-xml-elements-for-property [property]
+  (map (fn [pair] (xml/element (first pair) nil (second pair))) ; TODO: make this recursive to handle complex
+       property)
+  )
+
+(defn- create-xml-elements-for-entity [entity]
+  (let [top-level-name (-> entity :entity :name)]
+  (map (fn [tuple]
+         (xml/element top-level-name nil 
+                      (create-xml-elements-for-property tuple))
+         )
+       (:tuples entity))
+  ))
+
+(defn- xml-formatter [spec entity]
+  {:entity (:entity entity)
+   :tuples  (->> entity create-xml-elements-for-entity (map xml/emit-str))
+   })
+
 (defn format-rows [spec entities]
   (mapv (partial (case (:format spec)
                    :csv csv-formatter
                    :json json-formatter
-                   :sql sql-formatter)
+                   :sql sql-formatter
+                   :xml xml-formatter)
                  spec)
         entities))

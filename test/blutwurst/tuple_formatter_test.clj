@@ -7,10 +7,12 @@
 
 (use-fixtures :each logging-fixture)
 
+(def simple-schema {:name "Example" :schema "foo" :properties [{:name "A" :type :integer} {:name "B" :type :string}]})
+
 (deftest csv-formatter-test
   (testing "Generating a CSV from rows."
     (let [spec {:format :csv}
-          table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :integer})}
+          table (assoc-in simple-schema [:properties 1 :type] :integer)
           rows `({:entity ~table :tuples ({:A 1 :B 2})})]
       (is (= `[{:entity ~table :tuples ["A,B\n1,2\n"]}]
              (format-rows spec rows)))))
@@ -29,13 +31,12 @@
           table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :integer})}
           rows `({:entity ~table
                   :tuples ({:A 1 :B 2})})]
-      (is (= '({:entity {:name "Example" :schema "foo" :properties ({:name "A" :type :integer} {:name "B" :type :integer})}
-                :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2);\n"]})
+      (is (= `({:entity ~table :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2);\n"]})
              (format-rows spec rows)))))
 
   (testing "SQL generation quotes and escapes string values."
     (let [spec {:format :sql}
-          table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :string})}
+          table (assoc-in simple-schema [:properties 1 :type] :string)
           rows `({:entity ~table
                   :tuples ({:A 1 :B  "Then O'Kelly came in with the \t hatchett."})})]
       (is (= `({:entity ~table
@@ -52,20 +53,27 @@
 
   (testing "SQL generation formats DATE values."
     (let [spec {:format :sql}
-          table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :datetime})}
-          rows `({:entity ~table
-                  :tuples ({:A 1 :B ~(Date. 1109741401000)})})]
-      (is (= `({:entity ~table
-                :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'2005-03-01T23:30:01.000-06:00');\n"]})
+          table (assoc-in simple-schema [:properties 1 :type] :datetime)
+          rows `({:entity ~table :tuples ({:A 1 :B ~(Date. 1109741401000)})})]
+      (is (= `({:entity ~table :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'2005-03-01T23:30:01.000-06:00');\n"]})
                   ; TODO: handle timezone in test
              (format-rows spec rows))))))
 
 (deftest json-formatter-test
   (testing "Basic JSON generation."
     (let [spec {:format :json}
-          table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :string})}
-          rows `({:entity ~table
-                  :tuples ({:A 1 :B  "\"Thus sayeth...\""})})]
-      (is (= `[{:entity ~table
-                :tuples ["[{\"A\":1,\"B\":\"\\\"Thus sayeth...\\\"\"}]"]}]
+          table simple-schema
+          rows `({:entity ~table :tuples ({:A 1 :B  "\"Thus sayeth...\""})})]
+      (is (= `[{:entity ~table :tuples ["[{\"A\":1,\"B\":\"\\\"Thus sayeth...\\\"\"}]"]}]
              (format-rows spec rows))))))
+
+(deftest xml-formatter-test
+  (testing "Basic XML generation."
+    (let [spec {:format :xml}
+          table simple-schema
+          rows `({:entity ~table :tuples ({:A 1 :B  "\"Thus sayeth...\""} {:A 2 :B "three"})})
+          result (format-rows spec rows)]
+      (pprint result)
+      (is (= `[{:entity ~table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B>\"Thus sayeth...\"</B></Example>"
+                                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>2</A><B>three</B></Example>"]}]
+             result)))))
