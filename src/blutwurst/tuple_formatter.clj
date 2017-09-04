@@ -110,20 +110,22 @@
 
 (declare create-xml-elements-for-property)
 
-(defn- create-xml-element-for-pair [pair]
-  (let [tag-name (first pair)
-        content (second pair)]
+(defn- create-xml-element-for-pair [tag-name content]
   (cond
     (map? content) 
       (xml/element tag-name nil (create-xml-elements-for-property content))
     (sequential? content) 
-      (xml/element tag-name nil (map #(xml/element "item" nil %) content))
+      (xml/element tag-name 
+                   nil 
+                   (map create-xml-element-for-pair
+                        (repeat "item")
+                        content
+                   ))
     :else 
-      (xml/element tag-name nil content))))
+      (xml/element tag-name nil content)))
 
 (defn- create-xml-elements-for-property [property]
-  (map  create-xml-element-for-pair ; TODO: make this recursive to handle complex and sequence
-       property))
+  (map  #(create-xml-element-for-pair (first %) (second %)) property))
 
 (defn- create-xml-elements-for-entity [entity]
   (let [top-level-name (-> entity :entity :name)]
