@@ -13,12 +13,15 @@
                  [com.taoensso/timbre "4.10.0"]
                  [com.github.mifmif/generex "1.0.2"]
                  [com.thedeanda/lorem "2.1"]
-                 [cheshire "5.7.1"]
-                 [com.h2database/h2 "1.4.195" :scope "test"]]
+                 [cheshire "5.7.1"]]
   :plugins [[lein-print "0.1.0"]
             [lein-cljfmt "0.5.7"]
             [venantius/ultra "0.5.1"]]
   :main ^:skip-aot blutwurst.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all} 
-             :dev {:resource-paths ["test-data"]}})
+             :dev {:sources ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                                  [org.clojure/java.classpath "0.2.0"]
+                                  [com.h2database/h2 "1.4.195" :scope "test"]]
+                   :resource-paths ["test-data"]}})
