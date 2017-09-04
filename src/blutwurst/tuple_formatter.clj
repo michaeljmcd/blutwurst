@@ -112,34 +112,30 @@
 
 (defn- create-xml-element-for-pair [tag-name content]
   (cond
-    (map? content) 
-      (xml/element tag-name nil (create-xml-elements-for-property content))
-    (sequential? content) 
-      (xml/element tag-name 
-                   nil 
-                   (map create-xml-element-for-pair
-                        (repeat "item")
-                        content
-                   ))
-    :else 
-      (xml/element tag-name nil content)))
+    (map? content)
+    (xml/element tag-name nil (create-xml-elements-for-property content))
+    (sequential? content)
+    (xml/element tag-name
+                 nil
+                 (map create-xml-element-for-pair
+                      (repeat "item")
+                      content))
+    :else
+    (xml/element tag-name nil content)))
 
 (defn- create-xml-elements-for-property [property]
   (map  #(create-xml-element-for-pair (first %) (second %)) property))
 
 (defn- create-xml-elements-for-entity [entity]
   (let [top-level-name (-> entity :entity :name)]
-  (map (fn [tuple]
-         (xml/element top-level-name nil 
-                      (create-xml-elements-for-property tuple))
-         )
-       (:tuples entity))
-  ))
+    (map (fn [tuple]
+           (xml/element top-level-name nil
+                        (create-xml-elements-for-property tuple)))
+         (:tuples entity))))
 
 (defn- xml-formatter [spec entity]
   {:entity (:entity entity)
-   :tuples  (->> entity create-xml-elements-for-entity (map xml/emit-str))
-   })
+   :tuples  (->> entity create-xml-elements-for-entity (map xml/emit-str))})
 
 (defn format-rows [spec entities]
   (mapv (partial (case (:format spec)

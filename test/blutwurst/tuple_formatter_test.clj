@@ -84,12 +84,12 @@
              (format-rows spec data)))))
 
   (testing "Basic XML generation with sequences."
-      (let [spec {:format :xml}
-            table (-> simple-schema
-                      (assoc-in [:properties 1 :type] :sequence)
-                      (assoc-in [:properties 1 :properties] [{:name "items" :type :integer}]))
-            rows `({:entity ~table :tuples ({:A 1 :B  [1 2]} {:A 2 :B [3 5 6]})})
-            result (format-rows spec rows)]
-        (is (= `[{:entity ~table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B><item>1</item><item>2</item></B></Example>"
-                                          "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>2</A><B><item>3</item><item>5</item><item>6</item></B></Example>"]}]
-               result)))))
+    (let [spec {:format :xml}
+          table (-> simple-schema
+                    (assoc-in [:properties 1 :type] :sequence)
+                    (assoc-in [:properties 1 :properties] [{:name "items" :type :integer}]))
+          rows `({:entity ~table :tuples ({:A 1 :B  [1 2]} {:A 2 :B [3 5 6]})})
+          result (format-rows spec rows)]
+      (is (= `[{:entity ~table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B><item>1</item><item>2</item></B></Example>"
+                                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>2</A><B><item>3</item><item>5</item><item>6</item></B></Example>"]}]
+             result)))))
