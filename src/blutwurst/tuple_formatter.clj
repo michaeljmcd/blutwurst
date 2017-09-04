@@ -109,9 +109,9 @@
    :tuples (vector (json/generate-string (:tuples table)))})
 
 (defn- create-xml-elements-for-property [property]
-  (map (fn [pair] (xml/element (first pair) nil (second pair))) ; TODO: make this recursive to handle complex
-       property)
-  )
+  (map (fn [pair] 
+         (xml/element (first pair) nil (second pair))) ; TODO: make this recursive to handle complex and sequence
+       property))
 
 (defn- create-xml-elements-for-entity [entity]
   (let [top-level-name (-> entity :entity :name)]

@@ -28,9 +28,8 @@
 (deftest sql-formatter-test
   (testing "Basic SQL generation with integer-only values."
     (let [spec {:format :sql}
-          table {:name "Example" :schema "foo" :properties '({:name "A" :type :integer} {:name "B" :type :integer})}
-          rows `({:entity ~table
-                  :tuples ({:A 1 :B 2})})]
+          table (assoc-in simple-schema [:properties 1 :type] :integer)
+          rows `({:entity ~table :tuples ({:A 1 :B 2})})]
       (is (= `({:entity ~table :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,2);\n"]})
              (format-rows spec rows)))))
 
@@ -76,4 +75,16 @@
       (pprint result)
       (is (= `[{:entity ~table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B>\"Thus sayeth...\"</B></Example>"
                                         "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>2</A><B>three</B></Example>"]}]
-             result)))))
+             result))))
+
+  #_(testing "Basic XML generation with sequences."
+      (let [spec {:format :xml}
+            table (-> simple-schema
+                      (assoc-in [:properties 1 :type] :sequence)
+                      (assoc-in [:properties 1 :properties] [{:name "items" :type :integer}]))
+            rows `({:entity ~table :tuples ({:A 1 :B  [1 2]} {:A 2 :B [3 5 6]})})
+            result (format-rows spec rows)]
+        (pprint result)
+        (is (= `[{:entity ~table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B>\"Thus sayeth...\"</B></Example>"
+                                          "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>2</A><B>three</B></Example>"]}]
+               result)))))
