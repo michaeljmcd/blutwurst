@@ -21,7 +21,7 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all} 
              :dev {:sources ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [org.clojure/java.classpath "0.2.0"]
                                   [com.h2database/h2 "1.4.195" :scope "test"]]
                    :resource-paths ["test-data"]}})
