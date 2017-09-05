@@ -128,6 +128,14 @@ Be aware that most databases give the columns in all caps.
 As shown in [Handling Codes], this also extends to generators defined at the 
 command line.
 
+### Generating Data in XML Format
+
+Passing a `--format` value of `xml` will cause the exported data to be written in XML format. 
+
+    blutwurst --format xml <other options>
+
+Each distinct document will be written to a separate file.
+
 ## Reference
 
 The current list of options can be viewed with the `--help` switch. For convenience's sake,
@@ -138,8 +146,8 @@ the list is provided below.
 	  -d, --directory OUTPUT_DIRECTORY                  Output directory to which to write individual table-named files.
 	  -s, --schema SCHEMA                 []            Database schemas to include in the database scan.
 	  -t, --table TABLE                   []            Database tables to include in the database scan. If provided, only listed tables are included.
-	  -c, --connection-string CONNECTION  jdbc:h2:mem:  Connection string to scan.
-	  -f, --format FORMAT                 :csv          Format to which test data should be exported. Valid options are csv, json and sql.
+	  -c, --connection-string CONNECTION  jdbc:h2:mem:  Connection string to scan. If a connection that is not a JDBC connection string is passed, it is assumed to be a JSON Schema instead.
+	  -f, --format FORMAT                 :csv          Format to which test data should be exported. Valid options are csv, json, xml and sql.
 	  -n, --number-of-rows NUMBER         100           Number of rows to be generated for each table.
 		  --column PATTERN                []            Specifies a Java-style regex to be used in assigning a generator to a column.
 		  --generator NAME                []            Specifies that columns matching the pattern given previously must use the generator name.
