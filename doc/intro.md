@@ -136,6 +136,29 @@ Passing a `--format` value of `xml` will cause the exported data to be written i
 
 Each distinct document will be written to a separate file.
 
+### Generating Data from a JSON Schema
+
+Blutwurst can accept a [JSON Schema](http://json-schema.org/) to determine how
+to parse data. Passing the path to the schema document to `-c`
+/ `--connection-string` will cause it to be parsed as a JSON Schema. Complex
+JSON objects can be generated but there are a few caveats of which to be aware.
+
+Blutwurst does not implement the entire JSON Schema standard. Over time, this
+may be corrected, but in the meantime there are JSON Schema documents that will
+not parse correctly. Definitions and hyperlinks are entirely unimplemented.
+Almost none of the validation options are used and Hyper-Schema is entirely
+unimplemented.
+
+With all of that said, the provided functionality will be sufficient for
+generating data for many real-life schemas. The address example from the JSON
+Schema site is included in the `samples` directory. To get a taste of how this
+can be used, run the following command:
+
+    ./bin/blutwurst.cmd -c samples/address.json -f json -d .
+
+This will generate JSON files in the current directory answering to the schema
+provided in address.json.
+
 ## Reference
 
 The current list of options can be viewed with the `--help` switch. For convenience's sake,
