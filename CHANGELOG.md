@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.5.0] - 2017-09-06
 ### Fixed
 - Corrected the identification of SQL Server's "INT IDENTITY" as a string.
 - Added limits to prevent usage of the lorem ipsum text generator from causing stack overflow exceptions on large column inputs.
@@ -80,7 +82,8 @@ All notable changes to this project will be documented in this file. This change
 - Support for dumping generated data to standard out.
 - Basic data generators for integers, decimals and strings.
 
-[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.2.0...v0.3.0
