@@ -132,6 +132,7 @@
         (not (empty? (:errors parsed-input))) (print-parsing-error parsed-input)
         (-> parsed-input :options :help) (usage (:summary parsed-input))
         (-> parsed-input :options :list-generators) (print-generator-list spec)
+        (<= (count effective-args) 1) (usage (:summary parsed-input))
         :else (->> spec
                    discover-schema
                    create-data-generation-plan

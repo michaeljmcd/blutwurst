@@ -82,6 +82,12 @@
          (pprint output)
          (is (= "Unknown option: \"--darby-ogill-and-the-little-people\"" (string/trim output))))))
 
+  (testing "Prints help on empty input."
+    (with-redefs-fn {#'core/usage (fn [a] (print "passed"))}
+      #(let [output (with-out-str (core/-main "app.jar"))]
+          (is (= "passed" output)
+          ))))
+
   (testing "End to end flow."
     (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2" "-v")
     (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
