@@ -32,13 +32,18 @@
         (find-generator-by-name override-name generators)))))
 
 (defn- build-dependency-selector-fn [generated-data dependency]
-  (let [targeted-table (first (filter #(and (= (-> % :entity :schema) (:target-schema dependency))
-                                            (= (-> % :entity :name) (:target-name dependency)))
+  (let [targeted-table (first (filter #(and (= (-> % :entity :schema) 
+                                               (:target-schema dependency))
+                                            (= (-> % :entity :name) 
+                                               (:target-name dependency)))
                                       generated-data))
         tuple-count (count (:tuples targeted-table))]
     (fn []
-      (let [chosen-row (nth (:tuples targeted-table) (random-integer-under-value tuple-count))
-            column-values (map #(hash-map (keyword (first %)) (get chosen-row (keyword (second %)))) (:links dependency))]
+      (let [chosen-row (nth (:tuples targeted-table) 
+                            (random-integer-under-value tuple-count))
+            column-values (map #(hash-map (keyword (first %)) 
+                                          (get chosen-row (keyword (second %)))) 
+                               (:links dependency))]
         (if (= :embedded (-> dependency :links first second))
           (hash-map (keyword (-> dependency :links first first)) chosen-row)
           (apply merge column-values))))))
