@@ -95,7 +95,11 @@
         complex-generators (create-complex-property-generators spec table generated-data)]
        ; TODO: log missing generators
     (fn []
-      (->> (concat dependency-selectors complex-generators value-generators self-generators sequence-generators)
+      (->> (concat dependency-selectors 
+                   complex-generators 
+                   value-generators 
+                   self-generators 
+                   sequence-generators)
            (map #(%))
            (apply merge)))))
 
