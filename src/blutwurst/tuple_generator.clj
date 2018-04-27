@@ -26,7 +26,11 @@
   (let [generators (create-generators spec)
         override-name (find-override-for-column spec column)]
     (if (nil? override-name)
-      (generator-search column generators)
+      (let [strategy (generator-search column generators)]
+       (if (nil? strategy)
+        (trace "No generator found for column  " column)
+        (trace "Found generation strategy " (:name strategy) " for column " column))
+       strategy)
       (do
         (trace "Found override " override-name " for column " column)
         (find-generator-by-name override-name generators)))))
@@ -98,7 +102,6 @@
         self-generators (create-top-level-generators spec table)
         sequence-generators (create-sequence-generators spec table generated-data)
         complex-generators (create-complex-property-generators spec table generated-data)]
-       ; TODO: log missing generators
     (fn []
       (->> (concat dependency-selectors 
                    complex-generators 

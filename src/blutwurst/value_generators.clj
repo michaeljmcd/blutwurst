@@ -11,7 +11,7 @@
 (defn- crop-to-column-size [column input-string]
   (if (or (nil? input-string) (empty? input-string))
     input-string
-    (subs input-string 0 (min (count input-string) (or (:length column) 20)))))
+    (subs input-string 0 (min (count input-string) (or (:length column) (-> column :constraints :maximum-length) 20)))))
 
 (defn- create-regex-generator [generator-name regex]
   {:name generator-name
@@ -89,7 +89,11 @@
     :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getUrl l))))}
    {:name "Text Generator"
     :determiner column-is-string?
-    :generator (let [l (LoremIpsum.)] (fn [c] (crop-to-column-size c (.getWords l 0 (calculate-maximum-word-count c)))))}
+    :generator (let [l (LoremIpsum.)] 
+                (fn [c] 
+                 (crop-to-column-size c 
+                                      (.getWords l 0 (calculate-maximum-word-count c)))
+                    ))}
    {:name "String Generator"
     :determiner column-is-string?
     :generator #(random-string (or (min (:length %) 2000) 255))}

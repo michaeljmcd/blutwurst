@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Fixed
 - The application would dump a stack trace and die if no command line arguments were provided. This has been fixed so that usage notes (the same ones as `--help`) will be printed to the screen instead.
+- Fixed bug where maximum length constraints on text-based columns were not being respected. The existing test passed due to a luckily long test length.
 
 ## [0.5.0] - 2017-09-06
 ### Fixed

@@ -58,10 +58,17 @@
 
   (testing "String generators stay within text limits."
     (let [generator-fn (find-generator-fn-by-name "City Generator")
-          column {:name "asdf" :type "asdf" :constraints {:maximum-length 200}}]
+          column {:name "asdf" :type "asdf" :constraints {:maximum-length 10}}]
       (dotimes [iter 10]
         (let [value (generator-fn column)]
-          (is (<= (count value) 200))))))
+          (is (<= (count value) 10))))))
+
+  (testing "Text generator stays within text limits."
+   (let [generator-fn (find-generator-fn-by-name "Text Generator")
+         column {:name "asdf" :type "nvarchar" :constraints {:maximum-length 10}}]
+      (dotimes [iter 10]
+        (let [value (generator-fn column)]
+          (is (<= (count value) 10))))))
 
   (testing "Basic random string generation."
     (let [value (vg/random-string 10)]
