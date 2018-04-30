@@ -81,7 +81,7 @@
     (= type-name "TINYINT") (long 255)
     (= type-name "SMALLINT") (long (- (Math/pow 2 15) 1))
     (= type-name "BIGINT") (long (- (Math/pow 2 63) 1))
-    :else (long (- (Math/pow 2 32) 1))))
+    :else (long (- (Math/pow 2 31) 1))))
 
 (defn- check-for-identity [rs result]
   (if (= (cstring/upper-case (or (.getString rs "TYPE_NAME") "")) "INT IDENTITY")

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. This change
 - The application would dump a stack trace and die if no command line arguments were provided. This has been fixed so that usage notes (the same ones as `--help`) will be printed to the screen instead.
 - Fixed bug where maximum length constraints on text-based columns were not being respected. The existing test passed due to a luckily long test length.
 - Added checks so that generated decimal values remain within the ranges specified by `DECIMAL` columns in SQL databases.
+- Fixed a bug where the maximum value for a 32-bit integer was calculated as 2^32 - 1, instead of 2^31 - 1.
 ### Changed
 - Added a minimum date of 1800-01-01 to the datetime generator.
 
