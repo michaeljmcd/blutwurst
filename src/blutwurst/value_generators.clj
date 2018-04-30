@@ -11,7 +11,10 @@
 (defn- crop-to-column-size [column input-string]
   (if (or (nil? input-string) (empty? input-string))
     input-string
-    (subs input-string 0 (min (count input-string) (or (:length column) (-> column :constraints :maximum-length) 20)))))
+    (subs input-string 0 (min (count input-string) 
+                              (or (:length column)
+                                  (-> column :constraints :maximum-length)
+                                  20)))))
 
 (defn- create-regex-generator [generator-name regex]
   {:name generator-name
