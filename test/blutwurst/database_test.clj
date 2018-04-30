@@ -14,6 +14,7 @@
                    :type :complex
                    :properties
                    [{:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
+                   ; {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]})
                     {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]})
 
 (def full-expected-graph {:entities
@@ -63,5 +64,11 @@
 
   (testing "Table scans include schemas when at least one is provided."
     (let [spec {:connection-string connection-string :included-schemas '("DBO")}
+          table-graph (retrieve-table-graph spec)]
+      (is (= full-expected-graph table-graph)))))
+
+(deftest column-constraint-tests
+   (testing "Integer columns should have a maximum value of 2^31 - 1."
+      (let [spec {:connection-string connection-string :included-schemas '("DBO")}
           table-graph (retrieve-table-graph spec)]
       (is (= full-expected-graph table-graph)))))

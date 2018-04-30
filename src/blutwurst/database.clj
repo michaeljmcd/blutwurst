@@ -103,9 +103,13 @@
 (defn- add-integer-constraints [rs result]
   (if (= :integer (:type result))
     (-> result
-        (assoc-in [:constraints :maximum-value] (max-integer-value-for-column (cstring/upper-case (.getString rs "TYPE_NAME"))))
-        (assoc-in [:constraints :minimum-value] 0) ; TODO: add negative values here
-)
+        (assoc-in [:constraints :maximum-value] 
+                  (max-integer-value-for-column 
+                    (cstring/upper-case (.getString rs 
+                                                    "TYPE_NAME"))))
+        ; TODO: add negative values here
+        (assoc-in [:constraints :minimum-value]
+                  0))
     result))
 
 (defn- add-constraints [rs result]
