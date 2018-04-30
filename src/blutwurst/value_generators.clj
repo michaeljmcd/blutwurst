@@ -1,12 +1,15 @@
 (ns blutwurst.value-generators
   (:import (java.util Random Date GregorianCalendar)
            (java.lang Math Integer)
+           (org.apache.commons.math3.random RandomDataGenerator)
            (com.thedeanda.lorem LoremIpsum)
            (com.mifmif.common.regex Generex))
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
             [clojure.string :as string]
             [taoensso.timbre :as timbre :refer [trace error]]))
+
+(def ^{:private true} random (RandomDataGenerator.))
 
 (defn- crop-to-column-size [column input-string]
   (if (or (nil? input-string) (empty? input-string))
@@ -26,9 +29,8 @@
   (let [random (Random.)]
     (mod (.nextLong random) max-value)))
 
-(defn- random-decimal []
-  (let [random (Random.)]
-    (.nextLong random)))
+(defn- random-decimal [min-value max-value]
+    (.nextUniform random (double min-value) (double max-value)))
 
 (defn random-string [max-length]
   (let [g (Generex. "([A-Za-z0-9'\" \\n\\t!@#$%&*()])+")]
@@ -106,8 +108,9 @@
     :generator #(random-integer-under-value (or (-> % :constraints :maximum-value) Integer/MAX_VALUE))}
    {:name "Decimal Generator"
     :determiner #(= (:type %) :decimal)
-    :generator (fn [c] (random-decimal)) ; TODO account for column's max value
-}
+    :generator #(random-decimal (or (-> % :constraints :minimum-value) 0)
+                                (or (-> % :constraints :maximum-value) 1))
+   }
    {:name "Date / Timestamp Generator"
     :determiner #(= (:type %) :datetime)
     :generator (fn [c] (random-datetime))}

@@ -12,6 +12,7 @@
                  [org.clojure/core.incubator "0.1.4"]
                  [com.taoensso/timbre "4.10.0"]
                  [com.github.mifmif/generex "1.0.2"]
+                 [org.apache.commons/commons-math3 "3.6.1"]
                  [com.thedeanda/lorem "2.1"]
                  [cheshire "5.7.1"]]
   :plugins [[lein-print "0.1.0"]

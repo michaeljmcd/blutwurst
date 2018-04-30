@@ -8,7 +8,7 @@
 
 ## Fixes
 
-- Handle column size in decimal generators.
+- Handle column size in decimal generators. More particularly, this does not respect values given nor does the database module detect min/max values.
 
 ## General
 

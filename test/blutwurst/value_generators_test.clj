@@ -38,6 +38,14 @@
           (let [value (generator-fn column)]
             (is (<= min-date (.getTime value) max-date))))))
 
+  (testing "Decimal generator respects maximum values allowed."
+    (let [generator-fn (find-generator-fn-by-name "Decimal Generator")]
+      (dotimes [iter 100]
+        (let [value (generator-fn {:name "foo" :type :integer :constraints {:minimum-value 0 :maximum-value 1.31}})]
+          (is (and (<= value (double 1.31))
+                   (>= value (double 0)))
+              "Decimal generator must stay within range.")))))
+
   (testing "Basic random number generator respects size of smallint."
     (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
       (dotimes [iter 100]
