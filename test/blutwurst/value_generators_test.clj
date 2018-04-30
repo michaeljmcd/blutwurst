@@ -46,6 +46,14 @@
                    (>= value (double 0)))
               "Decimal generator must stay within range.")))))
 
+  (testing "Decimal generator remains between 0 and 1 if no min/max are provided."
+    (let [generator-fn (find-generator-fn-by-name "Decimal Generator")]
+      (dotimes [iter 100]
+        (let [value (generator-fn {:name "foo" :type :integer :constraints {:nullable true}})]
+          (is (and (<= value (double 1))
+                   (>= value (double 0)))
+              "Decimal generator must stay within range.")))))
+
   (testing "Basic random number generator respects size of smallint."
     (let [generator-fn (find-generator-fn-by-name "Integer Generator")]
       (dotimes [iter 100]
