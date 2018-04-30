@@ -1,5 +1,5 @@
 (ns blutwurst.value-generators
-  (:import (java.util Random Date)
+  (:import (java.util Random Date GregorianCalendar)
            (java.lang Math Integer)
            (com.thedeanda.lorem LoremIpsum)
            (com.mifmif.common.regex Generex))
@@ -32,8 +32,9 @@
     (.random g (max 0 (- max-length (* 0.5 max-length))) max-length)))
 
 (defn- random-datetime []
-  (let [r (Random.)]
-    (Date. (mod (.nextLong r) 4102466400000)) ; Makes sure that our date stays under 2100-01-01.
+  (let [r (Random.)
+        min-time (.getTime (.getTime (GregorianCalendar. 1800 1 1)))]
+    (Date. (max (mod (.nextLong r) 4102466400000) min-time)) ; Makes sure that our date stays above 1800-01-01 and under 2100-01-01.
 ))
 
 (defn- column-is-string? [column]
