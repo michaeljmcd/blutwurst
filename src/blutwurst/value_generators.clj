@@ -44,6 +44,9 @@
 
    (ZonedDateTime/ofInstant (Instant/ofEpochMilli (.nextLong random minimum-time maximum-time)) system-offset)))
 
+(defn- random-date []
+ (.toLocalDate (random-datetime)))
+
 (defn- column-is-string? [column]
   (= :string (:type column)))
 
@@ -118,7 +121,7 @@
     :generator (fn [c] (random-datetime))}
    {:name "Date Generator"
     :determiner #(= (:type %) :date)
-    :generator (fn [c] (random-datetime))}
+    :generator (fn [c] (random-date))}
    {:name "Null Value Generator"
     :determiner #(do % nil)
     :generator #(do % nil)}])

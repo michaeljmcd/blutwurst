@@ -1,5 +1,5 @@
 (ns blutwurst.tuple-formatter
-  (:import (java.time ZonedDateTime)
+  (:import (java.time ZonedDateTime LocalDate)
            (java.time.format DateTimeFormatter))
   (:require [clojure.data.csv :as csv]
             [clojure.data.xml :as xml]
@@ -73,14 +73,14 @@
           %)
        values))
 
-(defn- format-date [date]
-  ;(.format date (DateTimeFormatter/ISO_OFFSET_DATE_TIME)))
+(defn- format-datetime [date]
   (.format date (DateTimeFormatter/ofPattern "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")))
 
 (defn- sql-date [values]
-  (map #(if (instance? ZonedDateTime %)
-          (str "'" (format-date %) "'")
-          %)
+  (map #(cond
+          (instance? ZonedDateTime %) (str "'" (format-datetime %) "'")  
+          (instance? LocalDate %) (str "'" % "'")
+          :else %)
        values))
 
 (defn- build-tuples [table]
