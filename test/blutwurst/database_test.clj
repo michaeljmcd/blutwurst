@@ -41,7 +41,7 @@
                                             :nullable false}}
                              {:name "PURCHASETYPECATEGORY" :type :string :constraints {:nullable true :maximum-length 50}}
                              {:name "PURCHASETYPENAME" :type :string :constraints {:nullable true :maximum-length 50}}
-                             {:name "AMOUNT", :type :decimal,  :constraints {:nullable true :maximum-value 999.99}}
+                             {:name "AMOUNT", :type :decimal,  :constraints {:nullable true :maximum-value 999.99 :minimum-value -999.99}}
                              {:name "ID", :type :integer,  :constraints {:minimum-value 0 :maximum-value 4294967295 :nullable true}}]}
                            person-table]})
 

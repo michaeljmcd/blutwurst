@@ -6,10 +6,6 @@
 - Externalize data sources so that they can be tweaked.
 - Add support for SQL Server geography types.
 
-## Fixes
-
-- Handle column size in decimal generators. More particularly, this does not respect values given nor does the database module detect min/max values.
-
 ## General
 
 - Clean up in-code to-dos.

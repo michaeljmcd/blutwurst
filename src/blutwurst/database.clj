@@ -108,7 +108,9 @@
 
 (defn- add-maximum-value-constraints [rs result]
   (if (= :decimal (:type result))
-    (assoc-in result [:constraints :maximum-value] (compute-maximum-decimal-size rs))
+    (-> result
+        (assoc-in [:constraints :maximum-value] (compute-maximum-decimal-size rs))
+        (assoc-in [:constraints :minimum-value] (* -1 (compute-maximum-decimal-size rs))))
     result))
 
 (defn- add-integer-constraints [rs result]
