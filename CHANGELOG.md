@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
+## [Unreleased]
+
 ## [0.6.0] - 2018-04-30
 ### Fixed
 - The application would dump a stack trace and die if no command line arguments were provided. This has been fixed so that usage notes (the same ones as `--help`) will be printed to the screen instead.
