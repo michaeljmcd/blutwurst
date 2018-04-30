@@ -13,7 +13,7 @@
         table-creation-sql ["create schema dbo"
                             "create table dbo.PurchaseType (Name varchar(50), Category varchar(50))"
                             "create table dbo.Person (ID int, Name varchar(100))"
-                            "create table dbo.Purchase (ID int, Amount decimal, 
+                            "create table dbo.Purchase (ID int, Amount decimal(5,2), 
                                 PurchaseTypeName varchar(50),
                                 PurchaseTypeCategory varchar(50),
                                 PurchasedByID int not null, 

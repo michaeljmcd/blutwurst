@@ -100,6 +100,17 @@
     (assoc-in result [:constraints :maximum-length] (.getInt rs "COLUMN_SIZE"))
     result))
 
+(defn- compute-maximum-decimal-size [rs]
+ (let [precision (.getInt rs "COLUMN_SIZE")
+       scale (.getInt rs "DECIMAL_DIGITS")]
+   (read-string (apply str (concat (repeat (- precision scale) "9") '(".") (repeat scale "9"))))
+))
+
+(defn- add-maximum-value-constraints [rs result]
+  (if (= :decimal (:type result))
+    (assoc-in result [:constraints :maximum-value] (compute-maximum-decimal-size rs))
+    result))
+
 (defn- add-integer-constraints [rs result]
   (if (= :integer (:type result))
     (-> result
@@ -116,6 +127,7 @@
   (->> result
        (add-nullable-constraint rs)
        (add-maximum-length rs)
+       (add-maximum-value-constraints rs)
        (add-integer-constraints rs)))
 
 (defn- read-columns [rs result]
