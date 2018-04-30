@@ -13,7 +13,9 @@
                    :dependencies []
                    :type :complex
                    :properties
-                   [{:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
+                   [
+                    {:name "BIRTHDATE", :type :date, :constraints {:nullable true}}
+                    {:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
                     {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 2147483647 :nullable true}}]})
 
 (def full-expected-graph {:entities

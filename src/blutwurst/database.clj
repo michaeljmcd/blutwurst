@@ -73,7 +73,8 @@
       (some #{a-type} '("NVARCHAR" "CHAR" "VARCHAR" "TEXT" "STRING")) :string
       (some #{a-type} '("DECIMAL" "DOUBLE" "MONEY" "CURRENCY")) :decimal
       (some #{a-type} '("INTEGER" "SMALLINT" "BIGINT" "INT" "TINYINT" "INT IDENTITY")) :integer
-      (some #{a-type} '("DATE" "DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET")) :datetime
+      (some #{a-type} '("DATE")) :date
+      (some #{a-type} '("DATETIME" "TIMESTAMP" "DATETIME2" "DATETIMEOFFSET")) :datetime
       :else :string)))
 
 (defn- max-integer-value-for-column [type-name]
