@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. This change
 
 ### Changed
 - Added a minimum date of 1800-01-01 to the datetime generator.
+- Blutwurst now requires a Java 8 JRE. This is due to switching the date API being used to differentiate between date and datetime.
 
 ## [0.5.0] - 2017-09-06
 ### Fixed

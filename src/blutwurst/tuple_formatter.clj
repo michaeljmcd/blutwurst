@@ -1,5 +1,6 @@
 (ns blutwurst.tuple-formatter
-  (:import (java.util Date) (java.text SimpleDateFormat))
+  (:import (java.time ZonedDateTime)
+           (java.time.format DateTimeFormatter))
   (:require [clojure.data.csv :as csv]
             [clojure.data.xml :as xml]
             [clojure.core.strint :refer [<<]]
@@ -73,11 +74,11 @@
        values))
 
 (defn- format-date [date]
-  (let [simple-format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")]
-    (.format simple-format date)))
+  ;(.format date (DateTimeFormatter/ISO_OFFSET_DATE_TIME)))
+  (.format date (DateTimeFormatter/ofPattern "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")))
 
 (defn- sql-date [values]
-  (map #(if (instance? Date %)
+  (map #(if (instance? ZonedDateTime %)
           (str "'" (format-date %) "'")
           %)
        values))

@@ -1,5 +1,6 @@
 (ns blutwurst.value-generators-test
   (:import (java.lang Math)
+           (java.time OffsetDateTime)
            (java.util GregorianCalendar))
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
@@ -36,7 +37,7 @@
             max-date (.getTime (.getTime (GregorianCalendar. 2100 1 1)))]
         (dotimes [iter 10]
           (let [value (generator-fn column)]
-            (is (<= min-date (.getTime value) max-date))))))
+            (is (<= min-date (-> value .toInstant .toEpochMilli) max-date))))))
 
   (testing "Decimal generator respects maximum values allowed."
     (let [generator-fn (find-generator-fn-by-name "Decimal Generator")]

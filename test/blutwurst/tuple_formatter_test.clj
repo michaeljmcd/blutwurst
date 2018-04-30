@@ -1,5 +1,5 @@
 (ns blutwurst.tuple-formatter-test
-  (:import (java.util Date))
+  (:import (java.time ZonedDateTime OffsetDateTime ZoneOffset Instant))
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
             [blutwurst.logging-fixture :refer :all]
@@ -51,9 +51,8 @@
   (testing "SQL generation formats DATE values."
     (let [spec {:format :sql}
           table (assoc-in simple-schema [:properties 1 :type] :datetime)
-          rows `({:entity ~table :tuples ({:A 1 :B ~(Date. 1109741401000)})})]
+          rows `({:entity ~table :tuples ({:A 1 :B ~(ZonedDateTime/ofInstant (Instant/ofEpochMilli 1109741401000) (ZoneOffset/ofHours -6))})})]
       (is (= `({:entity ~table :tuples ["INSERT INTO \"foo\".\"Example\" (\"A\",\"B\") VALUES (1,'2005-03-01T23:30:01.000-06:00');\n"]})
-                  ; TODO: handle timezone in test
              (format-rows spec rows))))))
 
 (deftest json-formatter-test

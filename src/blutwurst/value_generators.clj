@@ -1,5 +1,6 @@
 (ns blutwurst.value-generators
-  (:import (java.util Random Date GregorianCalendar)
+  (:import (java.util Random)
+           (java.time OffsetDateTime ZonedDateTime Instant)
            (java.lang Math Integer)
            (org.apache.commons.math3.random RandomDataGenerator)
            (com.thedeanda.lorem LoremIpsum)
@@ -37,10 +38,11 @@
     (.random g (max 0 (- max-length (* 0.5 max-length))) max-length)))
 
 (defn- random-datetime []
-  (let [r (Random.)
-        min-time (.getTime (.getTime (GregorianCalendar. 1800 1 1)))]
-    (Date. (max (mod (.nextLong r) 4102466400000) min-time)) ; Makes sure that our date stays above 1800-01-01 and under 2100-01-01.
-))
+ (let [system-offset (.getOffset (OffsetDateTime/now))
+       minimum-time (.toEpochMilli (.toInstant (ZonedDateTime/parse "1800-01-01T00:00:00-06:00[America/Chicago]")))
+       maximum-time (.toEpochMilli (.toInstant (ZonedDateTime/parse "2100-12-31T23:59:59-06:00[America/Chicago]")))]
+
+   (ZonedDateTime/ofInstant (Instant/ofEpochMilli (.nextLong random minimum-time maximum-time)) system-offset)))
 
 (defn- column-is-string? [column]
   (= :string (:type column)))
@@ -113,6 +115,9 @@
    }
    {:name "Date / Timestamp Generator"
     :determiner #(= (:type %) :datetime)
+    :generator (fn [c] (random-datetime))}
+   {:name "Date Generator"
+    :determiner #(= (:type %) :date)
     :generator (fn [c] (random-datetime))}
    {:name "Null Value Generator"
     :determiner #(do % nil)

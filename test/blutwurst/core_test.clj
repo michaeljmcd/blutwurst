@@ -92,6 +92,6 @@
     (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2" "-v")
     (let [output (with-out-str (core/-main "app.jar" "-c" connection-string "-f" "csv" "-o" "-" "-n" "2"))]
       (is (and (string/includes? output "CATEGORY,NAME")
-               (string/includes? output "ID,NAME")
+               (string/includes? output "ID,BIRTHDATE,NAME")
                (string/includes? output "ID,PURCHASEDBYID,PURCHASETYPECATEGORY,AMOUNT,PURCHASETYPENAME")
                (= 11 (count (string/split-lines output))))))))
