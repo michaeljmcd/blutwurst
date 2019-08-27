@@ -27,7 +27,7 @@
     :assoc-fn accumulate-arguments]
    ["-c" "--connection-string CONNECTION" "Connection string to scan. If a connection that is not a JDBC connection string is passed, it is assumed to be a JSON Schema instead."
     :default "jdbc:h2:mem:"]
-   ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json, xml and sql."
+   ["-f" "--format FORMAT" "Format to which test data should be exported. Valid options are csv, json, xml, edn and sql."
     :parse-fn #(keyword %)
     :default :csv]
    ["-n" "--number-of-rows NUMBER" "Number of rows to be generated for each table."

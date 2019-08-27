@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/). This project follows the conventions of [semver.org](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added support for EDN as an output format for generated data.
+
+### Fixed
+- Creating XML files with dates or datetimes would result in an error.
+
+### Changed
+- Updated runtime to support Java 11.
+- Upgraded all dependencies.
 
 ## [0.6.0] - 2018-04-30
 ### Fixed

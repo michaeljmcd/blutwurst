@@ -4,7 +4,12 @@
   (:require [clojure.data.csv :as csv]
             [clojure.data.xml :as xml]
             [clojure.core.strint :refer [<<]]
+            [clojure.data.xml.event :refer
+             [->StartElementEvent ->EmptyElementEvent ->EndElementEvent
+              ->CharsEvent ->CDataEvent ->CommentEvent]]
             [cheshire.core :as json]
+            [clojure.data.xml.protocols :refer
+             [EventGeneration AsXmlString gen-event next-events xml-str]]
             [taoensso.timbre :as timbre :refer [trace]]))
 
 (defn- extract-data-from-row [row]
@@ -109,6 +114,20 @@
   {:entity (:entity table)
    :tuples (vector (json/generate-string (:tuples table)))})
 
+(extend LocalDate AsXmlString
+ {:xml-str (fn [item] (.toString item))})
+
+(extend LocalDate EventGeneration
+ {:gen-event (comp ->CharsEvent #'xml-str)
+  :next-events (fn [item next-items] (do next-items))})
+
+(extend ZonedDateTime AsXmlString
+ {:xml-str (fn [item] (.toString item))})
+
+(extend ZonedDateTime EventGeneration
+ {:gen-event (comp ->CharsEvent #'xml-str)
+  :next-events (fn [item next-items] (do next-items))})
+
 (declare create-xml-elements-for-property)
 
 (defn- create-xml-element-for-pair [tag-name content]
@@ -138,11 +157,16 @@
   {:entity (:entity entity)
    :tuples  (->> entity create-xml-elements-for-entity (map xml/emit-str))})
 
+(defn- edn-formatter [spec entity]
+ {:entity (:entity entity)
+  :tuples (->> entity :tuples (mapv pr-str))})
+
 (defn format-rows [spec entities]
   (mapv (partial (case (:format spec)
                    :csv csv-formatter
                    :json json-formatter
                    :sql sql-formatter
-                   :xml xml-formatter)
+                   :xml xml-formatter
+                   :edn edn-formatter)
                  spec)
         entities))

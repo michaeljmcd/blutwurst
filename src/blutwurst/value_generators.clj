@@ -114,8 +114,7 @@
    {:name "Decimal Generator"
     :determiner #(= (:type %) :decimal)
     :generator #(random-decimal (or (-> % :constraints :minimum-value) 0)
-                                (or (-> % :constraints :maximum-value) 1))
-   }
+                                (or (-> % :constraints :maximum-value) 1))}
    {:name "Date / Timestamp Generator"
     :determiner #(= (:type %) :datetime)
     :generator (fn [c] (random-datetime))}

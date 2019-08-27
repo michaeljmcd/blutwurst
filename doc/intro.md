@@ -170,7 +170,7 @@ the list is provided below.
 	  -s, --schema SCHEMA                 []            Database schemas to include in the database scan.
 	  -t, --table TABLE                   []            Database tables to include in the database scan. If provided, only listed tables are included.
 	  -c, --connection-string CONNECTION  jdbc:h2:mem:  Connection string to scan. If a connection that is not a JDBC connection string is passed, it is assumed to be a JSON Schema instead.
-	  -f, --format FORMAT                 :csv          Format to which test data should be exported. Valid options are csv, json, xml and sql.
+	  -f, --format FORMAT                 :csv          Format to which test data should be exported. Valid options are csv, json, xml, edn and sql.
 	  -n, --number-of-rows NUMBER         100           Number of rows to be generated for each table.
 		  --column PATTERN                []            Specifies a Java-style regex to be used in assigning a generator to a column.
 		  --generator NAME                []            Specifies that columns matching the pattern given previously must use the generator name.

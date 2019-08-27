@@ -1,5 +1,5 @@
 (ns blutwurst.tuple-formatter-test
-  (:import (java.time ZonedDateTime OffsetDateTime ZoneOffset Instant))
+  (:import (java.time ZonedDateTime OffsetDateTime ZoneOffset Instant LocalDate))
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer :all]
             [blutwurst.logging-fixture :refer :all]
@@ -24,6 +24,14 @@
           data `({:entity ~person-schema :tuples ~(list {:name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
       (is (= [{:entity person-schema :tuples ["name,Address.Address1,Address.City\nJohn Doe,123 Main,Springfield\n"]}]
              (format-rows spec data))))))
+
+(deftest edn-formatter-test
+ (testing "Generating an EDN file from rows."
+    (let [spec {:format :edn}
+          table (assoc-in simple-schema [:properties 1 :type] :integer)
+          rows `({:entity ~table :tuples ({:A 1 :B 2})})]
+      (is (= `[{:entity ~table :tuples ["{:A 1, :B 2}"]}]
+             (format-rows spec rows))))))
 
 (deftest sql-formatter-test
   (testing "Basic SQL generation with integer-only values."
@@ -78,6 +86,27 @@
           person-table {:name "Person" :schema nil :properties [{:name "Address" :type :complex} {:name "Name" :type :string}]}
           data `({:entity ~person-table :tuples ~(list {:name "John Doe" :Address {:Address1 "123 Main" :City "Springfield"}})})]
       (is (= [{:entity person-table :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Person><name>John Doe</name><Address><Address1>123 Main</Address1><City>Springfield</City></Address></Person>"]}]
+             (format-rows spec data)))))
+
+  (testing "XML generation with local dates."
+   (let [spec {:format :xml}
+         person-table {:name "Person" 
+                       :schema nil 
+                       :properties [{:name "Name" :type :string}
+                                    {:name "DOB" :type :date}]}
+         data (list {:entity person-table 
+                     :tuples [{:name "John Doe" 
+                               :DOB (LocalDate/of 2019 1 1)}]})]
+      (is (= [{:entity person-table 
+               :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Person><name>John Doe</name><DOB>2019-01-01</DOB></Person>"]}]
+             (format-rows spec data)))))
+
+  (testing "XML generation with DATETIME values."
+    (let [spec {:format :xml}
+          table (assoc-in simple-schema [:properties 1 :type] :datetime)
+          data `({:entity ~table :tuples ({:A 1 :B ~(ZonedDateTime/ofInstant (Instant/ofEpochMilli 1109741401000) (ZoneOffset/ofHours -6))})})]
+      (is (= `({:entity ~table
+                :tuples ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><Example><A>1</A><B>2005-03-01T23:30:01-06:00</B></Example>"]})
              (format-rows spec data)))))
 
   (testing "Basic XML generation with sequences."

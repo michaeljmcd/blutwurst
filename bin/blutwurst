@@ -11,6 +11,6 @@ case "`uname`" in
 esac
 
 CLASSPATH_B=".${SEP}${BASE_DIR}/../lib/*"
-JAVA_OPTS_B="-XX:+AggressiveOpts -Xverify:none -Djava.library.path=${BASE_DIR}/../lib"
+JAVA_OPTS_B="-Xverify:none -Djava.library.path=${BASE_DIR}/../lib"
 
 java -cp "${CLASSPATH_B}" ${JAVA_OPTS_B} blutwurst.core "$@"
