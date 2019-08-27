@@ -105,7 +105,7 @@ All notable changes to this project will be documented in this file. This change
 - Support for dumping generated data to standard out.
 - Basic data generators for integers, decimals and strings.
 
-[Unreleased]: https://github.com/michaeljmcd/blutwurst/compare/v0.6.0...HEAD
+[0.7.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/michaeljmcd/blutwurst/compare/v0.4.0...v0.4.1
