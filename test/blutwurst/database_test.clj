@@ -16,7 +16,7 @@
                    [
                     {:name "BIRTHDATE", :type :date, :constraints {:nullable true}}
                     {:name "NAME", :type :string, :constraints {:nullable true :maximum-length 100}}
-                    {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 2147483647 :nullable true}}]})
+                    {:name "ID", :type :integer, :constraints {:minimum-value 0 :maximum-value 2147483647 :nullable false}}]})
 
 (def full-expected-graph {:entities
                           [{:name "PURCHASETYPE" :schema "DBO" :type :complex
@@ -54,7 +54,7 @@
       (is (= {:entities [person-table]} table-graph))))
 
   (testing "Connects to an in-memory database and returns basic table list."
-    (let [spec {:connection-string connection-string}
+    (let [spec {:connection-string connection-string :included-schemas '("DBO")} ; There was originally no included-schema, but this now returns system tables as well.
           table-graph (retrieve-table-graph spec)]
       (is (= full-expected-graph table-graph))))
 

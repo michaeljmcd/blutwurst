@@ -11,7 +11,7 @@
            org.apache.commons/commons-math3 {:mvn/version "3.6.1"}
            com.thedeanda/lorem {:mvn/version "2.2"}
            cheshire/cheshire {:mvn/version "5.12.0"}}
- :aliases {:test     {:extra-paths ["test/main/clojure"]
+ :aliases {:test     {:extra-paths ["test-data"]
                       :extra-deps  {lambdaisland/kaocha {:mvn/version "1.87.1366"}
                                     org.clojure/tools.namespace {:mvn/version "1.5.0"}
                                     org.clojure/java.classpath {:mvn/version "1.1.0"}
