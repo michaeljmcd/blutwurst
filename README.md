@@ -12,9 +12,9 @@ To install, simply unpack an archive and add any needed JDBC drivers to the
 `lib` folder. 
 
 To build from source, you will need the Java runtime and Leiningen. With these
-prerequisites, simply build with `lein`.
+prerequisites, simply build with `clj`.
 
-    lein uberjar
+    clj -T:build uber
 
 ## Usage
 
@@ -22,7 +22,7 @@ To generate data, execute the JAR adding any other JDBC drivers to the classpath
 
     $  ./bin/blutwurst.cmd [args]
 
-This is, admittedly, not a great user experience. We will be developing wrapper scripts to make this nicer.    
+This is, admittedly, not a great user experience. We will be developing wrapper scripts to make this nicer.
 
 ## Options
 
