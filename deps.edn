@@ -17,10 +17,10 @@
                                     org.clojure/java.classpath {:mvn/version "1.1.0"}
                                     com.h2database/h2 {:mvn/version "2.2.224"}}
                       :main-opts   ["-m" "kaocha.runner"]}
-            :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
-                       :main-opts ["-m" "antq.core"]}
+           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+                      :main-opts ["-m" "antq.core"]}
            :cljfmt {:main-opts ["-m" "cljfmt.main"]
                     :extra-deps {cljfmt/cljfmt {:mvn/version "0.9.2"}}}
-					 :build {:deps {io.github.clojure/tools.build {:git/tag "v0.9.6"}}
+					:build {:deps {io.github.clojure/tools.build {:mvn/version "0.9.6"}}
                    :ns-default build}
-           :core {:main-opts ["-m" "batch-order-cancel.core"]}}}
+           :core {:main-opts ["-m" "blutwurst.core"]}}}
