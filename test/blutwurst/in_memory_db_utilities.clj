@@ -17,8 +17,9 @@
                                 PurchaseTypeName varchar(50),
                                 PurchaseTypeCategory varchar(50),
                                 PurchasedByID int not null, 
-                                foreign key (PurchaseTypeName, PurchaseTypeCategory) references dbo.PurchaseType(Name, Category),
-                                foreign key (PurchasedByID) references dbo.Person(ID))"]]
+                                -- foreign key (PurchaseTypeName, PurchaseTypeCategory) references dbo.PurchaseType(Name, Category),
+                                -- foreign key (PurchasedByID) references dbo.Person(ID)
+                            )"]]
     (doseq [i table-creation-sql]
       (.execute statement i))
     (.close statement)))
