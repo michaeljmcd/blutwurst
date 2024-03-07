@@ -12,6 +12,9 @@
 (defn clean [_]
   (b/delete {:path "target"}))
 
+(defn build-version [_]
+  (println version))
+
 (defn uber [_]
   (clean nil)
   (b/copy-dir {:src-dirs ["src" "resources"]
